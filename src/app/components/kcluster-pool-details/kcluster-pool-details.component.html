@@ -12,55 +12,55 @@
             <div class="card">
                 <div class="card-header p-2">
                   <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active" href="#overview" data-toggle="tab">Overview</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#template" data-toggle="tab">Pool Template</a></li>
-                    <li *ngIf="hasClusterAutoscaler" class="nav-item"><a class="nav-link" href="#autoscaling" data-toggle="tab">Autoscaling</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#virtualmachines" data-toggle="tab">Instances</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#overview" data-toggle="tab">개요</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#template" data-toggle="tab">풀 템플릿</a></li>
+                    <li *ngIf="hasClusterAutoscaler" class="nav-item"><a class="nav-link" href="#autoscaling" data-toggle="tab">자동 확장</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#virtualmachines" data-toggle="tab">인스턴스</a></li>
                   </ul>
                 </div>
                 <div class="card-body">
                   <div class="tab-content">
                     <!-- Overview -->
                     <div class="active tab-pane" id="overview">
-                       <dt>Metadata</dt>
+                       <dt>메타데이터</dt>
                        <br>
-                       <dd>Name: {{activePool.name}} </dd>
-                       <dd>Namespace: {{activePool.namespace}} </dd>
-                       <dd>Labels:</dd>
+                       <dd>이름: {{activePool.name}} </dd>
+                       <dd>네임스페이스: {{activePool.namespace}} </dd>
+                       <dd>레이블:</dd>
                        <ul *ngFor="let thisLabel of activePool.labels | keyvalue">
                            <li>{{thisLabel.key}} : {{thisLabel.value}}</li>
                        </ul>
                        <hr>
                        <dt>
-                        Spec
-                        <a class="btn float-right" (click)='showReplicas(activePool.namespace, activePool.name, activePool.replicas)' title="Edit...">
+                        사양
+                        <a class="btn float-right" (click)='showReplicas(activePool.namespace, activePool.name, activePool.replicas)' title="편집...">
                             <i class="fas fa-pen" (click)='showReplicas(activePool.namespace, activePool.name, activePool.replicas)'></i>
                         </a>
                       </dt>
                       <br>
-                       <dd>Desired Replicas: {{activePool.replicas}} </dd>
-                       <dd>Cluster Name: {{activePool.clusterName}} </dd>
-                       <dd>Kubernetes Version: {{activePool.version}} </dd>
+                       <dd>원하는 레플리카: {{activePool.replicas}} </dd>
+                       <dd>클러스터 이름: {{activePool.clusterName}} </dd>
+                       <dd>쿠버네티스 버전: {{activePool.version}} </dd>
                        <hr>
-                       <dt>Status</dt>
+                       <dt>상태</dt>
                        <br>
-                       <dd>Phase: {{activePool.phase}} </dd>
-                       <dd>Ready Replicas: {{activePool.readyReplicas}} </dd>
-                       <dd>Created At: {{activePool.creationTimestamp}} </dd>
+                       <dd>단계: {{activePool.phase}} </dd>
+                       <dd>준비된 레플리카: {{activePool.readyReplicas}} </dd>
+                       <dd>생성일: {{activePool.creationTimestamp}} </dd>
                     </div>
                     <!-- Template -->
                     <div class="tab-pane" id="template">
                         <!-- Custom VM -->
                         <div *ngIf="customTemplate; else vmTemplated">
                           <dt>
-                            General Hardware
+                            일반 하드웨어
                           </dt>
                           <br>
-                          <dd>Instance Type: {{activePool.machineTemplate.instType}} </dd>
-                          <dd>CPU Sockets: {{activePool.machineTemplate.sockets}} </dd>
-                          <dd>CPU Cores: {{activePool.machineTemplate.cores}} </dd>
-                          <dd>CPU Threads: {{activePool.machineTemplate.threads}} </dd>
-                          <dd>Total VM Memory: {{activePool.machineTemplate.memory}} </dd>
+                          <dd>인스턴스 유형: {{activePool.machineTemplate.instType}} </dd>
+                          <dd>CPU 소켓: {{activePool.machineTemplate.sockets}} </dd>
+                          <dd>CPU 코어: {{activePool.machineTemplate.cores}} </dd>
+                          <dd>CPU 스레드: {{activePool.machineTemplate.threads}} </dd>
+                          <dd>전체 VM 메모리: {{activePool.machineTemplate.memory}} </dd>
                           <!-- BIOS / UEFI / Secure Boot
                           <br>
                           <dd>Firmware: {{activePool.machineTemplate.firmware}} </dd>
@@ -70,12 +70,12 @@
                        <!-- Templated VM -->
                        <ng-template #vmTemplated>
                           <dt>
-                            General Hardware
+                            일반 하드웨어
                           </dt>
                           <br>
-                          <dd>Instance Type: {{activePool.machineTemplate.instType}} </dd>
-                          <dd>Total vCPU: {{activePool.machineTemplate.cores}} </dd>
-                          <dd>Total VM Memory: {{activePool.machineTemplate.memory}} </dd>
+                          <dd>인스턴스 유형: {{activePool.machineTemplate.instType}} </dd>
+                          <dd>전체 vCPU: {{activePool.machineTemplate.cores}} </dd>
+                          <dd>전체 VM 메모리: {{activePool.machineTemplate.memory}} </dd>
                           <!-- BIOS / UEFI / Secure Boot
                           <br>
                           <dd>Firmware: {{activePool.machineTemplate.firmware}} </dd>
@@ -84,53 +84,53 @@
                        </ng-template>
                        <hr>
                        <dt>
-                        Execution
+                        실행
                        </dt>
                        <br>
-                       <dd>Priority Class: {{activePool.machineTemplate.priorityClass}} </dd>
+                       <dd>우선순위 클래스: {{activePool.machineTemplate.priorityClass}} </dd>
                        <hr>
                        <dt>
-                        Networking
+                        네트워킹
                        </dt>
                        <br>
                        <dd>NIC: {{poolNetwork.name}}</dd>
-                       <dd>NIC Type: {{poolNetwork.type}}</dd>
-                       <dd>Network: {{poolNetwork.network}}</dd>
+                       <dd>NIC 유형: {{poolNetwork.type}}</dd>
+                       <dd>네트워크: {{poolNetwork.network}}</dd>
                        <hr>
-                       <dt>Disks</dt>
+                       <dt>디스크</dt>
                        <br>
                        <div *ngIf="hasDisk1">
-                            <dd>Disk 1:</dd>
+                            <dd>디스크 1:</dd>
                             <ul>
-                                <li>Name: {{disk1Info.name}} </li>
-                                <li>Namespace: {{disk1Info.namespace}} </li>
-                                <li>Type: {{disk1Info.type}} </li>
-                                <li>Backend: {{disk1Info.backend}} </li>
-                                <li>Data Volume Name: {{disk1Info.dataVolumeName}} </li>
-                                <li>Data Volume Namespace: {{disk1Info.dataVolumeNamespace}} </li>
-                                <li>Source Type: {{disk1Info.dataVolumeSource}} </li>
-                                <li>Source Value: {{disk1Info.dataVolumeSourceValue}} </li>
-                                <li>Access Mode: {{disk1Info.accessMode}}</li>
-                                <li>Cache Mode: {{disk1Info.cacheMode || ""}} </li>
-                                <li>Capacity: {{disk1Info.capacity}} </li>
-                                <li>Storage Class: {{disk1Info.storageClass}}</li>
+                                <li>이름: {{disk1Info.name}} </li>
+                                <li>네임스페이스: {{disk1Info.namespace}} </li>
+                                <li>유형: {{disk1Info.type}} </li>
+                                <li>백엔드: {{disk1Info.backend}} </li>
+                                <li>데이터 볼륨 이름: {{disk1Info.dataVolumeName}} </li>
+                                <li>데이터 볼륨 네임스페이스: {{disk1Info.dataVolumeNamespace}} </li>
+                                <li>소스 유형: {{disk1Info.dataVolumeSource}} </li>
+                                <li>소스 값: {{disk1Info.dataVolumeSourceValue}} </li>
+                                <li>접근 모드: {{disk1Info.accessMode}}</li>
+                                <li>캐시 모드: {{disk1Info.cacheMode || ""}} </li>
+                                <li>용량: {{disk1Info.capacity}} </li>
+                                <li>스토리지 클래스: {{disk1Info.storageClass}}</li>
                             </ul>
                        </div>
                        <div *ngIf="hasDisk2">
-                            <dd>Disk 2:</dd>
+                            <dd>디스크 2:</dd>
                             <ul>
-                                <li>Name: {{disk2Info.name}} </li>
-                                <li>Namespace: {{disk2Info.namespace}} </li>
-                                <li>Type: {{disk2Info.type}} </li>
-                                <li>Backend: {{disk2Info.backend}} </li>
-                                <li>Data Volume Name: {{disk2Info.dataVolumeName}} </li>
-                                <li>Data Volume Namespace: {{disk2Info.dataVolumeNamespace}} </li>
-                                <li>Source Type: {{disk2Info.dataVolumeSource}} </li>
-                                <li>Source Value: {{disk2Info.dataVolumeSourceValue}} </li>
-                                <li>Access Mode: {{disk2Info.accessMode}}</li>
-                                <li>Cache Mode: {{disk2Info.cacheMode || ""}} </li>
-                                <li>Capacity: {{disk2Info.capacity}} </li>
-                                <li>Storage Class: {{disk2Info.storageClass}}</li>
+                                <li>이름: {{disk2Info.name}} </li>
+                                <li>네임스페이스: {{disk2Info.namespace}} </li>
+                                <li>유형: {{disk2Info.type}} </li>
+                                <li>백엔드: {{disk2Info.backend}} </li>
+                                <li>데이터 볼륨 이름: {{disk2Info.dataVolumeName}} </li>
+                                <li>데이터 볼륨 네임스페이스: {{disk2Info.dataVolumeNamespace}} </li>
+                                <li>소스 유형: {{disk2Info.dataVolumeSource}} </li>
+                                <li>소스 값: {{disk2Info.dataVolumeSourceValue}} </li>
+                                <li>접근 모드: {{disk2Info.accessMode}}</li>
+                                <li>캐시 모드: {{disk2Info.cacheMode || ""}} </li>
+                                <li>용량: {{disk2Info.capacity}} </li>
+                                <li>스토리지 클래스: {{disk2Info.storageClass}}</li>
                             </ul>
                        </div>
                     </div>
@@ -138,14 +138,14 @@
                     <div class="tab-pane" id="autoscaling">
                        <div>
                           <dt>
-                            General Config
-                            <a class="btn float-right" (click)='showAutoscaling(activePool.namespace, activePool.name, activePool.minReplicas, activePool.maxReplicas)' title="Edit...">
+                            일반 설정
+                            <a class="btn float-right" (click)='showAutoscaling(activePool.namespace, activePool.name, activePool.minReplicas, activePool.maxReplicas)' title="편집...">
                                 <i class="fas fa-pen" (click)='showAutoscaling(activePool.namespace, activePool.name, activePool.minReplicas, activePool.maxReplicas)'></i>
                             </a>
                           </dt>
                           <br>
-                          <dd>Minimum Nodes: {{activePool.minReplicas}}</dd>
-                          <dd>Maximum Nodes: {{activePool.maxReplicas}}</dd>
+                          <dd>최소 노드: {{activePool.minReplicas}}</dd>
+                          <dd>최대 노드: {{activePool.maxReplicas}}</dd>
                        </div>
                     </div>
                     <!-- Virtual Mahcines -->
@@ -154,11 +154,11 @@
                             <thead>
                                 <tr>
                                 <th style="width: 10px">&nbsp;</th>
-                                <th style="width: 140px">Virtual Machine</th>
-                                <th style="width: 60px">Node</th>
-                                <th style="width: 50px">Status</th>
-                                <th style="width: 50px">IP Address</th>
-                                <th style="width: 50px">Ready</th>
+                                <th style="width: 140px">가상 머신</th>
+                                <th style="width: 60px">노드</th>
+                                <th style="width: 50px">상태</th>
+                                <th style="width: 50px">IP 주소</th>
+                                <th style="width: 50px">준비됨</th>
                                 <th style="width: 180px">&nbsp;</th>
                                 </tr>
                             </thead>
@@ -171,63 +171,63 @@
                                         </span>
                                     </span>
                                     </td>
-                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.name}}</a></td>
-                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.nodeSel}}</a></td>
-                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.status}}</a></td>
+                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부정보...">{{thisVM.name}}</a></td>
+                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부정보...">{{thisVM.nodeSel}}</a></td>
+                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부정보...">{{thisVM.status}}</a></td>
                                     <td style="line-height: 2.2 !important;">
                                     <span [ngSwitch]="thisVM.status">
                                         <span *ngSwitchCase="'running'">
-                                            <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.vmi.ifAddr}}</a>
+                                            <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부정보...">{{thisVM.vmi.ifAddr}}</a>
                                         </span>
                                         <span *ngSwitchDefault>
-                                            <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">&nbsp;</a>
+                                            <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부정보...">&nbsp;</a>
                                         </span>
                                     </span>
                                     </td>
-                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.ready}}</a></td>
+                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부정보...">{{thisVM.ready}}</a></td>
                                     <td style="line-height: 0 !important;">
                                         <div class="dropdown">
-                                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">Actions</button>
+                                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">작업</button>
                                             <div class="dropdown-menu">
                                                 <!--- INFO BUTTON -->
                                                 <span>
-                                                    <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="Show info...">
+                                                    <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="정보 보기...">
                                                         <i class="fas fa-info"></i>
                                                     </a>
                                                 </span>
                                                 <!--- VNC BUTTON -->
                                                 <span [ngSwitch]="thisVM.status">
-                                                    <a class="btn" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="Open console..." *ngSwitchCase="'running'">
+                                                    <a class="btn" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="콘솔 열기..." *ngSwitchCase="'running'">
                                                         <i class="fas fa-desktop"></i>
                                                     </a>
-                                                    <a class="btn disabled" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="Open console..." *ngSwitchDefault>
+                                                    <a class="btn disabled" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="콘솔 열기..." *ngSwitchDefault>
                                                         <i class="fas fa-desktop disabled"></i>
                                                     </a>
                                                 </span>
                                                 <!--- POWER ON BUTTON -->
                                                 <span [ngSwitch]="thisVM.running">
-                                                    <a class="btn disabled" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="Power on..." *ngSwitchCase="true">
+                                                    <a class="btn disabled" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="전원 켜기..." *ngSwitchCase="true">
                                                         <i class="fas fa-plug disabled"></i>
                                                     </a>
-                                                    <a class="btn" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="Power on..." *ngSwitchDefault>
+                                                    <a class="btn" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="전원 켜기..." *ngSwitchDefault>
                                                         <i class="fas fa-plug"></i>
                                                     </a>
                                                 </span>
                                                 <!--- POWER OFF BUTTON -->
                                                 <span [ngSwitch]="thisVM.running">
-                                                    <a class="btn" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="Power off..." *ngSwitchCase="true">
+                                                    <a class="btn" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="전원 끄기..." *ngSwitchCase="true">
                                                         <i class="fas fa-power-off"></i>
                                                     </a>
-                                                    <a class="btn disabled" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="Power off..." *ngSwitchDefault>
+                                                    <a class="btn disabled" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="전원 끄기..." *ngSwitchDefault>
                                                         <i class="fas fa-power-off disabled"></i>
                                                     </a>
                                                 </span>
                                                 <!--- RESTART BUTTON -->
                                                 <span [ngSwitch]="thisVM.running">
-                                                    <a class="btn" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="Restart..." *ngSwitchCase="true">
+                                                    <a class="btn" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="재시작..." *ngSwitchCase="true">
                                                         <i class="fas fa-redo"></i>
                                                     </a>
-                                                    <a class="btn disabled" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="Restart..." *ngSwitchDefault>
+                                                    <a class="btn disabled" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="재시작..." *ngSwitchDefault>
                                                         <i class="fas fa-redo disabled"></i>
                                                     </a>
                                                 </span>
@@ -263,13 +263,13 @@
               <div class="form-group">
                 <input type="hidden" id="replicas-wp-namespace" name="replicas-wp-namespace" value="">
                 <input type="hidden" id="replicas-wp-name" name="replicas-wp-name" value="">
-                <label for="replicasInput">New number of replicas</label>
+                <label for="replicasInput">새 레플리카 수</label>
                 <input #replicasinput type="number" class="form-control" id="replicas-wp-input" name="replicas-wp-input" placeholder="0">
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" (click)='hideComponent("modal-wp-replicas")' class="btn btn-default">Close</button>
-              <button type="button" class="btn btn-primary" (click)='applyReplicas(replicasinput.value)'>Resize</button>
+              <button type="button" (click)='hideComponent("modal-wp-replicas")' class="btn btn-default">닫기</button>
+              <button type="button" class="btn btn-primary" (click)='applyReplicas(replicasinput.value)'>크기 조정</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -294,15 +294,15 @@
                 <div class="form-group">
                   <input type="hidden" id="autoscaling-wp-namespace" name="replicas-wp-namespace" value="">
                   <input type="hidden" id="autoscaling-wp-name" name="replicas-wp-name" value="">
-                  <label for="minwpinput">Minimum nodes:</label>
+                  <label for="minwpinput">최소 노드:</label>
                   <input #minwpinput type="number" class="form-control" id="min-wp-input" name="min-wp-input" placeholder="0">
-                  <label for="maxwpinput">Maximum nodes:</label>
+                  <label for="maxwpinput">최대 노드:</label>
                   <input #maxwpinput type="number" class="form-control" id="max-wp-input" name="max-wp-input" placeholder="0">
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" (click)='hideComponent("modal-wp-autoscaling")' class="btn btn-default">Close</button>
-                <button type="button" class="btn btn-primary" (click)='applyAutoscaling(minwpinput.value, maxwpinput.value)'>Apply</button>
+                <button type="button" (click)='hideComponent("modal-wp-autoscaling")' class="btn btn-default">닫기</button>
+                <button type="button" class="btn btn-primary" (click)='applyAutoscaling(minwpinput.value, maxwpinput.value)'>적용</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -323,37 +323,37 @@
               </button>
             </div>
             <div class="modal-body" id="config-wp-value">
-                        <label for="config-wp-type">Virtual Machine Type:</label>
+                        <label for="config-wp-type">가상 머신 유형:</label>
                         <select #configwptype class="custom-select rounded-0" name="config-wp-type" id="config-wp-type">
                           <option>Value 1</option>
                         </select>
                         <div class="pane fade" id="config-wp-memory" name="config-wp-memory" style="display: none;" aria-hidden="true">
-                          <label for="config-wpumem-sockets">Sockets:</label>
+                          <label for="config-wpumem-sockets">소켓:</label>
                           <input #configwpcpumemsockets type="number" class="form-control" id="config-wpumem-sockets" name="config-wpumem-sockets">
-                          <label for="config-wpumem-cores">Cores:</label>
+                          <label for="config-wpumem-cores">코어:</label>
                           <input #configwpcpumemcores type="number" class="form-control" id="config-wpumem-cores" name="config-wpumem-cores">
-                          <label for="config-wpumem-threads">Threads:</label>
+                          <label for="config-wpumem-threads">스레드:</label>
                           <input #configwpcpumemthreads type="number" class="form-control" id="config-wpumem-threads" name="config-wpumem-threads">
-                          <label for="config-wpumem-memory">Memory (in GB):</label>
+                          <label for="config-wpumem-memory">메모리 (GB):</label>
                           <input #configwpcpumemmemory type="number" class="form-control" id="config-wpumem-memory" name="config-wpumem-memory">
                         </div>
-                        <label for="config-wp-priorityclass">Priority Class:</label>
+                        <label for="config-wp-priorityclass">우선순위 클래스:</label>
                         <select #configwppc class="custom-select rounded-0" name="config-wp-pc" id="config-wp-pc">
                           <option>Value 1</option>
                         </select>
-                        <label for="config-wp-disk">Boot Disk</label>
+                        <label for="config-wp-disk">부팅 디스크</label>
                         <div class="row">
                             <div class="col-3">
-                                <label for="config-wp-disksize">Size in GB:</label>
+                                <label for="config-wp-disksize">크기 (GB):</label>
                                 <input #configwpdisksize type=number class="form-control" name="config-wp-disksize" id="config-wp-disksize" placeholder="100">
                             </div>
                             <div class="col-3">
-                                <label for="config-wp-disksc">Storage Class:</label>
+                                <label for="config-wp-disksc">스토리지 클래스:</label>
                                 <select #configwpdisksc class="custom-select rounded-0" name="config-wp-disksc" id="config-wp-disksc">
                                 </select>
                             </div>
                             <div class="col-3">
-                                <label for="config-wp-diskam">Access Mode:</label>
+                                <label for="config-wp-diskam">접근 모드:</label>
                                 <select #configwpdiskam class="custom-select rounded-0" name="config-wp-diskam" id="config-wp-diskam">
                                     <option>ReadWriteOnce</option>
                                     <option>ReadOnlyMany</option>
@@ -361,19 +361,19 @@
                                 </select>
                             </div>
                             <div class="col-3">
-                                <label for="config-wp-diskcm">Cache Mode:</label>
+                                <label for="config-wp-diskcm">캐시 모드:</label>
                                 <select #configwpdiskcm class="custom-select rounded-0" name="config-wp-diskcm" id="config-wp-diskcm">
-                                  <option value="">Automatic</option>
-                                  <option value="none">None</option>
-                                  <option value="writethrough">WriteThrough</option>
-                                  <option value="writeback">WriteBack</option>
+                                  <option value="">자동</option>
+                                  <option value="none">없음</option>
+                                  <option value="writethrough">쓰기 투과</option>
+                                  <option value="writeback">쓰기 백</option>
                                 </select>
                             </div>
                         </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-config-wp")'>Close</button>
-              <button type="button" class="btn btn-primary">Apply</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-config-wp")'>닫기</button>
+              <button type="button" class="btn btn-primary">적용</button>
             </div>
           </div>
           <!-- /.modal-content -->
