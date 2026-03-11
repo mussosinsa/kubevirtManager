@@ -1,275 +1,365 @@
-<div class="content">
-  <div class="container-fluid">
-    <div class="content-wrapper">
-      <div class="row">&nbsp;</div>
+<div class="content-wrapper">
 
-      <!-- PROMETHEUS: CPU / MEMORY display: none;-->
-      <div class="row" id="prometheus-row-one" style="display: none;">
-        <div class="col-lg-6 col-6">
-          <!-- CPU GRAPH -->
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="d-flex justify-content-between">
-                <h3 class="card-title">CPU 사용량</h3>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="position-relative"><div class="chartjs-size-monitor">
-              <div class="chart-container">
-                <canvas  id="CpuChart" >{{ cpuChart }}</canvas>
-              </div>
-              </div></div>
-            </div>
-          </div>
+  <!-- 페이지 헤더 -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">대시보드</h1>
         </div>
-        <div class="col-lg-6 col-6">
-          <!-- MEMORY GRAPH -->
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="d-flex justify-content-between">
-                <h3 class="card-title">메모리 사용량 <i>(GB)</i></h3>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="position-relative"><div class="chartjs-size-monitor">
-              <div class="chart-container">
-                <canvas  id="MemChart" >{{ memChart }}</canvas>
-              </div>
-              </div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PROMETHEUS: NET / STORAGE display: none;-->
-      <div class="row" id="prometheus-row-two" style="display: none;">
-        <div class="col-lg-6 col-6">
-          <!-- NET GRAPH -->
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="d-flex justify-content-between">
-                <h3 class="card-title">네트워크 <i>총 트래픽 (MB)</i></h3>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="position-relative"><div class="chartjs-size-monitor">
-              <div class="chart-container">
-                <canvas  id="NetChart" >{{ netChart }}</canvas>
-              </div>
-              </div></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6 col-6">
-          <!-- STORAGE GRAPH -->
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="d-flex justify-content-between">
-                <h3 class="card-title">스토리지 <i>총 트래픽 (MB)</i></h3>
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="position-relative"><div class="chartjs-size-monitor">
-              <div class="chart-container">
-                <canvas  id="StgChart" >{{ stgChart }}</canvas>
-              </div>
-              </div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FIRST ROW -->
-      <div class="row" id="row-one">
-        <!-- NODE INFO -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="node-info">{{this.nodeInfo.running}}/{{this.nodeInfo.total}}</h3>
-
-              <p>쿠버네티스 노드</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-hdd"></i>
-            </div>
-            <a routerLink="/nodelist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- VM INFO -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="vm-info">{{this.vmInfo.running}}/{{this.vmInfo.total}}</h3>
-
-              <p>가상 머신</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-desktop"></i>
-            </div>
-            <a routerLink="/vmlist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- Disks -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="disk-info">{{this.discInfo}}</h3>
-
-              <p>데이터 볼륨</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-database"></i>
-            </div>
-            <a routerLink="/dsklist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- VM Pools -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="pool-info">{{this.poolInfo.running}}/{{this.poolInfo.total}}</h3>
-
-              <p>VM 풀</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-server"></i>
-            </div>
-            <a routerLink="/vmpools" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-      </div>
-      <div class="row">&nbsp;</div>
-
-      <!-- SECOND ROW -->
-      <div class="row" id="row-two">
-        <!-- CPU INFO -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="cpu-info">{{this.cpuInfo}}</h3>
-
-              <p>전체 노드 CPU</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-flash"></i>
-            </div>
-            <a routerLink="/nodelist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- MEMORY INFO -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="mem-info">{{this.memInfo}} GB</h3>
-
-              <p>전체 노드 메모리</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-gear-b"></i>
-            </div>
-            <a routerLink="/nodelist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- STORAGE INFO -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="storage-info">{{this.storageInfo}} GB</h3>
-
-              <p>전체 노드 스토리지</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-folder"></i>
-            </div>
-            <a routerLink="/nodelist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- NETWORK INFO -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="net-info">{{this.netInfo}}</h3>
-
-              <p>사용 가능한 네트워크</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-network-wired"></i>
-            </div>
-            <a routerLink="/netlist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-      </div>
-      <div class="row">&nbsp;</div>
-
-      <!-- THIRD ROW -->
-      <div class="row" id="row-three">
-        <!-- CLUSTERS -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="cluster-info">{{this.kclusterInfo}}</h3>
-
-              <p>클러스터</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-cubes"></i>
-            </div>
-            <a routerLink="/kcluster" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- AUTOSCALE -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="as-info">{{this.autoscaleInfo}}</h3>
-
-              <p>확장 그룹</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-expand-alt"></i>
-            </div>
-            <a routerLink="/autoscale" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- INSTANCE TYPES -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="it-info">{{this.instanceTypesInfo}}</h3>
-
-              <p>인스턴스 유형</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-book"></i>
-            </div>
-            <a routerLink="/citlist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-
-        <!-- SERVICES -->
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3 id="svc-info">{{this.loadBalancers}}</h3>
-
-              <p>로드 밸런서</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-sitemap"></i>
-            </div>
-            <a routerLink="/lblist" class="small-box-footer">자세히 보기 <i class="fas fa-arrow-circle-right"></i></a>
-          </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active">대시보드</li>
+          </ol>
         </div>
       </div>
     </div>
-
   </div>
+
+  <section class="content">
+    <div class="container-fluid">
+
+      <!-- ══════════════════════════════════════
+           1행: KPI 요약 카드
+      ══════════════════════════════════════ -->
+      <div class="row">
+
+        <!-- 노드 -->
+        <div class="col-xl col-md-4 col-6">
+          <div class="kpi-card border-left-info">
+            <a routerLink="/nodelist" class="kpi-link">
+              <div class="kpi-icon"><i class="fas fa-hdd"></i></div>
+              <div class="kpi-body">
+                <div class="kpi-value">{{ nodeInfo.running }}<span class="kpi-total">/{{ nodeInfo.total }}</span></div>
+                <div class="kpi-label">노드</div>
+                <div class="kpi-bar">
+                  <div class="kpi-bar-fill bg-info" [style.width.%]="nodeInfo.percent"></div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- 가상 머신 -->
+        <div class="col-xl col-md-4 col-6">
+          <div class="kpi-card border-left-success">
+            <a routerLink="/vmlist" class="kpi-link">
+              <div class="kpi-icon"><i class="fas fa-desktop"></i></div>
+              <div class="kpi-body">
+                <div class="kpi-value">{{ vmInfo.running }}<span class="kpi-total">/{{ vmInfo.total }}</span></div>
+                <div class="kpi-label">가상 머신</div>
+                <div class="kpi-bar">
+                  <div class="kpi-bar-fill bg-success" [style.width.%]="vmInfo.percent"></div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- VM 풀 -->
+        <div class="col-xl col-md-4 col-6">
+          <div class="kpi-card border-left-primary">
+            <a routerLink="/vmpools" class="kpi-link">
+              <div class="kpi-icon"><i class="fas fa-server"></i></div>
+              <div class="kpi-body">
+                <div class="kpi-value">{{ poolInfo.running }}<span class="kpi-total">/{{ poolInfo.total }}</span></div>
+                <div class="kpi-label">VM 풀</div>
+                <div class="kpi-bar">
+                  <div class="kpi-bar-fill bg-primary" [style.width.%]="poolInfo.percent"></div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- CPU -->
+        <div class="col-xl col-md-4 col-6">
+          <div class="kpi-card border-left-warning">
+            <a routerLink="/nodelist" class="kpi-link">
+              <div class="kpi-icon"><i class="fas fa-microchip"></i></div>
+              <div class="kpi-body">
+                <div class="kpi-value">{{ cpuInfo }}<span class="kpi-unit">코어</span></div>
+                <div class="kpi-label">전체 CPU</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- 메모리 -->
+        <div class="col-xl col-md-4 col-6">
+          <div class="kpi-card border-left-warning">
+            <a routerLink="/nodelist" class="kpi-link">
+              <div class="kpi-icon"><i class="fas fa-memory"></i></div>
+              <div class="kpi-body">
+                <div class="kpi-value">{{ memInfo }}<span class="kpi-unit">GB</span></div>
+                <div class="kpi-label">전체 메모리</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- 스토리지 -->
+        <div class="col-xl col-md-4 col-6">
+          <div class="kpi-card border-left-secondary">
+            <a routerLink="/nodelist" class="kpi-link">
+              <div class="kpi-icon"><i class="fas fa-database"></i></div>
+              <div class="kpi-body">
+                <div class="kpi-value">{{ storageInfo }}<span class="kpi-unit">GB</span></div>
+                <div class="kpi-label">전체 스토리지</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- 클러스터 -->
+        <div class="col-xl col-md-4 col-6">
+          <div class="kpi-card border-left-danger">
+            <a routerLink="/kcluster" class="kpi-link">
+              <div class="kpi-icon"><i class="fas fa-cubes"></i></div>
+              <div class="kpi-body">
+                <div class="kpi-value">{{ kclusterInfo }}</div>
+                <div class="kpi-label">클러스터</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- 로드 밸런서 -->
+        <div class="col-xl col-md-4 col-6">
+          <div class="kpi-card border-left-secondary">
+            <a routerLink="/lblist" class="kpi-link">
+              <div class="kpi-icon"><i class="fas fa-sitemap"></i></div>
+              <div class="kpi-body">
+                <div class="kpi-value">{{ loadBalancers }}</div>
+                <div class="kpi-label">로드 밸런서</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </div><!-- /1행 -->
+
+      <!-- ══════════════════════════════════════
+           2행: 도넛 차트 + 리소스 요약
+      ══════════════════════════════════════ -->
+      <div class="row mt-3">
+
+        <!-- 가상 머신 상태 도넛 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="card card-outline card-success h-100">
+            <div class="card-header border-0 pb-0">
+              <h3 class="card-title">
+                <i class="fas fa-desktop mr-1 text-success"></i>가상 머신 상태
+              </h3>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+              <div class="donut-wrapper">
+                <canvas id="VmStatusChart"></canvas>
+                <div class="donut-center">
+                  <div class="donut-pct"
+                       [ngClass]="vmInfo.percent >= 80 ? 'text-success' :
+                                  vmInfo.percent >= 50 ? 'text-warning' : 'text-danger'">
+                    {{ vmInfo.percent }}%
+                  </div>
+                  <div class="donut-sub">실행 중</div>
+                </div>
+              </div>
+              <div class="stat-row mt-2">
+                <span class="stat-pill bg-success">실행 중 {{ vmInfo.running }}</span>
+                <span class="stat-pill bg-danger ml-1">중지됨 {{ vmInfo.total - vmInfo.running }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 노드 상태 도넛 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="card card-outline card-info h-100">
+            <div class="card-header border-0 pb-0">
+              <h3 class="card-title">
+                <i class="fas fa-hdd mr-1 text-info"></i>노드 상태
+              </h3>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+              <div class="donut-wrapper">
+                <canvas id="NodeStatusChart"></canvas>
+                <div class="donut-center">
+                  <div class="donut-pct"
+                       [ngClass]="nodeInfo.percent === 100 ? 'text-info' :
+                                  nodeInfo.percent >= 80  ? 'text-warning' : 'text-danger'">
+                    {{ nodeInfo.percent }}%
+                  </div>
+                  <div class="donut-sub">Ready</div>
+                </div>
+              </div>
+              <div class="stat-row mt-2">
+                <span class="stat-pill bg-info">Ready {{ nodeInfo.running }}</span>
+                <span class="stat-pill bg-warning ml-1">NotReady {{ nodeInfo.total - nodeInfo.running }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VM 풀 상태 도넛 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="card card-outline card-primary h-100">
+            <div class="card-header border-0 pb-0">
+              <h3 class="card-title">
+                <i class="fas fa-server mr-1 text-primary"></i>VM 풀 상태
+              </h3>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+              <div class="donut-wrapper">
+                <canvas id="PoolStatusChart"></canvas>
+                <div class="donut-center">
+                  <div class="donut-pct"
+                       [ngClass]="poolInfo.percent >= 80 ? 'text-primary' :
+                                  poolInfo.percent >= 50 ? 'text-warning' : 'text-secondary'">
+                    {{ poolInfo.percent }}%
+                  </div>
+                  <div class="donut-sub">실행 중</div>
+                </div>
+              </div>
+              <div class="stat-row mt-2">
+                <span class="stat-pill bg-primary">실행 중 {{ poolInfo.running }}</span>
+                <span class="stat-pill bg-secondary ml-1">중지됨 {{ poolInfo.total - poolInfo.running }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 리소스 요약 카드 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="card card-outline card-secondary h-100">
+            <div class="card-header border-0 pb-0">
+              <h3 class="card-title">
+                <i class="fas fa-th-large mr-1 text-secondary"></i>리소스 요약
+              </h3>
+            </div>
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                  <span><i class="fas fa-layer-group text-warning mr-2"></i>데이터 볼륨</span>
+                  <a routerLink="/dsklist">
+                    <span class="badge badge-warning badge-pill">{{ discInfo }}</span>
+                  </a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                  <span><i class="fas fa-network-wired text-info mr-2"></i>네트워크</span>
+                  <a routerLink="/netlist">
+                    <span class="badge badge-info badge-pill">{{ netInfo }}</span>
+                  </a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                  <span><i class="fas fa-expand-alt text-success mr-2"></i>자동 확장</span>
+                  <a routerLink="/autoscale">
+                    <span class="badge badge-success badge-pill">{{ autoscaleInfo }}</span>
+                  </a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                  <span><i class="fas fa-book text-primary mr-2"></i>인스턴스 유형</span>
+                  <a routerLink="/citlist">
+                    <span class="badge badge-primary badge-pill">{{ instanceTypesInfo }}</span>
+                  </a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                  <span><i class="fas fa-cubes text-danger mr-2"></i>클러스터</span>
+                  <a routerLink="/kcluster">
+                    <span class="badge badge-danger badge-pill">{{ kclusterInfo }}</span>
+                  </a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                  <span><i class="fas fa-sitemap text-secondary mr-2"></i>로드 밸런서</span>
+                  <a routerLink="/lblist">
+                    <span class="badge badge-secondary badge-pill">{{ loadBalancers }}</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /2행 -->
+
+      <!-- ══════════════════════════════════════
+           3행: Prometheus 시계열 차트 (가용 시)
+      ══════════════════════════════════════ -->
+      <div *ngIf="prometheusAvailable" class="row mt-3">
+
+        <!-- CPU 사용량 -->
+        <div class="col-lg-6">
+          <div class="card card-outline card-primary">
+            <div class="card-header border-0">
+              <h3 class="card-title">
+                <i class="fas fa-microchip mr-1 text-primary"></i>CPU 사용량
+              </h3>
+              <div class="card-tools">
+                <span class="badge badge-primary">실시간</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="CpuChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 메모리 사용량 -->
+        <div class="col-lg-6">
+          <div class="card card-outline card-success">
+            <div class="card-header border-0">
+              <h3 class="card-title">
+                <i class="fas fa-memory mr-1 text-success"></i>메모리 사용량 (GB)
+              </h3>
+              <div class="card-tools">
+                <span class="badge badge-success">실시간</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="MemChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div *ngIf="prometheusAvailable" class="row mt-1">
+
+        <!-- 네트워크 트래픽 -->
+        <div class="col-lg-6">
+          <div class="card card-outline card-warning">
+            <div class="card-header border-0">
+              <h3 class="card-title">
+                <i class="fas fa-network-wired mr-1 text-warning"></i>네트워크 총 트래픽 (MB)
+              </h3>
+              <div class="card-tools">
+                <span class="badge badge-warning">실시간</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="NetChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 스토리지 I/O -->
+        <div class="col-lg-6">
+          <div class="card card-outline card-secondary">
+            <div class="card-header border-0">
+              <h3 class="card-title">
+                <i class="fas fa-hdd mr-1 text-secondary"></i>스토리지 I/O (MB)
+              </h3>
+              <div class="card-tools">
+                <span class="badge badge-secondary">실시간</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <canvas id="StgChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /3행 Prometheus -->
+
+    </div>
+  </section>
 </div>
