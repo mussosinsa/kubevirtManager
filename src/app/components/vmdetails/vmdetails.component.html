@@ -10,55 +10,55 @@
             <div class="card-tools">
                 <!--- PAUSE BUTTON -->
                 <span [ngSwitch]="activeVm.printableStatus">
-                    <a class="btn" (click)='vmOperations("pause", activeVm.namespace, activeVm.name)' title="Pause..." *ngSwitchCase="'running'">
+                    <a class="btn" (click)='vmOperations("pause", activeVm.namespace, activeVm.name)' title="일시 정지..." *ngSwitchCase="'running'">
                         <i class="fas fa-pause"></i>
                     </a>
-                    <a class="btn disabled" (click)='vmOperations("pause", activeVm.namespace, activeVm.name)' title="Pause..." *ngSwitchDefault>
+                    <a class="btn disabled" (click)='vmOperations("pause", activeVm.namespace, activeVm.name)' title="일시 정지..." *ngSwitchDefault>
                         <i class="fas fa-pause disabled"></i>
                     </a>
                 </span>
                 <!--- PLAY BUTTON -->
                 <span [ngSwitch]="activeVm.printableStatus">
-                    <a class="btn" (click)='vmOperations("unpause", activeVm.namespace, activeVm.name)' title="Resume..." *ngSwitchCase="'paused'">
+                    <a class="btn" (click)='vmOperations("unpause", activeVm.namespace, activeVm.name)' title="재개..." *ngSwitchCase="'paused'">
                         <i class="fas fa-play"></i>
                     </a>
-                    <a class="btn disabled" (click)='vmOperations("unpause", activeVm.namespace, activeVm.name)' title="Resume..." *ngSwitchDefault>
+                    <a class="btn disabled" (click)='vmOperations("unpause", activeVm.namespace, activeVm.name)' title="재개..." *ngSwitchDefault>
                         <i class="fas fa-play disabled"></i>
                     </a>
                 </span>
                 <!--- POWER ON BUTTON -->
                 <span [ngSwitch]="activeVm.running">
-                    <a class="btn disabled" (click)='vmOperations("start", activeVm.namespace, activeVm.name)' title="Power on..." *ngSwitchCase="true">
+                    <a class="btn disabled" (click)='vmOperations("start", activeVm.namespace, activeVm.name)' title="전원 켜기..." *ngSwitchCase="true">
                         <i class="fas fa-plug disabled"></i>
                     </a>
-                    <a class="btn" (click)='vmOperations("start", activeVm.namespace, activeVm.name)' title="Power on..." *ngSwitchDefault>
+                    <a class="btn" (click)='vmOperations("start", activeVm.namespace, activeVm.name)' title="전원 켜기..." *ngSwitchDefault>
                         <i class="fas fa-plug"></i>
                     </a>
                 </span>
                 <!--- POWER OFF BUTTON -->
                 <span [ngSwitch]="activeVm.running">
-                    <a class="btn" (click)='vmOperations("stop", activeVm.namespace, activeVm.name)' title="Power off..." *ngSwitchCase="true">
+                    <a class="btn" (click)='vmOperations("stop", activeVm.namespace, activeVm.name)' title="전원 끄기..." *ngSwitchCase="true">
                         <i class="fas fa-power-off"></i>
                     </a>
-                    <a class="btn disabled" (click)='vmOperations("stop", activeVm.namespace, activeVm.name)' title="Power off..." *ngSwitchDefault>
+                    <a class="btn disabled" (click)='vmOperations("stop", activeVm.namespace, activeVm.name)' title="전원 끄기..." *ngSwitchDefault>
                         <i class="fas fa-power-off disabled"></i>
                     </a>
                 </span>
                 <!--- RESTART BUTTON -->
                 <span [ngSwitch]="activeVm.running">
-                    <a class="btn" (click)='vmOperations("reboot", activeVm.namespace, activeVm.name)' title="Restart..." *ngSwitchCase="true">
+                    <a class="btn" (click)='vmOperations("reboot", activeVm.namespace, activeVm.name)' title="재시작..." *ngSwitchCase="true">
                         <i class="fas fa-redo"></i>
                     </a>
-                    <a class="btn disabled" (click)='vmOperations("reboot", activeVm.namespace, activeVm.name)' title="Restart..." *ngSwitchDefault>
+                    <a class="btn disabled" (click)='vmOperations("reboot", activeVm.namespace, activeVm.name)' title="재시작..." *ngSwitchDefault>
                         <i class="fas fa-redo disabled"></i>
                     </a>
                 </span>
                 <!--- LIVEMIGRATE BUTTON -->
                 <span [ngSwitch]="activeVm.running">
-                    <a class="btn" (click)='vmOperations("migrate", activeVm.namespace, activeVm.name)' title="Live Migrate..." *ngSwitchCase="true">
+                    <a class="btn" (click)='vmOperations("migrate", activeVm.namespace, activeVm.name)' title="라이브 마이그레이션..." *ngSwitchCase="true">
                         <i class="fas fa-angle-double-right"></i>
                     </a>
-                    <a class="btn disabled" (click)='vmOperations("migrate", activeVm.namespace, activeVm.name)' title="Live Migrate..." *ngSwitchDefault>
+                    <a class="btn disabled" (click)='vmOperations("migrate", activeVm.namespace, activeVm.name)' title="라이브 마이그레이션..." *ngSwitchDefault>
                         <i class="fas fa-angle-double-right disabled"></i>
                     </a>
                 </span>
@@ -68,102 +68,102 @@
             <div class="card">
                 <div class="card-header p-2">
                   <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active" href="#overview" data-toggle="tab">Overview</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#details" data-toggle="tab">Details</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#networking" data-toggle="tab">Networking</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#disks" data-toggle="tab">Disks</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#logging" data-toggle="tab">Logs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#vmmonitoring" data-toggle="tab" *ngIf="promCheck">Monitoring</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#vmserial" data-toggle="tab">Serial</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#vmconsole" data-toggle="tab">Console</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#overview" data-toggle="tab">개요</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#details" data-toggle="tab">세부 정보</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#networking" data-toggle="tab">네트워킹</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#disks" data-toggle="tab">디스크</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#logging" data-toggle="tab">로그</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#vmmonitoring" data-toggle="tab" *ngIf="promCheck">모니터링</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#vmserial" data-toggle="tab">시리얼</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#vmconsole" data-toggle="tab">콘솔</a></li>
                   </ul>
                 </div>
                 <div class="card-body">
                   <div class="tab-content">
                     <!-- Overview -->
                     <div class="active tab-pane" id="overview">
-                       <dt>Metadata</dt>
+                       <dt>메타데이터</dt>
                        <br>
-                       <dd>Name: {{activeVm.name}} </dd>
-                       <dd>Namespace: {{activeVm.namespace}} </dd>
-                       <dd>Labels:</dd>
+                       <dd>이름: {{activeVm.name}} </dd>
+                       <dd>네임스페이스: {{activeVm.namespace}} </dd>
+                       <dd>레이블:</dd>
                        <ul *ngFor="let thisLabel of activeVm.labels | keyvalue">
                            <li>{{thisLabel.key}} : {{thisLabel.value}}</li>
                        </ul>
                        <hr>
-                       <dt>Spec
-                           <a class="btn float-right" title="Edit...">
+                       <dt>사양
+                           <a class="btn float-right" title="편집...">
                            <i class="fas fa-pen" (click)="showRunStrategy()"></i>
                       </a>
                        </dt>
                        <br>
-                       <dd>Run Strategy: {{activeVm.runStrategy}} </dd>
+                       <dd>실행 전략: {{activeVm.runStrategy}} </dd>
                        <hr>
-                       <dt>Status</dt>
+                       <dt>상태</dt>
                        <br>
-                       <dd>Running: {{activeVm.running}} </dd>
-                       <dd>Status: {{activeVm.printableStatus}}</dd>
-                       <dd>Created At: {{activeVm.creationTimestamp}} </dd>
+                       <dd>실행 중: {{activeVm.running}} </dd>
+                       <dd>상태: {{activeVm.printableStatus}}</dd>
+                       <dd>생성일: {{activeVm.creationTimestamp}} </dd>
                     </div>
                     <!-- Details -->
                     <div class="tab-pane" id="details">
                         <!-- Custom VM -->
                         <div *ngIf="customTemplate; else vmTemplated">
                           <dt>
-                            General Hardware
-                            <a class="btn float-right" title="Edit...">
+                            일반 하드웨어
+                            <a class="btn float-right" title="편집...">
                                 <i class="fas fa-pen" (click)="showResize(activeVm.sockets, activeVm.cores, activeVm.threads, activeVm.memory)"></i>
                             </a>
                           </dt>
                           <br>
-                          <dd>Instance Type: {{activeVm.instType}} </dd>
-                          <dd>CPU Sockets: {{activeVm.sockets || 0}} </dd>
-                          <dd>CPU Cores: {{activeVm.cores || 0}} </dd>
-                          <dd>CPU Threads: {{activeVm.threads || 0}} </dd>
-                          <dd>Total VM Memory: {{activeVm.memory}} </dd>
-                          <dd>Firmware: {{activeVm.firmware}} </dd>
-                          <dd>Secure Boot: {{activeVm.secureBoot}} </dd>
+                          <dd>인스턴스 유형: {{activeVm.instType}} </dd>
+                          <dd>CPU 소켓: {{activeVm.sockets || 0}} </dd>
+                          <dd>CPU 코어: {{activeVm.cores || 0}} </dd>
+                          <dd>CPU 스레드: {{activeVm.threads || 0}} </dd>
+                          <dd>전체 VM 메모리: {{activeVm.memory}} </dd>
+                          <dd>펌웨어: {{activeVm.firmware}} </dd>
+                          <dd>보안 부팅: {{activeVm.secureBoot}} </dd>
                        </div>
                        <!-- Templated VM -->
                        <ng-template #vmTemplated>
                           <dt>
-                            General Hardware
-                            <a class="btn float-right" title="Edit...">
+                            일반 하드웨어
+                            <a class="btn float-right" title="편집...">
                                 <i class="fas fa-pen" (click)="showType()"></i>
                             </a>
                           </dt>
                           <br>
-                          <dd>Instance Type: {{activeVm.instType}} </dd>
-                          <dd>Total vCPU: {{activeVm.cores * activeVm.sockets * activeVm.threads || 0}}</dd>
-                          <dd>Total VM Memory: {{activeVm.memory}} </dd>
-                          <dd>Firmware: {{activeVm.firmware}} </dd>
-                          <dd>Secure Boot: {{activeVm.secureBoot}} </dd>
+                          <dd>인스턴스 유형: {{activeVm.instType}} </dd>
+                          <dd>전체 vCPU: {{activeVm.cores * activeVm.sockets * activeVm.threads || 0}}</dd>
+                          <dd>전체 VM 메모리: {{activeVm.memory}} </dd>
+                          <dd>펌웨어: {{activeVm.firmware}} </dd>
+                          <dd>보안 부팅: {{activeVm.secureBoot}} </dd>
                        </ng-template>
                        <hr>
                        <div *ngIf="activeVm.vmi.running">
                             <dt>
-                                Instance Information
+                                인스턴스 정보
                             </dt>
                             <br>
-                            <dd>Operating System Id: {{activeVm.vmi.osId}} </dd>
-                            <dd>Operating System Name: {{activeVm.vmi.osName}} - {{activeVm.vmi.osPrettyName}}</dd>
-                            <dd>Operating System Version: {{activeVm.vmi.osVersion}} </dd>
-                            <dd>Operating System Kernel: {{activeVm.vmi.osKernRel}} - {{activeVm.vmi.osKernVer}} </dd>
+                            <dd>운영 체제 ID: {{activeVm.vmi.osId}} </dd>
+                            <dd>운영 체제 이름: {{activeVm.vmi.osName}} - {{activeVm.vmi.osPrettyName}}</dd>
+                            <dd>운영 체제 버전: {{activeVm.vmi.osVersion}} </dd>
+                            <dd>운영 체제 커널: {{activeVm.vmi.osKernRel}} - {{activeVm.vmi.osKernVer}} </dd>
                             <hr>
                        </div>
                        <dt>
-                        Execution
-                        <!--<a class="btn float-right" title="Edit...">
+                        실행
+                        <!--<a class="btn float-right" title="편집...">
                             <i class="fas fa-pen" (click)="showPc()"></i>
                         </a>-->
                        </dt>
                        <br>
-                       <dd>Priority Class: {{activeVm.priorityClass}}</dd>
+                       <dd>우선순위 클래스: {{activeVm.priorityClass}}</dd>
                        <hr>
                     </div>
                     <!-- Networking -->
                     <div class="tab-pane" id="networking">
-                       <dt>Networking</dt>
+                       <dt>네트워킹</dt>
                        <br>
                        <div class="card" *ngFor="let actualNet of activeVm.networkList">
                             <div class="card-header">
@@ -172,31 +172,31 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                    <li>Name: {{actualNet.name}}</li>
-                                    <li>Type: {{actualNet.type}}</li>
-                                    <li>Driver: {{actualNet.driver}}</li>
-                                    <li>Network: {{actualNet.network}}</li>
-                                    <li>IP Address: {{actualNet.ip}}</li>
+                                    <li>이름: {{actualNet.name}}</li>
+                                    <li>유형: {{actualNet.type}}</li>
+                                    <li>드라이버: {{actualNet.driver}}</li>
+                                    <li>네트워크: {{actualNet.network}}</li>
+                                    <li>IP 주소: {{actualNet.ip}}</li>
                             </div>
                        </div>
                     </div>
                     <!-- Disks -->
                     <div class="tab-pane" id="disks">
                        <dt>
-                            Disks
-                            <a class="btn float-right" title="Hotplug...">
+                            디스크
+                            <a class="btn float-right" title="핫플러그...">
                                 <i class="fas fa-plus" (click)="showHotplug()"></i>
                             </a>
-                            
+
                             <span [ngSwitch]="activeVm.running">
-                              <a class="btn float-right disabled" title="Edit..." *ngSwitchCase="true">
+                              <a class="btn float-right disabled" title="편집..." *ngSwitchCase="true">
                                 <i class="fas fa-pen disabled" (click)="showDisk()"></i>
                               </a>
-                              <a class="btn float-right" title="Edit..." *ngSwitchDefault>
+                              <a class="btn float-right" title="편집..." *ngSwitchDefault>
                                 <i class="fas fa-pen" (click)="showDisk()"></i>
                               </a>
                              </span>
-                            
+
                         </dt>
                        <br>
                        <div class="card" *ngFor="let actualDisk of activeVm.diskList">
@@ -205,33 +205,33 @@
                                     <i class="fas fa-hdd"></i>&nbsp;&nbsp;{{actualDisk.name}}
                                 </div>
                                 <div class="card-tools">
-                                    <a class="btn btn-tool" title="Unplug..." *ngIf="actualDisk.hotplug">
+                                    <a class="btn btn-tool" title="언플러그..." *ngIf="actualDisk.hotplug">
                                         <i class="fas fa-minus" (click)="showUnplug(actualDisk.name)"></i>
                                     </a>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <li>Name: {{actualDisk.name}} </li>
-                                <li>Namespace: {{actualDisk.namespace}} </li>
-                                <li>Type: {{actualDisk.type}} </li>
+                                <li>이름: {{actualDisk.name}} </li>
+                                <li>네임스페이스: {{actualDisk.namespace}} </li>
+                                <li>유형: {{actualDisk.type}} </li>
                                 <li>BUS: {{actualDisk.bus}} </li>
-                                <li>Backend: {{actualDisk.backend}} </li>
-                                <li>Data Volume Name: {{actualDisk.dataVolume.name}} </li>
-                                <li>Data Volume Namespace: {{actualDisk.dataVolume.namespace}} </li>
-                                <li>Data Volume Source Type: {{actualDisk.dataVolume.source}} </li>
-                                <li>Data Volume Source Value: {{actualDisk.dataVolume.sourceValue}} </li>
-                                <li>Access Mode: {{actualDisk.accessMode}}</li>
-                                <li>Cache Mode: {{actualDisk.cacheMode}} </li>
-                                <li>Boot Order: {{actualDisk.bootOrder}} </li>
-                                <li>Capacity: {{actualDisk.size}} </li>
-                                <li>Storage Class: {{actualDisk.storageClass}}</li>
-                                <li>Hotplugged: {{actualDisk.hotplug}}</li>
+                                <li>백엔드: {{actualDisk.backend}} </li>
+                                <li>데이터 볼륨 이름: {{actualDisk.dataVolume.name}} </li>
+                                <li>데이터 볼륨 네임스페이스: {{actualDisk.dataVolume.namespace}} </li>
+                                <li>데이터 볼륨 소스 유형: {{actualDisk.dataVolume.source}} </li>
+                                <li>데이터 볼륨 소스 값: {{actualDisk.dataVolume.sourceValue}} </li>
+                                <li>접근 모드: {{actualDisk.accessMode}}</li>
+                                <li>캐시 모드: {{actualDisk.cacheMode}} </li>
+                                <li>부팅 순서: {{actualDisk.bootOrder}} </li>
+                                <li>용량: {{actualDisk.size}} </li>
+                                <li>스토리지 클래스: {{actualDisk.storageClass}}</li>
+                                <li>핫플러그됨: {{actualDisk.hotplug}}</li>
                             </div>
                        </div>
                     </div>
                     <!-- VM Logging -->
                     <div class="tab-pane" id="logging">
-                        <dt>Logging</dt>
+                        <dt>로그</dt>
                         <br>
                         <div id="log-viewer" class="log-viewer">
                             <div id="log-stream" class="log-stream">
@@ -241,8 +241,8 @@
                         </div>
                      </div>
                     <!-- VM Monitoring -->
-                    <div class="tab-pane" id="vmmonitoring">  
-                       <dt>Monitoring</dt>
+                    <div class="tab-pane" id="vmmonitoring">
+                       <dt>모니터링</dt>
                        <br>
                        <!-- PROMETHEUS: CPU -->
                        <div class="row">
@@ -250,7 +250,7 @@
                             <div class="card">
                                 <div class="card-header border-0">
                                     <div class="d-flex justify-content-between">
-                                        <h3 class="card-title">CPU Usage</h3>
+                                        <h3 class="card-title">CPU 사용량</h3>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -267,7 +267,7 @@
                             <div class="card">
                                 <div class="card-header border-0">
                                     <div class="d-flex justify-content-between">
-                                        <h3 class="card-title">Memory Usage</h3>
+                                        <h3 class="card-title">메모리 사용량</h3>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -286,7 +286,7 @@
                            <div class="card">
                                <div class="card-header border-0">
                                    <div class="d-flex justify-content-between">
-                                       <h3 class="card-title">Storage Usage</h3>
+                                       <h3 class="card-title">스토리지 사용량</h3>
                                    </div>
                                </div>
                                <div class="card-body">
@@ -303,7 +303,7 @@
                            <div class="card">
                                <div class="card-header border-0">
                                    <div class="d-flex justify-content-between">
-                                       <h3 class="card-title">Network Usage</h3>
+                                       <h3 class="card-title">네트워크 사용량</h3>
                                    </div>
                                </div>
                                <div class="card-body">
@@ -322,15 +322,15 @@
                       <iframe id="xtermfram" width="60%" height="100%" frameBorder="0" style="height: 360px; width: 680px" [src]="urlSafeXterm"></iframe>
                     </div>
                     <!-- VM Console -->
-                    <div class="tab-pane" id="vmconsole">  
+                    <div class="tab-pane" id="vmconsole">
                         <iframe id="vncframe" width="100%" height="100%" frameBorder="0" style="height: 600px" [src]="urlSafeVnc"></iframe>
                         <br>
-                        <p><a href="#" (click)='openNoVNC()' title="Open console...">Open Full noVNC Client</a></p>
+                        <p><a href="#" (click)='openNoVNC()' title="콘솔 열기...">전체 noVNC 클라이언트 열기</a></p>
                     </div>
                   </div>
                 </div>
               </div>
-            
+
           </div>
           <!-- /.card-body -->
         </div>
@@ -343,13 +343,13 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" id="type-title">Run Strategpy: {{activeVm.namespace}} - {{activeVm.name}}</h4>
+            <h4 class="modal-title" id="type-title">실행 전략: {{activeVm.namespace}} - {{activeVm.name}}</h4>
             <button type="button" class="close" (click)='hideComponent("modal-runstrategy")'>
               <span aria-hidden="true">×</span>
             </button>
           </div>
           <div class="modal-body" id="type-value">
-            <label for="newType">Run Strategy:</label>
+            <label for="newType">실행 전략:</label>
             <select #changevmrunstrategy class="custom-select rounded-0" name="changevm-runstrategy" id="changevm-runstrategy">
               <option value="Always">Always</option>
               <option value="Halted">Halted</option>
@@ -359,8 +359,8 @@
             </select>
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-runstrategy")'>Close</button>
-            <button type="button" class="btn btn-primary" (click)="applyStrategy(changevmrunstrategy.value)">Save changes</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-runstrategy")'>닫기</button>
+            <button type="button" class="btn btn-primary" (click)="applyStrategy(changevmrunstrategy.value)">변경 사항 저장</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -375,20 +375,20 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="type-title">Type: {{activeVm.namespace}} - {{activeVm.name}}</h4>
+              <h4 class="modal-title" id="type-title">유형: {{activeVm.namespace}} - {{activeVm.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-type")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="type-value">
-              <label for="newType">Virtual Machine VM Type:</label>
+              <label for="newType">가상 머신 VM 유형:</label>
               <select #changevmtype class="custom-select rounded-0" name="changevm-type" id="changevm-type">
                   <option>Value 1</option>
               </select>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyType(changevmtype.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyType(changevmtype.value)">변경 사항 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -403,37 +403,37 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="hotplug-title">Hotplug: {{activeVm.namespace}} - {{activeVm.name}}</h4>
+              <h4 class="modal-title" id="hotplug-title">핫플러그: {{activeVm.namespace}} - {{activeVm.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-hotplug")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="hotplug-value">
-              <label for="hotplugVolume">Volumes:</label>
+              <label for="hotplugVolume">볼륨:</label>
               <select #hotplugvolume class="custom-select rounded-0" name="hotplug-volume" id="hotplug-volume">
                   <option>Value 1</option>
               </select>
-              <label for="hotplugType">Type:</label>
+              <label for="hotplugType">유형:</label>
               <select #hotplugtype class="custom-select rounded-0" name="hotplug-type" id="hotplug-type">
-                  <option selected value=disk>Disk</option>
+                  <option selected value=disk>디스크</option>
                   <!-- <option value=cdrom>CDROM</option> not supported yet -->
                   <option value=lun>LUN</option>
               </select>
-              <label for="hotplugCache">Type:</label>
+              <label for="hotplugCache">유형:</label>
               <select #hotplugcache class="custom-select rounded-0" name="hotplug-cache" id="hotplug-cache">
-                  <option selected value=none>CacheNone</option>
-                  <option value=writethrough>CacheWriteThrough</option>
-                  <option value=writeback>CacheWriteBack</option>
+                  <option selected value=none>캐시 없음</option>
+                  <option value=writethrough>캐시 쓰기 투과</option>
+                  <option value=writeback>캐시 쓰기 백</option>
               </select>
-              <label for="hotplugReadOnly">Read Only:</label>
+              <label for="hotplugReadOnly">읽기 전용:</label>
               <select #hotplugreadonly class="custom-select rounded-0" name="hotplug-readonly" id="hotplug-readonly">
-                <option selected value="no">No</option>
-                <option value="yes">Yes</option>
+                <option selected value="no">아니오</option>
+                <option value="yes">예</option>
             </select>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-hotplug")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyHotplug(hotplugvolume.value, hotplugtype.value, hotplugcache.value, hotplugreadonly.value)">Plug</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-hotplug")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyHotplug(hotplugvolume.value, hotplugtype.value, hotplugcache.value, hotplugreadonly.value)">연결</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -448,7 +448,7 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="unplug-title">Unplug Volume</h4>
+              <h4 class="modal-title" id="unplug-title">볼륨 언플러그</h4>
               <button type="button" class="close" (click)='hideComponent("modal-unplug")'>
                 <span aria-hidden="true">×</span>
               </button>
@@ -458,8 +458,8 @@
               <p>BODY_TEMPLATE</p>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-unplug")'>Close</button>
-              <button type="button" class="btn btn-danger" (click)='applyUnplug()'>Unplug</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-unplug")'>닫기</button>
+              <button type="button" class="btn btn-danger" (click)='applyUnplug()'>언플러그</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -474,24 +474,24 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="resize-title">Resize: {{activeVm.namespace}} - {{activeVm.name}}</h4>
+              <h4 class="modal-title" id="resize-title">크기 조정: {{activeVm.namespace}} - {{activeVm.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-resize")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="resize-value">
-              <label for="resize-sockets">Sockets:</label>
+              <label for="resize-sockets">소켓:</label>
               <input #resizeSockets type="number" class="form-control" id="resize-sockets" name="resize-sockets">
-              <label for="resize-cores">Cores:</label>
+              <label for="resize-cores">코어:</label>
               <input #resizeCores type="number" class="form-control" id="resize-cores" name="resize-cores">
-              <label for="resize-threads">Threads:</label>
+              <label for="resize-threads">스레드:</label>
               <input #resizeThreads type="number" class="form-control" id="resize-threads" name="resize-threas">
-              <label for="resize-memory">Memory (in GB):</label>
+              <label for="resize-memory">메모리 (GB):</label>
               <input #resizeMemory type="number" class="form-control" id="resize-memory" name="resize-memory">
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyResize(resizeSockets.value, resizeCores.value, resizeThreads.value, resizeMemory.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyResize(resizeSockets.value, resizeCores.value, resizeThreads.value, resizeMemory.value)">변경 사항 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -506,7 +506,7 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="disk-title">Edit Disk: {{activeVm.namespace}} - {{activeVm.name}}</h4>
+              <h4 class="modal-title" id="disk-title">디스크 편집: {{activeVm.namespace}} - {{activeVm.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-disk")'>
                 <span aria-hidden="true">×</span>
               </button>
@@ -518,7 +518,7 @@
                         <div class="card-body" style="display: block;">
                             <div class="row">
                                 <div class="col-4" name="newvm-disk-type-col">
-                                    <label for="editvm-diskname-{{i}}">Name:</label>
+                                    <label for="editvm-diskname-{{i}}">이름:</label>
                                     <br>disk{{i}}
                                     <input #newvmdiskname type=hidden class="form-control" name="newvm-diskname-{{i}}" id="diskName-{{i}}" formControlName="diskName">
                                 </div>
@@ -532,7 +532,7 @@
                                   </select>
                                 </div>
                                 <div class="col-4">
-                                  <label for="newvm-bootorder-{{i}}">Boot Order:</label>
+                                  <label for="newvm-bootorder-{{i}}">부팅 순서:</label>
                                   <input #newvmdiskbootorder type=number class="form-control" name="newvm-diskbootorder-{{i}}" id="diskBootOrder-{{i}}" formControlName="diskBootOrder">
                                 </div>
                             </div>
@@ -542,8 +542,8 @@
             </form>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-disk")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyDisk()">Apply</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-disk")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyDisk()">적용</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -558,20 +558,20 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="type-title">Priority Class: {{activeVm.namespace}} - {{activeVm.name}}</h4>
+              <h4 class="modal-title" id="type-title">우선순위 클래스: {{activeVm.namespace}} - {{activeVm.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-pc")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="type-value">
-              <label for="newPriority">Priority Class:</label>
+              <label for="newPriority">우선순위 클래스:</label>
               <select #changevmpc class="custom-select rounded-0" name="changevm-pc" id="changevm-pc">
                   <option>Value 1</option>
               </select>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-pc")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyPc(changevmpc.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-pc")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyPc(changevmpc.value)">변경 사항 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->

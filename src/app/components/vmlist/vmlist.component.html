@@ -6,14 +6,14 @@
         <div class="card-header">
             <h3 class="card-title">
               <i class="fas fa-desktop"></i>
-              &nbsp;&nbsp;Virtual Machines 
+              &nbsp;&nbsp;가상 머신
             </h3>
             <div class="card-tools">
-              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="Refresh..." title="Refresh..." class="btn btn-tool" (click)="fullReload()">
-                  <i class="fas fa-sync" (click)="fullReload()" title="Refresh..."></i>
+              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새로고침..." title="새로고침..." class="btn btn-tool" (click)="fullReload()">
+                  <i class="fas fa-sync" (click)="fullReload()" title="새로고침..."></i>
               </button>
-              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="New VM..." title="New VM..." class="btn btn-tool" (click)="showNewVm()" *ngIf="cdiCheck">
-                  <i class="fas fa-plus-square" (click)="showNewVm()" title="New VM..."></i>
+              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새 VM..." title="새 VM..." class="btn btn-tool" (click)="showNewVm()" *ngIf="cdiCheck">
+                  <i class="fas fa-plus-square" (click)="showNewVm()" title="새 VM..."></i>
               </button>
             </div>
         </div>
@@ -22,13 +22,13 @@
                <thead>
                  <tr>
                     <th style="width: 10px">&nbsp;</th>
-                    <th style="width: 130px">Namespace</th>
-                    <th style="width: 160px">Name</th>
-                    <th style="width: 10px">Node</th>
-                    <th style="width: 70px">VM Type</th>
+                    <th style="width: 130px">네임스페이스</th>
+                    <th style="width: 160px">이름</th>
+                    <th style="width: 10px">노드</th>
+                    <th style="width: 70px">VM 유형</th>
                     <th style="width: 18px">vCPU</th>
-                    <th style="width: 18px">Memory</th>
-                    <!-- <th style="width: 80px">Status</th> -->
+                    <th style="width: 18px">메모리</th>
+                    <!-- <th style="width: 80px">상태</th> -->
                     <th style="width: 250px">&nbsp;</th>
                  </tr>
                </thead>
@@ -45,62 +45,62 @@
                           </span>
                         </span>
                       </td>
-                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.namespace}}</a></td>
-                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.name}}</a></td>
-                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.nodeSel}}</a></td>
-                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.instType}}</a></td>
-                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{(thisVM.cores || 0) * (thisVM.sockets || 0) * (thisVM.threads || 0)}}</a></td>
-                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.memory}}</a></td>
-                      <!-- <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.status}}</a></td> -->
+                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.namespace}}</a></td>
+                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.name}}</a></td>
+                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.nodeSel}}</a></td>
+                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.instType}}</a></td>
+                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{(thisVM.cores || 0) * (thisVM.sockets || 0) * (thisVM.threads || 0)}}</a></td>
+                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.memory}}</a></td>
+                      <!-- <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.status}}</a></td> -->
                       <td style="line-height: 0 !important;">
                         <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">Actions</button>
+                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">작업</button>
                             <div class="dropdown-menu">
                                 <!--- INFO BUTTON -->
                                 <span>
-                                    <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="Show info...">
+                                    <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="정보 보기...">
                                     <i class="fas fa-info"></i>
                                     </a>
                                 </span>
                                 <!--- PAUSE BUTTON -->
                                 <span [ngSwitch]="thisVM.status">
-                                    <a class="btn" (click)='vmOperations("pause", thisVM.namespace, thisVM.name)' title="Pause..." *ngSwitchCase="'running'">
+                                    <a class="btn" (click)='vmOperations("pause", thisVM.namespace, thisVM.name)' title="일시 정지..." *ngSwitchCase="'running'">
                                         <i class="fas fa-pause"></i>
                                     </a>
-                                    <a class="btn disabled" (click)='vmOperations("pause", thisVM.namespace, thisVM.name)' title="Pause..." *ngSwitchDefault>
+                                    <a class="btn disabled" (click)='vmOperations("pause", thisVM.namespace, thisVM.name)' title="일시 정지..." *ngSwitchDefault>
                                         <i class="fas fa-pause disabled"></i>
                                     </a>
                                     </span>
                                 <!--- PLAY BUTTON -->
                                 <span [ngSwitch]="thisVM.status">
-                                    <a class="btn" (click)='vmOperations("unpause", thisVM.namespace, thisVM.name)' title="Resume..." *ngSwitchCase="'paused'">
+                                    <a class="btn" (click)='vmOperations("unpause", thisVM.namespace, thisVM.name)' title="재개..." *ngSwitchCase="'paused'">
                                     <i class="fas fa-play"></i>
                                     </a>
-                                    <a class="btn disabled" (click)='vmOperations("unpause", thisVM.namespace, thisVM.name)' title="Resume..." *ngSwitchDefault>
+                                    <a class="btn disabled" (click)='vmOperations("unpause", thisVM.namespace, thisVM.name)' title="재개..." *ngSwitchDefault>
                                     <i class="fas fa-play disabled"></i>
                                     </a>
                                 </span>
                                 <!--- VNC BUTTON -->
                                 <span [ngSwitch]="thisVM.status">
-                                    <a class="btn" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="Open console..." *ngSwitchCase="'running'">
+                                    <a class="btn" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="콘솔 열기..." *ngSwitchCase="'running'">
                                     <i class="fas fa-desktop"></i>
                                     </a>
-                                    <a class="btn disabled" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="Open console..." *ngSwitchDefault>
+                                    <a class="btn disabled" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="콘솔 열기..." *ngSwitchDefault>
                                     <i class="fas fa-desktop disabled"></i>
                                     </a>
                                 </span>
                                 <!--- CONFIG BUTTON -->
                                 <span [ngSwitch]="thisVM.running">
-                                    <a class="btn disabled" title="Config..." *ngSwitchCase="true">
+                                    <a class="btn disabled" title="설정..." *ngSwitchCase="true">
                                     <i class="fas fa-cog disabled"></i>
                                     </a>
                                     <!-- Check if this VM is custom or not -->
                                     <span *ngSwitchDefault>
                                     <span [ngSwitch]="thisVM.instType">
-                                        <a class="btn" (click)="showResize(thisVM.name, thisVM.namespace, thisVM.sockets, thisVM.cores, thisVM.threads, thisVM.memory)" title="Config..." *ngSwitchCase="'custom'">
+                                        <a class="btn" (click)="showResize(thisVM.name, thisVM.namespace, thisVM.sockets, thisVM.cores, thisVM.threads, thisVM.memory)" title="설정..." *ngSwitchCase="'custom'">
                                         <i class="fas fa-cog"></i>
                                         </a>
-                                        <a class="btn" (click)="showType(thisVM.name, thisVM.namespace)" title="Config..." *ngSwitchDefault>
+                                        <a class="btn" (click)="showType(thisVM.name, thisVM.namespace)" title="설정..." *ngSwitchDefault>
                                         <i class="fas fa-cog"></i>
                                         </a>
                                         </span>
@@ -108,46 +108,46 @@
                                 </span>
                                 <!--- POWER ON BUTTON -->
                                 <span [ngSwitch]="thisVM.running">
-                                    <a class="btn disabled" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="Power on..." *ngSwitchCase="true">
+                                    <a class="btn disabled" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="전원 켜기..." *ngSwitchCase="true">
                                     <i class="fas fa-plug disabled"></i>
                                     </a>
-                                    <a class="btn" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="Power on..." *ngSwitchDefault>
+                                    <a class="btn" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="전원 켜기..." *ngSwitchDefault>
                                     <i class="fas fa-plug"></i>
                                     </a>
                                 </span>
                                 <!--- POWER OFF BUTTON -->
                                 <span [ngSwitch]="thisVM.running">
-                                    <a class="btn" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="Power off..." *ngSwitchCase="true">
+                                    <a class="btn" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="전원 끄기..." *ngSwitchCase="true">
                                     <i class="fas fa-power-off"></i>
                                     </a>
-                                    <a class="btn disabled" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="Power off..." *ngSwitchDefault>
+                                    <a class="btn disabled" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="전원 끄기..." *ngSwitchDefault>
                                     <i class="fas fa-power-off disabled"></i>
                                     </a>
                                 </span>
                                 <!--- RESTART BUTTON -->
                                 <span [ngSwitch]="thisVM.running">
-                                    <a class="btn" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="Restart..." *ngSwitchCase="true">
+                                    <a class="btn" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="재시작..." *ngSwitchCase="true">
                                     <i class="fas fa-redo"></i>
                                     </a>
-                                    <a class="btn disabled" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="Restart..." *ngSwitchDefault>
+                                    <a class="btn disabled" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="재시작..." *ngSwitchDefault>
                                     <i class="fas fa-redo disabled"></i>
                                     </a>
                                 </span>
                                 <!--- LIVEMIGRATE BUTTON -->
                                 <span [ngSwitch]="thisVM.running">
-                                    <a class="btn" (click)='vmOperations("migrate", thisVM.namespace, thisVM.name)' title="Live Migrate..." *ngSwitchCase="true">
+                                    <a class="btn" (click)='vmOperations("migrate", thisVM.namespace, thisVM.name)' title="라이브 마이그레이션..." *ngSwitchCase="true">
                                     <i class="fas fa-angle-double-right"></i>
                                     </a>
-                                    <a class="btn disabled" (click)='vmOperations("migrate", thisVM.namespace, thisVM.name)' title="Live Migrate..." *ngSwitchDefault>
+                                    <a class="btn disabled" (click)='vmOperations("migrate", thisVM.namespace, thisVM.name)' title="라이브 마이그레이션..." *ngSwitchDefault>
                                     <i class="fas fa-angle-double-right disabled"></i>
                                     </a>
                                 </span>
                                 <!--- DELETE BUTTON -->
                                 <span [ngSwitch]="thisVM.running">
-                                    <a class="btn disabled" (click)="showDelete(thisVM.name, thisVM.namespace)" title="Delete..." *ngSwitchCase="true">
+                                    <a class="btn disabled" (click)="showDelete(thisVM.name, thisVM.namespace)" title="삭제..." *ngSwitchCase="true">
                                     <i class="fas fa-trash disabled"></i>
                                     </a>
-                                    <a class="btn" (click)="showDelete(thisVM.name, thisVM.namespace)" title="Delete..." *ngSwitchDefault>
+                                    <a class="btn" (click)="showDelete(thisVM.name, thisVM.namespace)" title="삭제..." *ngSwitchDefault>
                                     <i class="fas fa-trash"></i>
                                     </a>
                                 </span>
@@ -179,32 +179,32 @@
                 <!-- TABS Selector-->
                 <ul class="nav nav-tabs" id="custom-tabs-two-tab" role="tablist">
                   <li class="nav-item">
-                    <a class="nav-link active" id="newvm-home-tab" data-toggle="pill" href="#newvm-home" role="tab" aria-controls="newvm-home" aria-selected="false">Basic</a>
+                    <a class="nav-link active" id="newvm-home-tab" data-toggle="pill" href="#newvm-home" role="tab" aria-controls="newvm-home" aria-selected="false">기본</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" id="newvm-meta-tab" data-toggle="pill" href="#newvm-meta" role="tab" aria-controls="newvm-meta" aria-selected="false">Metadata</a>
+                    <a class="nav-link" id="newvm-meta-tab" data-toggle="pill" href="#newvm-meta" role="tab" aria-controls="newvm-meta" aria-selected="false">메타데이터</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" id="newvm-cpumem-tab" data-toggle="pill" href="#newvm-cpumem" role="tab" aria-controls="newvm-cpumem" aria-selected="false">CPU/Memory</a>
+                    <a class="nav-link" id="newvm-cpumem-tab" data-toggle="pill" href="#newvm-cpumem" role="tab" aria-controls="newvm-cpumem" aria-selected="false">CPU/메모리</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" id="newvm-disks-tab" data-toggle="pill" href="#newvm-disks" role="tab" aria-controls="newvm-disks" aria-selected="false">Disk</a>
+                    <a class="nav-link" id="newvm-disks-tab" data-toggle="pill" href="#newvm-disks" role="tab" aria-controls="newvm-disks" aria-selected="false">디스크</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" id="newvm-net-tab" data-toggle="pill" href="#newvm-net" role="tab" aria-controls="newvm-net" aria-selected="false">Networking</a>
+                    <a class="nav-link" id="newvm-net-tab" data-toggle="pill" href="#newvm-net" role="tab" aria-controls="newvm-net" aria-selected="false">네트워킹</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" id="newvm-cloudinit-tab" data-toggle="pill" href="#newvm-cloudinit" role="tab" aria-controls="newvm-cloudinit" aria-selected="false">Cloud-Init</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" id="newvm-userdata-tab" data-toggle="pill" href="#newvm-userdata" role="tab" aria-controls="newvm-userdata" aria-selected="false">User Data</a>
+                    <a class="nav-link" id="newvm-userdata-tab" data-toggle="pill" href="#newvm-userdata" role="tab" aria-controls="newvm-userdata" aria-selected="false">사용자 데이터</a>
                   </li>
                   <li class="nav-item">
                     <!-- This is hidden by default, and only shown if enableCloudInit == true && Network != podNetwork -->
-                    <a class="nav-link" id="newvm-netdata-tab" data-toggle="pill" href="#newvm-netdata" role="tab" aria-controls="newvm-netdata" aria-selected="false" style="display: none;">Network Data</a>
+                    <a class="nav-link" id="newvm-netdata-tab" data-toggle="pill" href="#newvm-netdata" role="tab" aria-controls="newvm-netdata" aria-selected="false" style="display: none;">네트워크 데이터</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" id="newvm-initscript-tab" data-toggle="pill" href="#newvm-initscript" role="tab" aria-controls="newvm-initscript" aria-selected="false">Init Script</a>
+                    <a class="nav-link" id="newvm-initscript-tab" data-toggle="pill" href="#newvm-initscript" role="tab" aria-controls="newvm-initscript" aria-selected="false">초기화 스크립트</a>
                   </li>
                 </ul>
               </div>
@@ -212,17 +212,17 @@
                 <div class="tab-content" id="custom-tabs-two-tabContent">
                    <!-- HOME TAB -->
                   <div class="tab-pane fade show active" id="newvm-home" role="tabpanel" aria-labelledby="newvm-home-tab">
-                    <label for="newvm-name">Name:</label>
+                    <label for="newvm-name">이름:</label>
                     <input #newvmname type="text" class="form-control" id="newvm-name" name="newvm-name">
-                    <label for="newvm-namespaces">Namespace:</label>
+                    <label for="newvm-namespaces">네임스페이스:</label>
                     <select #newvmnamespace class="custom-select rounded-0" name="newvm-namespace" id="newvm-namespace" (change)="onChangeNamespace(newvmnamespace.value)">
                       <option>Value 1</option>
                     </select>
-                    <label for="newvm-node">Node:</label>
+                    <label for="newvm-node">노드:</label>
                     <select #newvmnode class="custom-select rounded-0" name="newvm-node" id="newvm-node">
                       <option value="auto-select">auto-select</option>
                     </select>
-                    <label for="newvm-runstrategy">Run Strategy:</label>
+                    <label for="newvm-runstrategy">실행 전략:</label>
                     <select #newvmrunstrategy class="custom-select rounded-0" name="newvm-runstrategy" id="newvm-runstrategy">
                       <option value="Always">Always</option>
                       <option value="Halted">Halted</option>
@@ -234,8 +234,8 @@
                   <!-- METADATA TAB -->
                   <div class="tab-pane fade" id="newvm-meta" role="tabpanel" aria-labelledby="newvm-meta-tab">
                     <div class="row">
-                        <label for="newvm-labels">Labels:&nbsp;
-                          <a class="btn" (click)="addLabel()" title="Add new label...">
+                        <label for="newvm-labels">레이블:&nbsp;
+                          <a class="btn" (click)="addLabel()" title="새 레이블 추가...">
                             <i class="fas fa-plus"></i>
                           </a>
                         </label>
@@ -245,17 +245,17 @@
                             <table class="table table-sm" style="vertical-align: middle !important;">
                                 <thead>
                                     <tr>
-                                    <th style="width: 500px">Key</th>
-                                    <th style="width: 500px">Value</th>
+                                    <th style="width: 500px">키</th>
+                                    <th style="width: 500px">값</th>
                                     <th style="width: 100px">&nbsp;</th>
                                     </tr>
                                 </thead>
-                                <tbody formArrayName="labels"> 
+                                <tbody formArrayName="labels">
                                     <tr *ngFor="let label of labels.controls; let i = index" [formGroupName]="i">
                                       <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newvm-labelkey" id="labelKey{{i}}" formControlName="labelKey"></td>
                                       <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newvm-labelvalue" id="labelValue{{i}}" formControlName="labelValue"></td>
                                       <td style="line-height: 2.2 !important;">
-                                        <a class="btn" (click)="removeLabel(i)" title="Remove label...">
+                                        <a class="btn" (click)="removeLabel(i)" title="레이블 제거...">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                       </td>
@@ -265,8 +265,8 @@
                         </form>
                     </div>
                     <div class="row">
-                        <label for="newvm-annotations">Annotations:&nbsp;
-                          <a class="btn" (click)="addAnnotation()" title="Add new annotation...">
+                        <label for="newvm-annotations">어노테이션:&nbsp;
+                          <a class="btn" (click)="addAnnotation()" title="새 어노테이션 추가...">
                             <i class="fas fa-plus"></i>
                           </a>
                         </label>
@@ -276,17 +276,17 @@
                             <table class="table table-sm" style="vertical-align: middle !important;">
                                 <thead>
                                     <tr>
-                                    <th style="width: 500px">Key</th>
-                                    <th style="width: 500px">Value</th>
+                                    <th style="width: 500px">키</th>
+                                    <th style="width: 500px">값</th>
                                     <th style="width: 100px">&nbsp;</th>
                                     </tr>
                                 </thead>
-                                <tbody formArrayName="annotations"> 
+                                <tbody formArrayName="annotations">
                                     <tr *ngFor="let annotation of annotations.controls; let i = index" [formGroupName]="i">
                                       <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newvm-annotationkey" id="annotKey{{i}}" formControlName="annotKey"></td>
                                       <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newvm-annotationvalue" id="annotValue{{i}}" formControlName="annotValue"></td>
                                       <td style="line-height: 2.2 !important;">
-                                        <a class="btn" (click)="removeAnnotation(i)" title="Remove annotation...">
+                                        <a class="btn" (click)="removeAnnotation(i)" title="어노테이션 제거...">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                       </td>
@@ -298,30 +298,30 @@
                   </div>
                   <!-- CPU/MEM TAB -->
                   <div class="tab-pane fade" id="newvm-cpumem" role="tabpanel" aria-labelledby="newvm-cpumem-tab">
-                    <label for="newvm-namespaces">Virtual Machine Type:</label>
+                    <label for="newvm-namespaces">가상 머신 유형:</label>
                     <select #newvmtype class="custom-select rounded-0" name="newvm-type" id="newvm-type" (change)="onChangeType(newvmtype.value)">
                         <option>Value 1</option>
                     </select>
                     <div class="pane fade" id="custom-cpu-memory" name="custom-cpu-memory" style="display: none;" aria-hidden="true">
-                        <label for="newvm-cpumem-sockets">Sockets:</label>
+                        <label for="newvm-cpumem-sockets">소켓:</label>
                         <input #newvmcpumemsockets type="number" class="form-control" id="newvm-cpumem-sockets" name="newvm-cpumem-sockets">
-                        <label for="newvm-cpumem-cores">Cores:</label>
+                        <label for="newvm-cpumem-cores">코어:</label>
                         <input #newvmcpumemcores type="number" class="form-control" id="newvm-cpumem-cores" name="newvm-cpumem-cores">
-                        <label for="newvm-cpumem-threads">Threads:</label>
+                        <label for="newvm-cpumem-threads">스레드:</label>
                         <input #newvmcpumemthreads type="number" class="form-control" id="newvm-cpumem-threads" name="newvm-cpumem-threads">
-                        <label for="newvm-cpumem-memory">Memory (in GB):</label>
+                        <label for="newvm-cpumem-memory">메모리 (GB):</label>
                         <input #newvmcpumemmemory type="number" class="form-control" id="newvm-cpumem-memory" name="newvm-cpumem-memory">
                     </div>
-                    <label for="newvm-priorityclass">Priority Class:</label>
+                    <label for="newvm-priorityclass">우선순위 클래스:</label>
                     <select #newvmpc class="custom-select rounded-0" name="newvm-pc" id="newvm-pc">
                         <option>Value 1</option>
                     </select>
-                    <label for="newvm-firmware">Firmware:</label>
+                    <label for="newvm-firmware">펌웨어:</label>
                     <select #newvmfirmware class="custom-select rounded-0" name="newvm-firmware" id="newvm-firmware" (change)="onChangeFirmware(newvmfirmware.value)">
                         <option value="bios" selected>BIOS</option>
                         <option value="uefi">UEFI</option>
                     </select>
-                    <label for="newvm-secureboot">Secure Boot:</label>
+                    <label for="newvm-secureboot">보안 부팅:</label>
                     <select #newvmsecureboot class="custom-select rounded-0" name="newvm-secureboot" id="newvm-secureboot" disabled>
                         <option value="false" selected>false</option>
                         <option value="true">true</option>
@@ -330,8 +330,8 @@
                   <!-- DISK TAB -->
                   <div class="tab-pane fade" id="newvm-disks" role="tabpanel" aria-labelledby="newvm-disks-tab">
                     <div class="row">
-                        <label for="newvm-disks">Disks:&nbsp;
-                          <a class="btn" (click)="addDisk()" title="Add new disk...">
+                        <label for="newvm-disks">디스크:&nbsp;
+                          <a class="btn" (click)="addDisk()" title="새 디스크 추가...">
                             <i class="fas fa-plus"></i>
                           </a>
                         </label>
@@ -343,7 +343,7 @@
                                     <div class="card-header">
                                         <b class="card-title" style="font-weight: bold;"><i class="fas fa-hdd"></i> &nbsp; disk{{i}}</b>
                                         <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" (click)="removeDisk(i)" title="Remove disk...">
+                                            <button type="button" class="btn btn-tool" (click)="removeDisk(i)" title="디스크 제거...">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                           <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -354,37 +354,37 @@
                                     <div class="card-body" style="display: block;">
                                         <div class="row">
                                             <div class="col-3" name="newvm-disk-type-col">
-                                                <label for="newvm-disktype-{{i}}">Type:</label>
+                                                <label for="newvm-disktype-{{i}}">유형:</label>
                                                 <select #disktype class="custom-select rounded-0" name="newvm-disktype-{{i}}" id="diskType-{{i}}" formControlName="diskType" (change)="onChangeDisk(newvmnamespace.value, i)">
                                                     <option selected></option>
-                                                    <option value="blank">Blank Disk</option>
-                                                    <option value="image">Image</option>
+                                                    <option value="blank">빈 디스크</option>
+                                                    <option value="image">이미지</option>
                                                     <option value="dv">DataVolume</option>
                                                 </select>
                                             </div>
                                             <div class="col-5">
-                                                <label for="newvm-diskvalue-{{i}}">Value:</label>
+                                                <label for="newvm-diskvalue-{{i}}">값:</label>
                                                 <select #newvmdiskvalue class="custom-select rounded-0" name="newvm-diskvalue-{{i}}" id="diskValue-{{i}}" formControlName="diskValue">
                                                 </select>
                                             </div>
                                             <div class="col-2">
-                                                <label for="newvm-disksize-{{i}}">Size/GB:</label>
+                                                <label for="newvm-disksize-{{i}}">크기/GB:</label>
                                                 <input #newvmdisksize type=number class="form-control" name="newvm-disksize-{{i}}" id="diskSize-{{i}}" formControlName="diskSize">
                                             </div>
                                             <div class="col-2">
-                                              <label for="newvm-bootorder-{{i}}">Boot Order:</label>
+                                              <label for="newvm-bootorder-{{i}}">부팅 순서:</label>
                                               <input #newvmdiskbootorder type=number class="form-control" name="newvm-diskbootorder-{{i}}" id="diskBootOrder-{{i}}" formControlName="diskBootOrder">
                                             </div>
                                         </div>
                                         <div class="row">&nbsp;</div>
                                         <div class="row">
                                           <div class="col-3">
-                                            <label for="newvm-disksc-{{i}}">Storage Class:</label>
+                                            <label for="newvm-disksc-{{i}}">스토리지 클래스:</label>
                                             <select #newvmdisksc class="custom-select rounded-0" name="newvm-disksc-{{i}}" id="diskStorageClass-{{i}}" formControlName="diskStorageClass">
                                             </select>
                                           </div>
                                           <div class="col-3">
-                                            <label for="newvm-diskam-{{i}}">Access Mode:</label>
+                                            <label for="newvm-diskam-{{i}}">접근 모드:</label>
                                             <select #newvmdiskam class="custom-select rounded-0" name="newvm-diskeam-{{i}}" id="diskAccessMode-{{i}}" formControlName="diskAccessMode">
                                                 <option selected></option>
                                                 <option>ReadWriteOnce</option>
@@ -393,16 +393,16 @@
                                             </select>
                                           </div>
                                           <div class="col-2">
-                                            <label for="newvm-diskcm-{{i}}">Cache Mode:</label>
+                                            <label for="newvm-diskcm-{{i}}">캐시 모드:</label>
                                             <select #newvmdiskcm class="custom-select rounded-0" name="newvm-diskcm-{{i}}" id="diskCacheMode-{{i}}" formControlName="diskCacheMode">
-                                                <option value="" selected>Automatic</option>
-                                                <option value="none">None</option>
-                                                <option value="writethrough">WriteThrough</option>
-                                                <option value="writeback">WriteBack</option>
+                                                <option value="" selected>자동</option>
+                                                <option value="none">없음</option>
+                                                <option value="writethrough">쓰기 투과</option>
+                                                <option value="writeback">쓰기 백</option>
                                             </select>
                                           </div>
                                           <div class="col-2">
-                                            <label for="newvm-diskcm-{{i}}">Bus:</label>
+                                            <label for="newvm-diskcm-{{i}}">버스:</label>
                                             <select #newvmdiskbus class="custom-select rounded-0" name="newvm-diskbus-{{i}}" id="diskBus-{{i}}" formControlName="diskBus">
                                                 <option value="" selected></option>
                                                 <option value="virtio">virtio</option>
@@ -411,7 +411,7 @@
                                             </select>
                                           </div>
                                           <div class="col-2">
-                                            <label for="newvm-diskmode-{{i}}">Volume Mode:</label>
+                                            <label for="newvm-diskmode-{{i}}">볼륨 모드:</label>
                                             <select #newvmdiskbus class="custom-select rounded-0" name="newvm-diskmode-{{i}}" id="diskMode-{{i}}" formControlName="diskMode">
                                                 <option value="Filesystem" selected>Filesystem</option>
                                                 <option value="Block">Block</option>
@@ -427,8 +427,8 @@
                   <!-- NETWORK TAB -->
                   <div class="tab-pane fade" id="newvm-net" role="tabpanel" aria-labelledby="newvm-net-tab">
                     <div class="row">
-                        <label for="newvm-nics">Interfaces:&nbsp;
-                          <a class="btn" (click)="addNic()" title="Add new network...">
+                        <label for="newvm-nics">인터페이스:&nbsp;
+                          <a class="btn" (click)="addNic()" title="새 네트워크 추가...">
                             <i class="fas fa-plus"></i>
                           </a>
                         </label>
@@ -440,7 +440,7 @@
                                     <div class="card-header">
                                         <b class="card-title" style="font-weight: bold;"><i class="fas fa-network-wired"></i> &nbsp; nic{{j}}</b>
                                         <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" (click)="removeNic(j)" title="Remove network...">
+                                            <button type="button" class="btn btn-tool" (click)="removeNic(j)" title="네트워크 제거...">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                           <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -451,7 +451,7 @@
                                     <div class="card-body" style="display: block;">
                                         <div class="row">
                                             <div class="col-3" name="newvm-netname-col">
-                                                <label for="newvm-netname-{{j}}">Network:</label>
+                                                <label for="newvm-netname-{{j}}">네트워크:</label>
                                                 <select style="min-width: 300px;" class="custom-select rounded-0" name="newvm-netname-{{j}}" id="networkName-{{j}}" formControlName="networkName" (change)="onChangeNetwork(j)">
                                                     <option value="" selected></option>
                                                     <option value=podNetwork>podNetwork</option>
@@ -459,7 +459,7 @@
                                             </div>
                                             <div class="col-1">&nbsp;</div>
                                             <div class="col-3" name="newvm-nettype-col">
-                                                <label for="newvm-nettype-{{j}}">Type:</label>
+                                                <label for="newvm-nettype-{{j}}">유형:</label>
                                                 <select #nettype style="min-width: 300px;" class="custom-select rounded-0" name="newvm-nettype-{{j}}" id="networkType-{{j}}" formControlName="networkType">
                                                     <option value=bridge>bridge</option>
                                                     <option value=macvtap>macvtap</option>
@@ -468,7 +468,7 @@
                                             </div>
                                             <div class="col-1">&nbsp;</div>
                                             <div class="col-3" name="newvm-netdrv-col">
-                                                <label for="newvm-netdrv-{{j}}">Driver:</label>
+                                                <label for="newvm-netdrv-{{j}}">드라이버:</label>
                                                 <select #netdrv style="min-width: 300px;" class="custom-select rounded-0" name="newvm-netdrv-{{j}}" id="networkDriver-{{j}}" formControlName="networkDriver">
                                                     <option value=virtio selected>virtio</option>
                                                     <option value=e1000>e1000</option>
@@ -489,14 +489,14 @@
                   <!-- CLOUD-INIT TAB -->
                   <div class="tab-pane fade" id="newvm-cloudinit" role="tabpanel" aria-labelledby="newvm-cloudinit-tab">
                     <div class="row">
-                      <label for="newvm-enablecloudinit">Enable cloud-init:</label>
+                      <label for="newvm-enablecloudinit">Cloud-init 활성화:</label>
                       <select #newvmenablecloudinit class="custom-select rounded-0" name="newvm-enablecloudinit" id="newvm-enablecloudinit" (change)="onChangeCloudInit(newvmenablecloudinit.value)">
                         <option value="True" selected>True</option>
                         <option value="False">False</option>
                       </select>
                     </div>
                     <div class="row">
-                      <label for="newvm-cloudinitdriver">Device Driver:</label>
+                      <label for="newvm-cloudinitdriver">장치 드라이버:</label>
                       <select #newvmcloudinitdriver class="custom-select rounded-0" name="newvm-cloudinitdriver" id="newvm-cloudinitdriver">
                         <option value="virtio" selected>virtio</option>
                         <option value="sata">sata</option>
@@ -506,38 +506,38 @@
                   </div>
                   <!-- USERDATA TAB -->
                   <div class="tab-pane fade" id="newvm-userdata" role="tabpanel" aria-labelledby="newvm-userdata-tab">
-                    <label for="newvm-userdata-username">Username:</label>
+                    <label for="newvm-userdata-username">사용자 이름:</label>
                     <input #newvmuserdatausername type="text" class="form-control" id="newvm-userdata-username" name="newvm-userdata-username">
-                    <label for="newvm-userdata-auth">Authentication:</label>
+                    <label for="newvm-userdata-auth">인증:</label>
                     <select #newvmuserdataauth class="custom-select rounded-0" name="newvm-userdata-auth" id="newvm-userdata-auth" (change)="onChangeAuthType(newvmuserdataauth.value, newvmnamespace.value)">
-                      <option value="password">User/Password</option>
-                      <option value="ssh">SSH Private Key</option>
+                      <option value="password">사용자/비밀번호</option>
+                      <option value="ssh">SSH 개인 키</option>
                     </select>
                     <div class="pane fade show" id="newvm-userdata-password-panel" name="newvm-userdata-password-panel" style="display: contents;" aria-hidden="false">
-                        <label for="newvm-userdata-password">Password:</label>
+                        <label for="newvm-userdata-password">비밀번호:</label>
                         <input #newvmuserdatapassword type="password" class="form-control" id="newvm-userdata-password" name="newvm-userdata-password">
                     </div>
                     <div class="pane fade" id="newvm-userdata-ssh-panel" name="newvm-userdata-ssh-panel" style="display: none;" aria-hidden="true">
-                        <label for="newvm-userdata-ssh">SSH Key:</label>
+                        <label for="newvm-userdata-ssh">SSH 키:</label>
                         <select #newvmuserdatassh class="custom-select rounded-0" name="newvm-userdata-ssh" id="newvm-userdata-ssh">
-                            <option>Loading...</option>
+                            <option>로딩 중...</option>
                         </select>
                     </div>
                   </div>
                   <!-- NETWORK DATA TAB -->
                   <div class="tab-pane fade" id="newvm-netdata" role="tabpanel" aria-labelledby="newvm-netdata-tab">
-                    <label for="newvm-netdata-device">nic0 Device:</label>
+                    <label for="newvm-netdata-device">nic0 장치:</label>
                     <div class="autocomplete-container">
-                      <input #newvmnetdatadevice type="text" [formControl]="couldInitNetworkControl" (focus)="showSuggestions = true" (blur)="hideSuggestions()" class="form-control" id="newvm-netdata-device" name="newvm-netdata-device" placeholder="Eg: eth0, eno1, enp2s0f0np0">
+                      <input #newvmnetdatadevice type="text" [formControl]="couldInitNetworkControl" (focus)="showSuggestions = true" (blur)="hideSuggestions()" class="form-control" id="newvm-netdata-device" name="newvm-netdata-device" placeholder="예: eth0, eno1, enp2s0f0np0">
                       <ul *ngIf="showSuggestions && (filteredOptions | async)?.length" class="suggestions-list">
                         <p *ngFor="let option of filteredOptions | async" (mousedown)="selectSuggestion(option)" class="suggestion-item">{{ option }}</p>
                       </ul>
                     </div>
                     <label for="newvm-netdata-ip">nic0 IP:</label>
                     <input #newvmnetdataip type="text" class="form-control" id="newvm-netdata-ip" name="newvm-netdata-ip">
-                    <label for="newvm-netdata-netmask">nic0 Netmask:</label>
+                    <label for="newvm-netdata-netmask">nic0 넷마스크:</label>
                     <input #newvmnetdatanetmask type="text" class="form-control" id="newvm-netdata-netmask" name="newvm-netdata-netmask">
-                    <label for="newvm-netdata-gw">nic0 Gateway:</label>
+                    <label for="newvm-netdata-gw">nic0 게이트웨이:</label>
                     <input #newvmnetdatagw type="text" class="form-control" id="newvm-netdata-gw" name="newvm-netdata-gw">
                     <label for="newvm-netdata-dns1">DNS 1:</label>
                     <input #newvmnetdatadns1 type="text" class="form-control" id="newvm-netdata-dns1" name="newvm-netdata-dns1">
@@ -554,8 +554,8 @@
             </div>
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-newvm")'>Close</button>
-            <button type="button" class="btn btn-primary" (click)="applyNewVm(newvmname.value, newvmnamespace.value, newvmnode.value, newvmrunstrategy.value, newvmenablecloudinit.value, newvmcloudinitdriver.value, newvmtype.value, newvmcpumemsockets.value, newvmcpumemcores.value, newvmcpumemthreads.value, newvmcpumemmemory.value, newvmpc.value, newvmfirmware.value, newvmsecureboot.value, newvmuserdatausername.value, newvmuserdataauth.value, newvmuserdatapassword.value, newvmuserdatassh.value, newvmnetdatadevice.value, newvmnetdataip.value, newvmnetdatanetmask.value, newvmnetdatagw.value, newvmnetdatadns1.value, newvmnetdatadns2.value, newvminitscript.value)">Create</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-newvm")'>닫기</button>
+            <button type="button" class="btn btn-primary" (click)="applyNewVm(newvmname.value, newvmnamespace.value, newvmnode.value, newvmrunstrategy.value, newvmenablecloudinit.value, newvmcloudinitdriver.value, newvmtype.value, newvmcpumemsockets.value, newvmcpumemcores.value, newvmcpumemthreads.value, newvmcpumemmemory.value, newvmpc.value, newvmfirmware.value, newvmsecureboot.value, newvmuserdatausername.value, newvmuserdataauth.value, newvmuserdatapassword.value, newvmuserdatassh.value, newvmnetdatadevice.value, newvmnetdataip.value, newvmnetdatanetmask.value, newvmnetdatagw.value, newvmnetdatadns1.value, newvmnetdatadns2.value, newvminitscript.value)">생성</button>
           </div>
         </div>
         </div>
@@ -582,8 +582,8 @@
             <p>BODY_TEMPLATE</p>
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>Close</button>
-            <button type="button" class="btn btn-danger" (click)="applyDelete()">Delete</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>닫기</button>
+            <button type="button" class="btn btn-danger" (click)="applyDelete()">삭제</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -606,14 +606,14 @@
           <input type="hidden" id="type-vm" name="type-vm" value="">
           <input type="hidden" id="type-namespace" name="type-namespace" value="">
           <div class="modal-body" id="type-value">
-            <label for="newType">Virtual Machine Type:</label>
+            <label for="newType">가상 머신 유형:</label>
             <select #changevmtype class="custom-select rounded-0" name="changevm-type" id="changevm-type">
                 <option>Value 1</option>
             </select>
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>Close</button>
-            <button type="button" class="btn btn-primary" (click)="applyType(changevmtype.value)">Save changes</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>닫기</button>
+            <button type="button" class="btn btn-primary" (click)="applyType(changevmtype.value)">변경 사항 저장</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -636,18 +636,18 @@
           <div class="modal-body" id="resize-value">
             <input #resizeName type="hidden" id="resize-name" name="resize-name" value="">
             <input #resizeNamespace type="hidden" id="resize-namespace" name="resize-namespace" value="">
-            <label for="fileInput">Sockets:</label>
+            <label for="fileInput">소켓:</label>
             <input #resizeSockets type="number" class="form-control" id="resize-sockets" name="resize-sockets">
-            <label for="fileInput">Cores:</label>
+            <label for="fileInput">코어:</label>
             <input #resizeCores type="number" class="form-control" id="resize-cores" name="resize-cores">
-            <label for="fileInput">Threads:</label>
+            <label for="fileInput">스레드:</label>
             <input #resizeThreads type="number" class="form-control" id="resize-threads" name="resize-threas">
-            <label for="fileInput">Memory (in GB):</label>
+            <label for="fileInput">메모리 (GB):</label>
             <input #resizeMemory type="number" class="form-control" id="resize-memory" name="resize-memory">
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>Close</button>
-            <button type="button" class="btn btn-primary" (click)="applyResize(resizeSockets.value, resizeCores.value, resizeThreads.value, resizeMemory.value)">Save changes</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>닫기</button>
+            <button type="button" class="btn btn-primary" (click)="applyResize(resizeSockets.value, resizeCores.value, resizeThreads.value, resizeMemory.value)">변경 사항 저장</button>
           </div>
         </div>
         <!-- /.modal-content -->
