@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPICE 콘솔</title>
+  <link rel="stylesheet" href="./plugins/fontawesome-free/css/all.min.css">
+  <style>
+    :root { --primary: #007bff; --danger: #dc3545; --success: #28a745; --warning: #ffc107; --dark: #343a40; --gray: #6c757d; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif; background: #1a1a2e; color: #e0e0e0; min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: linear-gradient(135deg, #16213e, #0f3460); padding: 14px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #0f3460; }
+    header .logo { font-size: 1.25rem; font-weight: 700; color: #fff; }
+    header .vm-badge { background: rgba(255,255,255,.12); padding: 4px 12px; border-radius: 20px; font-size: .85rem; color: #aad4f5; }
+    main { flex: 1; padding: 28px 32px; max-width: 900px; margin: 0 auto; width: 100%; }
+
+    .status-bar { background: #16213e; border: 1px solid #0f3460; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 14px; }
+    .status-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.connecting { background: var(--warning); animation: pulse 1.5s infinite; }
+    .status-dot.connected   { background: var(--success); }
+    .status-dot.error       { background: var(--danger); }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+    .status-text { font-size: .95rem; }
+    .status-text small { display: block; color: var(--gray); font-size: .8rem; margin-top: 2px; }
+
+    .card { background: #16213e; border: 1px solid #0f3460; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+    .card-header { background: #0f3460; padding: 12px 20px; font-size: .95rem; font-weight: 600; color: #aad4f5; display: flex; align-items: center; gap: 8px; }
+    .card-body { padding: 20px; }
+
+    .info-grid { display: grid; grid-template-columns: 140px 1fr; gap: 10px 0; }
+    .info-label { color: var(--gray); font-size: .88rem; padding: 6px 0; border-bottom: 1px solid #0f3460; }
+    .info-value { font-size: .95rem; padding: 6px 12px; border-bottom: 1px solid #0f3460; font-family: "SFMono-Regular", Consolas, monospace; }
+
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border-radius: 6px; border: none; cursor: pointer; font-size: .9rem; font-weight: 600; transition: filter .15s, transform .1s; text-decoration: none; }
+    .btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-warning { background: var(--warning); color: #212529; }
+    .btn-secondary { background: #495057; color: #fff; }
+
+    .code-block { background: #0d0d1a; border: 1px solid #0f3460; border-radius: 6px; padding: 14px 18px; font-family: "SFMono-Regular", Consolas, monospace; font-size: .85rem; color: #a8ff78; overflow-x: auto; position: relative; }
+    .code-block .copy-btn { position: absolute; right: 10px; top: 8px; background: #0f3460; border: none; border-radius: 4px; color: #aad4f5; padding: 4px 10px; cursor: pointer; font-size: .78rem; }
+    .code-block .copy-btn:hover { background: var(--primary); color: #fff; }
+
+    .step-list { list-style: none; counter-reset: steps; }
+    .step-list li { counter-increment: steps; padding: 10px 0 10px 44px; position: relative; border-bottom: 1px solid #0f3460; font-size: .9rem; }
+    .step-list li:last-child { border-bottom: none; }
+    .step-list li::before { content: counter(steps); position: absolute; left: 0; top: 9px; width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem; }
+
+    .alert { padding: 12px 16px; border-radius: 6px; font-size: .88rem; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
+    .alert-info    { background: rgba(0,123,255,.15); border: 1px solid rgba(0,123,255,.4); color: #7ec8ff; }
+    .alert-warning { background: rgba(255,193,7,.12); border: 1px solid rgba(255,193,7,.4); color: #ffd966; }
+
+    footer { text-align: center; color: var(--gray); font-size: .8rem; padding: 16px; border-top: 1px solid #0f3460; }
+    .text-success { color: #28a745 !important; }
+    .text-warning { color: #ffc107 !important; }
+    .toast-msg { position: fixed; bottom: 24px; right: 24px; background: #28a745; color: #fff; padding: 10px 20px; border-radius: 6px; font-size: .9rem; display: none; z-index: 9999; }
+    .toast-msg.show { display: block; animation: fadeInOut 2.5s forwards; }
+    @keyframes fadeInOut { 0%{opacity:0;transform:translateY(10px)} 15%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0} }
+  </style>
+</head>
+<body>
+
+<header>
+  <i class="fas fa-tv" style="font-size:1.4rem;color:#aad4f5;"></i>
+  <span class="logo">SPICE 콘솔</span>
+  <span class="vm-badge" id="header-vm">-</span>
+  <span class="vm-badge" id="header-ns">-</span>
+</header>
+
+<main>
+
+  <!-- 상태 표시 -->
+  <div class="status-bar">
+    <div class="status-dot connecting" id="status-dot"></div>
+    <div class="status-text">
+      <span id="status-text">SPICE 연결 준비 중...</span>
+      <small id="status-sub">VM이 실행 중이고 SPICE 그래픽이 구성되어 있어야 합니다.</small>
+    </div>
+  </div>
+
+  <!-- 연결 정보 -->
+  <div class="card">
+    <div class="card-header"><i class="fas fa-info-circle"></i> 연결 정보</div>
+    <div class="card-body">
+      <div class="info-grid">
+        <span class="info-label">VM 이름</span>       <span class="info-value" id="info-vm">-</span>
+        <span class="info-label">네임스페이스</span>  <span class="info-value" id="info-ns">-</span>
+        <span class="info-label">SPICE 포트</span>    <span class="info-value">5900 (기본값)</span>
+        <span class="info-label">프로토콜</span>      <span class="info-value">SPICE over WebSocket</span>
+        <span class="info-label">API 경로</span>      <span class="info-value" id="info-path">-</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 빠른 연결 -->
+  <div class="card">
+    <div class="card-header"><i class="fas fa-bolt"></i> 빠른 연결</div>
+    <div class="card-body">
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        <div>VM의 그래픽 장치가 <strong>SPICE</strong>로 구성된 경우 아래 방법으로 연결할 수 있습니다.
+        브라우저 내 SPICE 뷰어를 사용하거나, 로컬 뷰어로 연결하세요.</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="downloadVvFile()">
+          <i class="fas fa-download"></i> .vv 파일 다운로드
+        </button>
+        <button class="btn btn-secondary" onclick="copyVirtctlCmd()">
+          <i class="fas fa-copy"></i> virtctl 명령 복사
+        </button>
+        <button class="btn btn-warning" onclick="window.close()">
+          <i class="fas fa-times"></i> 닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- .vv 연결 절차 -->
+  <div class="card">
+    <div class="card-header"><i class="fas fa-list-ol"></i> 로컬 뷰어로 연결하기 (virt-viewer)</div>
+    <div class="card-body">
+      <ol class="step-list">
+        <li>아래 <strong>virtctl</strong> 명령으로 포트 포워드를 설정합니다:
+          <div class="code-block" style="margin-top:8px;" id="cmd-portforward">
+            <button class="copy-btn" onclick="copyText('cmd-portforward')">복사</button>
+            <span id="cmd-portforward-text">-</span>
+          </div>
+        </li>
+        <li><strong>.vv 파일 다운로드</strong> 버튼을 클릭하여 연결 파일을 저장합니다.</li>
+        <li>다운로드된 <code>.vv</code> 파일을 <strong>virt-viewer</strong> 또는 <strong>remote-viewer</strong>로 엽니다.
+          <div class="alert alert-warning" style="margin-top:8px;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>virt-viewer가 설치되어 있지 않으면 <a href="https://virt-manager.org" target="_blank" style="color:#ffd966;">virt-manager.org</a>에서 설치하세요.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- kubectl 접근 -->
+  <div class="card">
+    <div class="card-header"><i class="fas fa-terminal"></i> kubectl / virtctl 명령</div>
+    <div class="card-body">
+      <p style="font-size:.88rem;color:var(--gray);margin-bottom:10px;">SPICE 포트를 로컬로 포워드한 다음 SPICE 클라이언트로 연결합니다.</p>
+      <div class="code-block" id="cmd-kubectl">
+        <button class="copy-btn" onclick="copyText('cmd-kubectl')">복사</button>
+        <span id="cmd-kubectl-text">-</span>
+      </div>
+      <div class="code-block" style="margin-top:10px;" id="cmd-remote">
+        <button class="copy-btn" onclick="copyText('cmd-remote')">복사</button>
+        <span id="cmd-remote-text">remote-viewer spice://localhost:5900</span>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>kubevirt-manager &middot; SPICE 콘솔 &middot; KubeVirt port-forward 기반</footer>
+<div class="toast-msg" id="toast">복사되었습니다!</div>
+
+<script>
+  const params    = new URLSearchParams(window.location.search);
+  const namespace = params.get('namespace') || 'default';
+  const vm        = params.get('vm')        || 'unknown';
+  const port      = params.get('port')      || '5900';
+
+  const apiPath = `/k8s/apis/subresources.kubevirt.io/v1/namespaces/${namespace}/virtualmachineinstances/${vm}/portforward/${port}`;
+
+  /* UI 채우기 */
+  document.getElementById('header-vm').textContent  = vm;
+  document.getElementById('header-ns').textContent  = namespace;
+  document.getElementById('info-vm').textContent    = vm;
+  document.getElementById('info-ns').textContent    = namespace;
+  document.getElementById('info-path').textContent  = apiPath;
+
+  const virtctlCmd = `virtctl port-forward vmi/${vm} ${port} -n ${namespace}`;
+  const kubectlCmd = `kubectl port-forward -n ${namespace} ` +
+                     `pods/$(kubectl get vmi ${vm} -n ${namespace} -o jsonpath='{.status.nodeName}') ` +
+                     `${port}:${port}`;
+
+  document.getElementById('cmd-portforward-text').textContent = virtctlCmd;
+  document.getElementById('cmd-kubectl-text').textContent     = virtctlCmd;
+  document.getElementById('cmd-remote-text').textContent      = `remote-viewer spice://localhost:${port}`;
+
+  /* 상태 표시 업데이트 */
+  const dot  = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  const sub  = document.getElementById('status-sub');
+
+  function setStatus(type, msg, detail) {
+    dot.className  = 'status-dot ' + type;
+    text.textContent = msg;
+    sub.textContent  = detail;
+  }
+
+  /* .vv 파일 다운로드 */
+  function downloadVvFile() {
+    const host = window.location.hostname;
+    const content = [
+      '[virt-viewer]',
+      'type=spice',
+      `host=localhost`,
+      `port=${port}`,
+      'fullscreen=0',
+      `title=${vm} - SPICE`,
+      'enable-smartcard=0',
+      'enable-usb-autoshare=1',
+      'delete-this-file=1',
+      `# 연결 전 먼저 실행: ${virtctlCmd}`,
+    ].join('\n');
+
+    const blob = new Blob([content], { type: 'application/x-virt-viewer' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = `${vm}-spice.vv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    setStatus('connecting', '.vv 파일이 다운로드되었습니다.', `포트 포워드 후 파일을 virt-viewer로 여세요. (${virtctlCmd})`);
+  }
+
+  /* 클립보드 복사 */
+  function copyVirtctlCmd() {
+    navigator.clipboard.writeText(virtctlCmd).then(() => showToast());
+  }
+
+  function copyText(blockId) {
+    const el = document.getElementById(blockId + '-text');
+    if (el) navigator.clipboard.writeText(el.textContent).then(() => showToast());
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.className = 'toast-msg show';
+    setTimeout(() => { t.className = 'toast-msg'; }, 2600);
+  }
+
+  /* 초기 상태 */
+  setStatus('connecting', 'SPICE 연결 대기 중', `VM: ${vm} | 네임스페이스: ${namespace} | 포트: ${port}`);
+</script>
+</body>
+</html>

@@ -42,6 +42,7 @@ export class VmlistComponent implements OnInit {
     networkCheck: boolean = false;
     cdiCheck: boolean = false;
     firewallLabels: FirewallLabels = new FirewallLabels;
+    isCreating: boolean = false;
     migrationList: KubeVirtMigration[] = [];
     /* key = "namespace/vmiName" → 진행 중 마이그레이션 */
     activeMigrationMap: Map<string, KubeVirtMigration> = new Map();
@@ -1128,11 +1129,14 @@ export class VmlistComponent implements OnInit {
                 };
             }
             try {
+                this.isCreating = true;
                 let data = await lastValueFrom(this.kubeVirtService.createVm(thisVirtualMachine));
+                this.isCreating = false;
                 this.hideComponent("modal-newvm");
-                this.myToasts.toastSuccess(this.pageName, "", "Created Virtual Machine: " + newvmname);
+                this.myToasts.toastSuccess(this.pageName, "", "가상 머신 생성됨: " + newvmname);
                 this.fullReload();
             } catch (e: any) {
+                this.isCreating = false;
                 this.myToasts.toastError(this.pageName, "", e.message);
                 console.log(e);
             }
@@ -1205,27 +1209,42 @@ export class VmlistComponent implements OnInit {
      * Show Delete Window
      */
     showDelete(vmName: string, vmNamespace: string): void {
-        let modalDiv = document.getElementById("modal-delete");
-        let modalTitle = document.getElementById("delete-title");
-        let modalBody = document.getElementById("delete-value");
-        if(modalTitle != null) {
-            modalTitle.replaceChildren("Delete");
-        }
-        if(modalBody != null) {
-            let vmNameInput = document.getElementById("delete-name");
-            let vmNamespaceInput = document.getElementById("delete-namespace");
-            if(vmNameInput != null && vmNamespaceInput != null) {
-                vmNameInput.setAttribute("value", vmName);
-                vmNamespaceInput.setAttribute("value", vmNamespace);
-                modalBody.replaceChildren("Are you sure you want to delete " + vmName + " on namespace: " + vmNamespace + "?");
-            }
-        }
-        if(modalDiv != null) {
+        const nameInput    = document.getElementById("delete-name");
+        const nsInput      = document.getElementById("delete-namespace");
+        const infoName     = document.getElementById("delete-info-name");
+        const infoNs       = document.getElementById("delete-info-namespace");
+        const confirmLabel = document.getElementById("delete-confirm-label");
+        const confirmInput = document.getElementById("delete-confirm-input") as HTMLInputElement | null;
+        const confirmBtn   = document.getElementById("delete-confirm-btn") as HTMLButtonElement | null;
+
+        if (nameInput)      nameInput.setAttribute("value", vmName);
+        if (nsInput)        nsInput.setAttribute("value", vmNamespace);
+        if (infoName)       infoName.textContent = vmName;
+        if (infoNs)         infoNs.textContent   = vmNamespace;
+        if (confirmLabel)   confirmLabel.textContent = vmName;
+        if (confirmInput)   confirmInput.value = "";
+        if (confirmBtn)     confirmBtn.disabled = true;
+
+        const modalDiv = document.getElementById("modal-delete");
+        if (modalDiv) {
             modalDiv.setAttribute("class", "modal fade show");
             modalDiv.setAttribute("aria-modal", "true");
             modalDiv.setAttribute("role", "dialog");
             modalDiv.setAttribute("aria-hidden", "false");
-            modalDiv.setAttribute("style","display: block;");
+            modalDiv.setAttribute("style", "display: block;");
+        }
+    }
+
+    /*
+     * VM 이름 확인 입력 검증
+     */
+    onDeleteConfirmInput(): void {
+        const nameInput    = document.getElementById("delete-name");
+        const confirmInput = document.getElementById("delete-confirm-input") as HTMLInputElement | null;
+        const confirmBtn   = document.getElementById("delete-confirm-btn") as HTMLButtonElement | null;
+        if (nameInput && confirmInput && confirmBtn) {
+            const expected = nameInput.getAttribute("value") || "";
+            confirmBtn.disabled = (confirmInput.value !== expected);
         }
     }
 
@@ -1741,6 +1760,14 @@ export class VmlistComponent implements OnInit {
         let path = "/k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/" + namespace + "/virtualmachineinstances/" + name + "/vnc";
         let fullpath = url + path;
         window.open(fullpath, "kubevirt-manager.io: CONSOLE", "width=800,height=600,location=no,toolbar=no,menubar=no,resizable=yes");
+    }
+
+    /*
+     * Open SPICE Console
+     */
+    openSpice(namespace: string, name: string): void {
+        let fullpath = `/assets/spice.html?namespace=${namespace}&vm=${name}`;
+        window.open(fullpath, "kubevirt-manager.io: SPICE", "width=1024,height=768,location=no,toolbar=no,menubar=no,resizable=yes");
     }
 
     /*

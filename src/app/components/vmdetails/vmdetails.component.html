@@ -53,6 +53,15 @@
                         <i class="fas fa-redo disabled"></i>
                     </a>
                 </span>
+                <!--- SPICE BUTTON -->
+                <span [ngSwitch]="activeVm.running">
+                    <a class="btn" (click)='openSpice()' title="SPICE 콘솔 열기..." *ngSwitchCase="true">
+                        <i class="fas fa-tv"></i>
+                    </a>
+                    <a class="btn disabled" title="SPICE 콘솔 (VM 중지됨)" *ngSwitchDefault>
+                        <i class="fas fa-tv disabled"></i>
+                    </a>
+                </span>
                 <!--- LIVEMIGRATE BUTTON -->
                 <span [ngSwitch]="activeVm.running">
                     <a class="btn" (click)='showMigrateModal()' title="라이브 마이그레이션..." *ngSwitchCase="true">
@@ -61,6 +70,15 @@
                     </a>
                     <a class="btn disabled" title="라이브 마이그레이션 (VM 중지됨)" *ngSwitchDefault>
                         <i class="fas fa-exchange-alt disabled"></i>
+                    </a>
+                </span>
+                <!--- DELETE BUTTON -->
+                <span [ngSwitch]="activeVm.running">
+                    <a class="btn disabled" title="삭제... (먼저 VM을 중지하세요)" *ngSwitchCase="true">
+                        <i class="fas fa-trash disabled"></i>
+                    </a>
+                    <a class="btn" (click)='vmOperations("delete", activeVm.namespace, activeVm.name)' title="삭제..." *ngSwitchDefault>
+                        <i class="fas fa-trash text-danger"></i>
                     </a>
                 </span>
             </div>
@@ -76,7 +94,8 @@
                     <li class="nav-item"><a class="nav-link" href="#logging" data-toggle="tab">로그</a></li>
                     <li class="nav-item"><a class="nav-link" href="#vmmonitoring" data-toggle="tab" *ngIf="promCheck">모니터링</a></li>
                     <li class="nav-item"><a class="nav-link" href="#vmserial" data-toggle="tab">시리얼</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#vmconsole" data-toggle="tab">콘솔</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#vmconsole" data-toggle="tab">VNC 콘솔</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#vmspice" data-toggle="tab">SPICE 콘솔</a></li>
                     <li class="nav-item">
                       <a class="nav-link" href="#vmmigration" data-toggle="tab">
                         마이그레이션
@@ -329,11 +348,34 @@
                     <div class="tab-pane" id="vmserial">
                       <iframe id="xtermfram" width="60%" height="100%" frameBorder="0" style="height: 360px; width: 680px" [src]="urlSafeXterm"></iframe>
                     </div>
-                    <!-- VM Console -->
+                    <!-- VM Console (VNC) -->
                     <div class="tab-pane" id="vmconsole">
-                        <iframe id="vncframe" width="100%" height="100%" frameBorder="0" style="height: 600px" [src]="urlSafeVnc"></iframe>
-                        <br>
-                        <p><a href="#" (click)='openNoVNC()' title="콘솔 열기...">전체 noVNC 클라이언트 열기</a></p>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <span class="text-muted small"><i class="fas fa-desktop mr-1"></i>VNC (noVNC) 브라우저 내 콘솔</span>
+                          <a href="#" (click)='openNoVNC()' title="새 창으로 열기..." class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-external-link-alt mr-1"></i>새 창으로 열기
+                          </a>
+                        </div>
+                        <iframe id="vncframe" width="100%" height="100%" frameBorder="0" style="height: 580px; border:1px solid #dee2e6; border-radius:4px;" [src]="urlSafeVnc"></iframe>
+                    </div>
+
+                    <!-- VM Console (SPICE) -->
+                    <div class="tab-pane" id="vmspice">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small"><i class="fas fa-tv mr-1"></i>SPICE 콘솔 연결 정보</span>
+                        <button class="btn btn-sm btn-outline-primary" (click)="openSpice()" title="SPICE 콘솔 새 창 열기">
+                          <i class="fas fa-external-link-alt mr-1"></i>새 창으로 열기
+                        </button>
+                      </div>
+                      <div *ngIf="!activeVm.running" class="alert alert-warning mb-3">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        VM이 실행 중일 때만 SPICE 콘솔에 접속할 수 있습니다.
+                      </div>
+                      <iframe id="spiceframe" width="100%" frameBorder="0"
+                              style="height: 580px; border:1px solid #dee2e6; border-radius:4px;"
+                              [src]="urlSafeSpice"
+                              *ngIf="activeVm.running">
+                      </iframe>
                     </div>
 
                     <!-- VM Migration -->
@@ -406,6 +448,61 @@
           <!-- /.card-body -->
         </div>
       </div>
+
+    <!--                   -->
+    <!-- Modal: Delete VM  -->
+    <!--                   -->
+    <div class="modal fade" id="modal-delete-detail" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content border-danger">
+          <div class="modal-header bg-danger text-white">
+            <h4 class="modal-title">
+              <i class="fas fa-trash-alt mr-2"></i>가상 머신 삭제
+            </h4>
+            <button type="button" class="close text-white" (click)='hideComponent("modal-delete-detail")'>
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-triangle mr-2"></i>
+              <strong>이 작업은 되돌릴 수 없습니다.</strong>
+              가상 머신과 관련된 모든 리소스가 영구적으로 삭제됩니다.
+            </div>
+            <table class="table table-sm table-bordered mb-3">
+              <tbody>
+                <tr>
+                  <th class="bg-light" style="width:120px">VM 이름</th>
+                  <td><strong class="text-danger">{{ activeVm.name }}</strong></td>
+                </tr>
+                <tr>
+                  <th class="bg-light">네임스페이스</th>
+                  <td>{{ activeVm.namespace }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">현재 상태</th>
+                  <td><span class="badge badge-secondary">{{ activeVm.printableStatus }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="form-group">
+              <label>확인을 위해 VM 이름 <strong class="text-danger">{{ activeVm.name }}</strong>을(를) 입력하세요:</label>
+              <input type="text" class="form-control border-danger" id="vmdetail-delete-input"
+                     placeholder="VM 이름 입력..."
+                     (input)="onDetailDeleteInput()">
+              <small class="form-text text-muted">VM 이름을 정확히 입력해야 삭제 버튼이 활성화됩니다.</small>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete-detail")'>취소</button>
+            <button type="button" class="btn btn-danger" id="vmdetail-delete-btn"
+                    disabled (click)="applyDetailDelete()">
+              <i class="fas fa-trash-alt mr-1"></i>삭제
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!--                        -->
     <!-- Modal: Live Migration -->

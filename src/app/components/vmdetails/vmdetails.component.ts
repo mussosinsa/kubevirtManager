@@ -34,6 +34,7 @@ export class VmdetailsComponent implements OnInit {
     customTemplate: boolean = false;
     urlSafeVnc: SafeResourceUrl = "";
     urlSafeXterm: SafeResourceUrl = "";
+    urlSafeSpice: SafeResourceUrl = "";
     promCheck: boolean = false;
     migrationList: KubeVirtMigration[] = [];
     activeMigration: KubeVirtMigration | undefined;
@@ -96,6 +97,7 @@ export class VmdetailsComponent implements OnInit {
         await this.loadSerialLog();
         this.loadXterm();
         this.loadNoVNC();
+        this.loadSpice();
     }
 
     /*
@@ -1361,6 +1363,22 @@ export class VmdetailsComponent implements OnInit {
         let fullpath = url + path;
         this.urlSafeVnc = this.sanitizer.bypassSecurityTrustResourceUrl(fullpath);
     }
+
+    /*
+     * Load SPICE Console
+     */
+    loadSpice(): void {
+        let fullpath = `/assets/spice.html?namespace=${this.activeVm.namespace}&vm=${this.activeVm.name}`;
+        this.urlSafeSpice = this.sanitizer.bypassSecurityTrustResourceUrl(fullpath);
+    }
+
+    /*
+     * Open SPICE in popup window
+     */
+    openSpice(): void {
+        let fullpath = `/assets/spice.html?namespace=${this.activeVm.namespace}&vm=${this.activeVm.name}`;
+        window.open(fullpath, "kubevirt-manager.io: SPICE", "width=1024,height=768,location=no,toolbar=no,menubar=no,resizable=yes");
+    }
     
 
     /*
@@ -1388,9 +1406,8 @@ export class VmdetailsComponent implements OnInit {
             this.myToasts.toastSuccess(this.pageName, "", "Resumed: " + vmName);
             this.reloadComponent();
         } else if (vmOperation == "delete") {
-            const data = await lastValueFrom(this.kubeVirtService.deleteVm(vmNamespace, vmName));
-            this.myToasts.toastSuccess(this.pageName, "", "Deleted: " + vmName);
-            this.reloadComponent();
+            this.showDeleteModal();
+            return;
         } else if (vmOperation == "migrate") {
             this.showMigrateModal();
             return;
@@ -1503,7 +1520,43 @@ export class VmdetailsComponent implements OnInit {
         await this.reloadPrometheus();
         await this.loadSerialLog();
         await this.cdRef.detectChanges();
-        
+
+    }
+
+    /* ─── VM 삭제 (상세 페이지) ──────────────── */
+
+    showDeleteModal(): void {
+        const confirmInput = document.getElementById("vmdetail-delete-input") as HTMLInputElement | null;
+        const confirmBtn   = document.getElementById("vmdetail-delete-btn")   as HTMLButtonElement | null;
+        if (confirmInput) confirmInput.value = "";
+        if (confirmBtn)   confirmBtn.disabled = true;
+        const modalDiv = document.getElementById("modal-delete-detail");
+        if (modalDiv) {
+            modalDiv.setAttribute("class", "modal fade show");
+            modalDiv.setAttribute("aria-modal", "true");
+            modalDiv.setAttribute("role", "dialog");
+            modalDiv.setAttribute("aria-hidden", "false");
+            modalDiv.setAttribute("style", "display: block;");
+        }
+    }
+
+    onDetailDeleteInput(): void {
+        const confirmInput = document.getElementById("vmdetail-delete-input") as HTMLInputElement | null;
+        const confirmBtn   = document.getElementById("vmdetail-delete-btn")   as HTMLButtonElement | null;
+        if (confirmInput && confirmBtn) {
+            confirmBtn.disabled = (confirmInput.value !== this.vmName);
+        }
+    }
+
+    async applyDetailDelete(): Promise<void> {
+        try {
+            await lastValueFrom(this.kubeVirtService.deleteVm(this.vmNamespace, this.vmName));
+            this.hideComponent("modal-delete-detail");
+            this.myToasts.toastSuccess(this.pageName, "", "가상 머신 삭제됨: " + this.vmName);
+            this.router.navigate(["/vmlist"]);
+        } catch (e: any) {
+            this.myToasts.toastError(this.pageName, "", e.message);
+        }
     }
 
 }
