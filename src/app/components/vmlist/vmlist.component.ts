@@ -16,6 +16,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { KubeVirtClusterInstanceType } from 'src/app/models/kube-virt-clusterinstancetype';
 import { Config } from 'datatables.net';
 import { KubeVirtVMI } from 'src/app/models/kube-virt-vmi.model';
+import { KubeVirtMigration } from 'src/app/models/kube-virt-migration.model';
 import { Constants } from 'src/app/classes/constants';
 import { Toasts } from 'src/app/classes/toasts';
 
@@ -41,6 +42,9 @@ export class VmlistComponent implements OnInit {
     networkCheck: boolean = false;
     cdiCheck: boolean = false;
     firewallLabels: FirewallLabels = new FirewallLabels;
+    migrationList: KubeVirtMigration[] = [];
+    /* key = "namespace/vmiName" → 진행 중 마이그레이션 */
+    activeMigrationMap: Map<string, KubeVirtMigration> = new Map();
 
     showSuggestions: boolean = false;
     enableCloudInit: boolean = true;
@@ -113,6 +117,7 @@ export class VmlistComponent implements OnInit {
         await this.getVMIs();
         await this.getVMs();
         await this.loadCrds();
+        await this.loadMigrations();
         this.vmList_dtTrigger.next(null);
         await this.checkNetwork();
         await this.checkCDI();
@@ -1745,5 +1750,128 @@ export class VmlistComponent implements OnInit {
         this.router.navigateByUrl('/refresh',{skipLocationChange:true}).then(()=>{
             this.router.navigate([`/vmlist`]);
         })
+    }
+
+    /* ─── 라이브 마이그레이션 ──────────────── */
+
+    /*
+     * 마이그레이션 목록 로드
+     */
+    async loadMigrations(): Promise<void> {
+        this.migrationList = [];
+        this.activeMigrationMap.clear();
+        try {
+            const data = await lastValueFrom(this.kubeVirtService.getMigrations());
+            for (const item of (data.items || [])) {
+                const mig = new KubeVirtMigration();
+                mig.name             = item.metadata?.name        || "";
+                mig.namespace        = item.metadata?.namespace   || "";
+                mig.vmiName          = item.spec?.vmiName         || "";
+                mig.phase            = item.status?.phase         || "Unknown";
+                mig.sourceNode       = item.status?.migrationState?.sourceNode || "";
+                mig.targetNode       = item.status?.migrationState?.targetNode || "";
+                mig.creationTimestamp = new Date(item.metadata?.creationTimestamp);
+                this.migrationList.push(mig);
+                /* 진행 중인 상태만 맵에 등록 */
+                const activePhases = ["Pending","Scheduling","Scheduled","PreparingTarget","TargetReady","Running"];
+                if (activePhases.includes(mig.phase)) {
+                    this.activeMigrationMap.set(`${mig.namespace}/${mig.vmiName}`, mig);
+                }
+            }
+        } catch (_) { }
+    }
+
+    /*
+     * VM 마이그레이션 확인 모달 열기
+     */
+    showMigrateModal(vmName: string, vmNamespace: string, vmNode: string): void {
+        const modalDiv   = document.getElementById("modal-migrate");
+        const nameEl     = document.getElementById("migrate-vm-name");
+        const nsEl       = document.getElementById("migrate-vm-namespace");
+        const infoNameEl = document.getElementById("migrate-info-name");
+        const infoNsEl   = document.getElementById("migrate-info-namespace");
+        const infoNodeEl = document.getElementById("migrate-info-node");
+        if (nameEl)     nameEl.setAttribute("value", vmName);
+        if (nsEl)       nsEl.setAttribute("value", vmNamespace);
+        if (infoNameEl) infoNameEl.textContent = vmName;
+        if (infoNsEl)   infoNsEl.textContent   = vmNamespace;
+        if (infoNodeEl) infoNodeEl.textContent  = vmNode || "-";
+        if (modalDiv) {
+            modalDiv.setAttribute("class", "modal fade show");
+            modalDiv.setAttribute("aria-modal", "true");
+            modalDiv.setAttribute("role", "dialog");
+            modalDiv.setAttribute("aria-hidden", "false");
+            modalDiv.setAttribute("style", "display: block;");
+        }
+    }
+
+    /*
+     * 마이그레이션 실행
+     */
+    async applyMigration(): Promise<void> {
+        const nameEl = document.getElementById("migrate-vm-name");
+        const nsEl   = document.getElementById("migrate-vm-namespace");
+        if (nameEl && nsEl) {
+            const vmName      = nameEl.getAttribute("value");
+            const vmNamespace = nsEl.getAttribute("value");
+            if (vmName && vmNamespace) {
+                try {
+                    await lastValueFrom(this.kubeVirtService.migrateVm(vmNamespace, vmName));
+                    this.hideComponent("modal-migrate");
+                    this.myToasts.toastSuccess(this.pageName, "", "라이브 마이그레이션 시작: " + vmName);
+                    this.fullReload();
+                } catch (e: any) {
+                    this.myToasts.toastError(this.pageName, "", e.message);
+                }
+            }
+        }
+    }
+
+    /*
+     * 마이그레이션 취소
+     */
+    async cancelMigrationByName(migName: string, migNamespace: string): Promise<void> {
+        try {
+            await lastValueFrom(this.kubeVirtService.cancelMigration(migNamespace, migName));
+            this.myToasts.toastSuccess(this.pageName, "", "마이그레이션 취소: " + migName);
+            this.fullReload();
+        } catch (e: any) {
+            this.myToasts.toastError(this.pageName, "", e.message);
+        }
+    }
+
+    /*
+     * VM이 현재 마이그레이션 중인지 확인
+     */
+    isVmMigrating(vmName: string, vmNamespace: string): boolean {
+        return this.activeMigrationMap.has(`${vmNamespace}/${vmName}`);
+    }
+
+    /*
+     * 마이그레이션 단계 한국어 변환
+     */
+    getMigrationPhaseKo(phase: string): string {
+        const map: {[k: string]: string} = {
+            "Pending":         "대기 중",
+            "Scheduling":      "스케줄링",
+            "Scheduled":       "스케줄됨",
+            "PreparingTarget": "대상 준비",
+            "TargetReady":     "대상 준비 완료",
+            "Running":         "진행 중",
+            "Succeeded":       "완료",
+            "Failed":          "실패",
+        };
+        return map[phase] || phase;
+    }
+
+    /*
+     * 마이그레이션 단계 배지 색상
+     */
+    getMigrationPhaseBadge(phase: string): string {
+        if (["Succeeded"].includes(phase))                                    return "badge-success";
+        if (["Running", "TargetReady"].includes(phase))                       return "badge-primary";
+        if (["Pending","Scheduling","Scheduled","PreparingTarget"].includes(phase)) return "badge-warning";
+        if (["Failed"].includes(phase))                                       return "badge-danger";
+        return "badge-secondary";
     }
 }

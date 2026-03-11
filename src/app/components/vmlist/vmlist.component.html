@@ -2,6 +2,60 @@
   <div class="container-fluid">
     <div class="content-wrapper">
       &nbsp;<br>
+
+      <!-- 마이그레이션 현황 패널 -->
+      <div class="card card-outline card-warning" *ngIf="migrationList.length > 0">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-exchange-alt text-warning mr-2"></i>
+            라이브 마이그레이션 현황
+            <span class="badge badge-warning ml-2">{{ activeMigrationMap.size }}개 진행 중</span>
+          </h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-sm table-hover mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th>VM 이름</th>
+                <th>네임스페이스</th>
+                <th>단계</th>
+                <th>소스 노드</th>
+                <th>대상 노드</th>
+                <th>시작 시간</th>
+                <th>작업</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let mig of migrationList">
+                <td><strong>{{ mig.vmiName }}</strong></td>
+                <td>{{ mig.namespace }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getMigrationPhaseBadge(mig.phase)">
+                    {{ getMigrationPhaseKo(mig.phase) }}
+                  </span>
+                </td>
+                <td>{{ mig.sourceNode || '-' }}</td>
+                <td>{{ mig.targetNode || '-' }}</td>
+                <td>{{ mig.creationTimestamp | date:'MM/dd HH:mm:ss' }}</td>
+                <td>
+                  <button class="btn btn-xs btn-outline-danger"
+                          *ngIf="['Pending','Scheduling','Scheduled','PreparingTarget','TargetReady','Running'].includes(mig.phase)"
+                          (click)="cancelMigrationByName(mig.name, mig.namespace)"
+                          title="마이그레이션 취소">
+                    <i class="fas fa-ban mr-1"></i>취소
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="card card-outline">
         <div class="card-header">
             <h3 class="card-title">
@@ -46,7 +100,14 @@
                         </span>
                       </td>
                       <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.namespace}}</a></td>
-                      <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.name}}</a></td>
+                      <td style="line-height: 2.2 !important;">
+                        <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.name}}</a>
+                        <span class="badge badge-warning ml-1"
+                              *ngIf="isVmMigrating(thisVM.name, thisVM.namespace)"
+                              title="마이그레이션 진행 중">
+                          <i class="fas fa-exchange-alt mr-1"></i>마이그레이션 중
+                        </span>
+                      </td>
                       <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.nodeSel}}</a></td>
                       <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.instType}}</a></td>
                       <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{(thisVM.cores || 0) * (thisVM.sockets || 0) * (thisVM.threads || 0)}}</a></td>
@@ -135,11 +196,12 @@
                                 </span>
                                 <!--- LIVEMIGRATE BUTTON -->
                                 <span [ngSwitch]="thisVM.running">
-                                    <a class="btn" (click)='vmOperations("migrate", thisVM.namespace, thisVM.name)' title="라이브 마이그레이션..." *ngSwitchCase="true">
-                                    <i class="fas fa-angle-double-right"></i>
+                                    <a class="btn" (click)='showMigrateModal(thisVM.name, thisVM.namespace, thisVM.vmi.nodeName)' title="라이브 마이그레이션..." *ngSwitchCase="true">
+                                      <i class="fas fa-exchange-alt"
+                                         [class.text-warning]="isVmMigrating(thisVM.name, thisVM.namespace)"></i>
                                     </a>
-                                    <a class="btn disabled" (click)='vmOperations("migrate", thisVM.namespace, thisVM.name)' title="라이브 마이그레이션..." *ngSwitchDefault>
-                                    <i class="fas fa-angle-double-right disabled"></i>
+                                    <a class="btn disabled" title="라이브 마이그레이션 (VM 중지됨)" *ngSwitchDefault>
+                                      <i class="fas fa-exchange-alt disabled"></i>
                                     </a>
                                 </span>
                                 <!--- DELETE BUTTON -->
@@ -562,6 +624,60 @@
         <!-- /.modal-content -->
       </div>
       <!-- /.modal-dialog -->
+    </div>
+
+    <!--                        -->
+    <!-- Modal: Live Migration -->
+    <!--                        -->
+    <div class="modal fade" id="modal-migrate" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-warning">
+            <h4 class="modal-title">
+              <i class="fas fa-exchange-alt mr-2"></i>라이브 마이그레이션
+            </h4>
+            <button type="button" class="close" (click)='hideComponent("modal-migrate")'>
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <input type="hidden" id="migrate-vm-namespace" value="">
+          <input type="hidden" id="migrate-vm-name" value="">
+          <div class="modal-body">
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle mr-2"></i>
+              라이브 마이그레이션은 VM을 중단 없이 다른 노드로 이동합니다.
+              VM이 실행 중인 상태에서만 가능하며, 대상 노드는 KubeVirt 스케줄러가 자동으로 선택합니다.
+            </div>
+            <table class="table table-sm table-bordered">
+              <tbody>
+                <tr>
+                  <th class="bg-light" style="width:140px">VM 이름</th>
+                  <td><strong id="migrate-info-name">-</strong></td>
+                </tr>
+                <tr>
+                  <th class="bg-light">네임스페이스</th>
+                  <td id="migrate-info-namespace">-</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">현재 노드</th>
+                  <td id="migrate-info-node">-</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="alert alert-warning mt-2 mb-0">
+              <i class="fas fa-exclamation-triangle mr-2"></i>
+              마이그레이션 중에는 네트워크 순단이 발생할 수 있습니다.
+              클러스터에 사용 가능한 노드가 2개 이상 있어야 합니다.
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-migrate")'>취소</button>
+            <button type="button" class="btn btn-warning" (click)="applyMigration()">
+              <i class="fas fa-exchange-alt mr-1"></i>마이그레이션 시작
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!--               -->

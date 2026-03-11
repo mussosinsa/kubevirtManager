@@ -8,6 +8,7 @@ import { KubeVirtService } from 'src/app/services/kube-virt.service';
 import { PrometheusService } from 'src/app/services/prometheus.service';
 import { Chart } from 'chart.js/auto'
 import { KubeVirtVMI } from 'src/app/models/kube-virt-vmi.model';
+import { KubeVirtMigration } from 'src/app/models/kube-virt-migration.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VMDisk } from 'src/app/models/vmdisk.model';
 import { VMNewtork } from 'src/app/models/vmnewtork.model';
@@ -34,6 +35,8 @@ export class VmdetailsComponent implements OnInit {
     urlSafeVnc: SafeResourceUrl = "";
     urlSafeXterm: SafeResourceUrl = "";
     promCheck: boolean = false;
+    migrationList: KubeVirtMigration[] = [];
+    activeMigration: KubeVirtMigration | undefined;
 
     myInterval = setInterval(() =>{ this.reloadChartsAndLogs(); }, 120000);
 
@@ -88,6 +91,7 @@ export class VmdetailsComponent implements OnInit {
         }
         this.myToasts = new Toasts();
         await this.loadVm();
+        await this.loadMigrations();
         await this.loadPrometheus();
         await this.loadSerialLog();
         this.loadXterm();
@@ -1388,9 +1392,8 @@ export class VmdetailsComponent implements OnInit {
             this.myToasts.toastSuccess(this.pageName, "", "Deleted: " + vmName);
             this.reloadComponent();
         } else if (vmOperation == "migrate") {
-            const data = await lastValueFrom(this.kubeVirtService.migrateVm(vmNamespace, vmName));
-            this.myToasts.toastSuccess(this.pageName, "", "Migreated: " + vmName);
-            this.reloadComponent();
+            this.showMigrateModal();
+            return;
         }
     }
     
@@ -1401,6 +1404,105 @@ export class VmdetailsComponent implements OnInit {
         this.router.navigateByUrl('/refresh',{skipLocationChange:true}).then(()=>{
             this.router.navigate([`/vmdetail/${this.vmNamespace}/${this.vmName}`]);
         })
+    }
+
+    /* ─── 라이브 마이그레이션 ──────────────── */
+
+    async loadMigrations(): Promise<void> {
+        this.migrationList = [];
+        this.activeMigration = undefined;
+        try {
+            const data = await lastValueFrom(
+                this.kubeVirtService.getMigrationsNamespaced(this.vmNamespace)
+            );
+            for (const item of (data.items || [])) {
+                if (item.spec?.vmiName !== this.vmName) continue;
+                const mig = new KubeVirtMigration();
+                mig.name              = item.metadata?.name       || "";
+                mig.namespace         = item.metadata?.namespace  || "";
+                mig.vmiName           = item.spec?.vmiName        || "";
+                mig.phase             = item.status?.phase        || "Unknown";
+                mig.sourceNode        = item.status?.migrationState?.sourceNode || "";
+                mig.targetNode        = item.status?.migrationState?.targetNode || "";
+                mig.creationTimestamp = new Date(item.metadata?.creationTimestamp);
+                this.migrationList.push(mig);
+            }
+            /* 최신 항목 정렬 (내림차순) */
+            this.migrationList.sort((a, b) =>
+                b.creationTimestamp.getTime() - a.creationTimestamp.getTime()
+            );
+            const activePhases = ["Pending","Scheduling","Scheduled","PreparingTarget","TargetReady","Running"];
+            this.activeMigration = this.migrationList.find(m => activePhases.includes(m.phase));
+        } catch (_) { }
+    }
+
+    showMigrateModal(): void {
+        const modalDiv = document.getElementById("modal-migrate-detail");
+        const nodeEl   = document.getElementById("migrate-detail-node");
+        if (nodeEl) nodeEl.textContent = this.activeVm.vmi.nodeName || "-";
+        if (modalDiv) {
+            modalDiv.setAttribute("class", "modal fade show");
+            modalDiv.setAttribute("aria-modal", "true");
+            modalDiv.setAttribute("role", "dialog");
+            modalDiv.setAttribute("aria-hidden", "false");
+            modalDiv.setAttribute("style", "display: block;");
+        }
+    }
+
+    async applyMigration(): Promise<void> {
+        try {
+            await lastValueFrom(
+                this.kubeVirtService.migrateVm(this.vmNamespace, this.vmName)
+            );
+            this.hideComponent("modal-migrate-detail");
+            this.myToasts.toastSuccess(this.pageName, "", "라이브 마이그레이션 시작: " + this.vmName);
+            this.reloadComponent();
+        } catch (e: any) {
+            this.myToasts.toastError(this.pageName, "", e.message);
+        }
+    }
+
+    async cancelActiveMigration(): Promise<void> {
+        if (!this.activeMigration) return;
+        try {
+            await lastValueFrom(
+                this.kubeVirtService.cancelMigration(
+                    this.activeMigration.namespace,
+                    this.activeMigration.name
+                )
+            );
+            this.myToasts.toastSuccess(this.pageName, "", "마이그레이션 취소: " + this.activeMigration.name);
+            this.reloadComponent();
+        } catch (e: any) {
+            this.myToasts.toastError(this.pageName, "", e.message);
+        }
+    }
+
+    getMigrationPhaseKo(phase: string): string {
+        const map: {[k: string]: string} = {
+            "Pending": "대기 중", "Scheduling": "스케줄링",
+            "Scheduled": "스케줄됨", "PreparingTarget": "대상 준비",
+            "TargetReady": "대상 준비 완료", "Running": "진행 중",
+            "Succeeded": "완료", "Failed": "실패",
+        };
+        return map[phase] || phase;
+    }
+
+    getMigrationPhaseBadge(phase: string): string {
+        if (["Succeeded"].includes(phase))                                            return "badge-success";
+        if (["Running","TargetReady"].includes(phase))                                return "badge-primary";
+        if (["Pending","Scheduling","Scheduled","PreparingTarget"].includes(phase))   return "badge-warning";
+        if (["Failed"].includes(phase))                                               return "badge-danger";
+        return "badge-secondary";
+    }
+
+    hideComponent(id: string): void {
+        const el = document.getElementById(id);
+        if (el) {
+            el.setAttribute("class", "modal fade");
+            el.setAttribute("aria-hidden", "true");
+            el.setAttribute("style", "display: none;");
+        }
     }
 
     /*

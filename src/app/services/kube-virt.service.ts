@@ -215,7 +215,22 @@ export class KubeVirtService {
             }
         }, { 'headers': headers } );
     }
-    
+
+    getMigrations(): Observable<any> {
+        var baseUrl = './k8s/apis/kubevirt.io/v1';
+        return this.http.get(`${baseUrl}/virtualmachineinstancemigrations`);
+    }
+
+    getMigrationsNamespaced(namespace: string): Observable<any> {
+        var baseUrl = './k8s/apis/kubevirt.io/v1';
+        return this.http.get(`${baseUrl}/namespaces/${namespace}/virtualmachineinstancemigrations`);
+    }
+
+    cancelMigration(namespace: string, name: string): Observable<any> {
+        var baseUrl = './k8s/apis/kubevirt.io/v1';
+        return this.http.delete(`${baseUrl}/namespaces/${namespace}/virtualmachineinstancemigrations/${name}`);
+    }
+
     createVm(virtualMachine: VirtualMachine): Observable<any> {
         var baseUrl ='./k8s/apis/' + virtualMachine.apiVersion;
         let name = virtualMachine.metadata.name;
