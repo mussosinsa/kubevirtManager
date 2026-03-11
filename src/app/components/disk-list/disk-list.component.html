@@ -6,17 +6,17 @@
         <div class="card-header">
           <h3 class="card-title">
             <i class="fas fa-database"></i>
-            &nbsp;&nbsp;Data Volumes / Persistent Volumes
+            &nbsp;&nbsp;데이터 볼륨 / 퍼시스턴트 볼륨
           </h3>
           <div class="card-tools">
-            <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="Refresh..." title="Refresh..." class="btn btn-tool" (click)="fullReload()">
-                  <i class="fas fa-sync" (click)="fullReload()" title="Refresh..."></i>
+            <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새로고침..." title="새로고침..." class="btn btn-tool" (click)="fullReload()">
+                  <i class="fas fa-sync" (click)="fullReload()" title="새로고침..."></i>
               </button>
             <!--<button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="Upload..." title="Upload..." class="btn btn-tool">
                 <i class="fas fa-upload" title="Upload..."></i>
             </button> -->
-            <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="New Disk..." title="New Disk..."class="btn btn-tool"  (click)="showNew()">
-              <i class="fas fa-plus-square" (click)="showNew()" title="New Disk..."></i>
+            <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새 디스크..." title="새 디스크..."class="btn btn-tool"  (click)="showNew()">
+              <i class="fas fa-plus-square" (click)="showNew()" title="새 디스크..."></i>
           </button>
           </div>
         </div>
@@ -25,13 +25,13 @@
             <thead>
               <tr>
                 <th style="width: 10px">&nbsp;</th>
-                <th style="width: 100px">Namespace</th>
-                <th style="width: 160px">Name</th>
-                <th style="width: 20px">Size</th>
-                <th style="width: 60px">Status</th>
-                <th style="width: 20px">Progress</th>
-                <th style="width: 100px">Storage Class</th>
-                <th style="width: 100px">Access Mode</th>                
+                <th style="width: 100px">네임스페이스</th>
+                <th style="width: 160px">이름</th>
+                <th style="width: 20px">크기</th>
+                <th style="width: 60px">상태</th>
+                <th style="width: 20px">진행률</th>
+                <th style="width: 100px">스토리지 클래스</th>
+                <th style="width: 100px">접근 모드</th>
                 <th style="width: 80px">&nbsp;</th>
               </tr>
             </thead>
@@ -47,23 +47,23 @@
                   <td style="line-height: 2.2 !important;">{{thisDisk.accessMode}}</td>
                   <td style="line-height: 0 !important;">
                     <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">Actions</button>
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">작업</button>
                         <div class="dropdown-menu">
                             <!--- INFO BUTTON -->
                             <a class="btn">
-                                <i class="fas fa-info" (click)="showInfo(thisDisk.namespace, thisDisk.name)" title="Info..."></i>
+                                <i class="fas fa-info" (click)="showInfo(thisDisk.namespace, thisDisk.name)" title="정보..."></i>
                             </a>
                             <!--- RESIZE BUTTON -->
                             <span [ngSwitch]="thisDisk.bound">
-                                <a class="btn" (click)="showResize(thisDisk.namespace, thisDisk.name)" title="Resize..." *ngSwitchCase="true"> 
+                                <a class="btn" (click)="showResize(thisDisk.namespace, thisDisk.name)" title="크기 조정..." *ngSwitchCase="true">
                                     <i class="fas fa-arrow-up" ></i>
                                 </a>
-                                <a class="btn disabled" title="Resize..." *ngSwitchDefault> 
+                                <a class="btn disabled" title="크기 조정..." *ngSwitchDefault>
                                     <i class="fas fa-arrow-up"></i>
                                 </a>
                             </span>
                             <!--- DELETE BUTTON -->
-                            <a class="btn" title="Delete...">
+                            <a class="btn" title="삭제...">
                                 <i class="fas fa-trash" (click)="showDelete(thisDisk.namespace, thisDisk.name)"></i>
                             </a>
                         </div>
@@ -93,13 +93,13 @@
             <div class="form-group">
               <input type="hidden" id="resize-namespace" name="resize-namespace" value="">
               <input type="hidden" id="resize-disk" name="resize-disk" value="">
-              <label for="resizeInput">New size in GB</label>
+              <label for="resizeInput">새 크기 (GB)</label>
               <input #resizeinput type="number" class="form-control" id="resize-input" name="resize-input" placeholder="0">
             </div>
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>Close</button>
-            <button type="button" class="btn btn-primary" (click)="applyResize(resizeinput.value)">Resize</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>닫기</button>
+            <button type="button" class="btn btn-primary" (click)="applyResize(resizeinput.value)">크기 조정</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -125,7 +125,7 @@
             </ul>
           </div>
           <div class="modal-footer justify-content-center">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-info")'>Close</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-info")'>닫기</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -147,28 +147,28 @@
           </div>
           <input type="hidden" id="new-node" name="new-node" value="">
           <div class="modal-body" id="new-value">
-            <label for="newDiskName">Disk Name</label>
+            <label for="newDiskName">디스크 이름</label>
             <input #newdiskname type="text" class="form-control" id="new-disk-name" name="new-disk-name" placeholder="disk-name">
-            <label for="newDiskNamespace">Namespace:</label>
+            <label for="newDiskNamespace">네임스페이스:</label>
             <select #newdisknamespace class="custom-select rounded-0" name="new-disk-namespace" id="new-disk-namespace">
                 <option>Value 1</option>
             </select>
-            <label for="newDiskStorageClass">Storage Class:</label>
+            <label for="newDiskStorageClass">스토리지 클래스:</label>
             <select #newdiskstorageclass class="custom-select rounded-0" name="new-disk-storageclass" id="new-disk-storageclass">
                 <option>Value 1</option>
             </select>
-            <label for="newDiskAccessMode">Access Mode:</label>
+            <label for="newDiskAccessMode">접근 모드:</label>
             <select #newdiskaccessmode class="custom-select rounded-0" name="new-disk-accessmode" id="new-disk-accessmode">
                 <option>ReadWriteOnce</option>
                 <option>ReadOnlyMany</option>
                 <option>ReadWriteMany</option>
             </select>
-            <label for="newDisksize">Size in GB</label>
+            <label for="newDisksize">크기 (GB)</label>
             <input #newdisksize type="number" class="form-control" id="new-disk-size" name="new-disk-size" placeholder="0">
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>Close</button>
-            <button type="button" class="btn btn-primary" (click)="applyNew(newdisknamespace.value, newdiskname.value , newdiskstorageclass.value, newdiskaccessmode.value, newdisksize.value)">Create</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>닫기</button>
+            <button type="button" class="btn btn-primary" (click)="applyNew(newdisknamespace.value, newdiskname.value , newdiskstorageclass.value, newdiskaccessmode.value, newdisksize.value)">생성</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -194,8 +194,8 @@
             <p>BODY_TEMPLATE</p>
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>Close</button>
-            <button type="button" class="btn btn-danger" (click)="applyDelete()">Delete</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>닫기</button>
+            <button type="button" class="btn btn-danger" (click)="applyDelete()">삭제</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -204,4 +204,5 @@
     </div>
   </div>
 </div>
+
 

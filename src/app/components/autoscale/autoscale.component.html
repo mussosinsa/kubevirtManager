@@ -6,14 +6,14 @@
           <div class="card-header">
             <h3 class="card-title">
               <i class="fas fa-expand-alt"></i>
-              &nbsp;&nbsp;Scaling Groups
+              &nbsp;&nbsp;확장 그룹
             </h3>
             <div class="card-tools">
-              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="Refresh..." title="Refresh..." class="btn btn-tool" (click)="fullReload()">
-                  <i class="fas fa-sync" (click)="fullReload()" title="Refresh..."></i>
+              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새로고침..." title="새로고침..." class="btn btn-tool" (click)="fullReload()">
+                  <i class="fas fa-sync" (click)="fullReload()" title="새로고침..."></i>
               </button>
-              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="Create Autoscaling group..." title="Create Autoscaling group..." class="btn btn-tool" (click)="showNew()">
-                  <i class="fas fa-plus-square" (click)="showNew()" title="Create Autoscaling group..."></i>
+              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="자동 확장 그룹 생성..." title="자동 확장 그룹 생성..." class="btn btn-tool" (click)="showNew()">
+                  <i class="fas fa-plus-square" (click)="showNew()" title="자동 확장 그룹 생성..."></i>
               </button>
             </div>
           </div>
@@ -22,16 +22,16 @@
                 <thead>
                   <tr>
                     <th style="width: 10px">&nbsp;</th>
-                    <th style="width: 130px">Namespace</th>
-                    <th style="width: 160px">Name</th>
-                    <th style="width: 160px">Target Pool</th>
-                    <th style="width: 20px">Min</th>
-                    <th style="width: 20px">Max</th>
-                    <th style="width: 40px">Metric</th>
-                    <th style="width: 60px">Threshold</th>
-                    <th style="width: 20px">Current</th>
-                    <th style="width: 20px">Desired</th>
-                    <th style="width: 60px">Utilization</th>
+                    <th style="width: 130px">네임스페이스</th>
+                    <th style="width: 160px">이름</th>
+                    <th style="width: 160px">대상 풀</th>
+                    <th style="width: 20px">최소</th>
+                    <th style="width: 20px">최대</th>
+                    <th style="width: 40px">지표</th>
+                    <th style="width: 60px">임계값</th>
+                    <th style="width: 20px">현재</th>
+                    <th style="width: 20px">원하는</th>
+                    <th style="width: 60px">사용률</th>
                     <th style="width: 120px">&nbsp;</th>
                   </tr>
                 </thead>
@@ -50,12 +50,12 @@
                     <td style="line-height: 2.2 !important;">{{thisHPA.currAvgUtl}}%</td>
                     <td style="line-height: 0 !important;">
                         <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">Actions</button>
+                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">작업</button>
                             <div class="dropdown-menu">
-                                <a class="btn" (click)="showEdit(thisHPA.namespace, thisHPA.name, thisHPA.minReplicas, thisHPA.maxReplicas, thisHPA.metricAvg)" title="Config...">
+                                <a class="btn" (click)="showEdit(thisHPA.namespace, thisHPA.name, thisHPA.minReplicas, thisHPA.maxReplicas, thisHPA.metricAvg)" title="설정...">
                                     <i class="fas fa-cog" (click)="showEdit(thisHPA.namespace, thisHPA.name, thisHPA.minReplicas, thisHPA.maxReplicas, thisHPA.metricAvg)"></i>
                                 </a>
-                                <a class="btn" (click)="showDelete(thisHPA.namespace, thisHPA.name)" title="Delete...">
+                                <a class="btn" (click)="showDelete(thisHPA.namespace, thisHPA.name)" title="삭제...">
                                 <i class="fas fa-trash" (click)="showDelete(thisHPA.namespace, thisHPA.name)"></i>
                                 </a>
                             </div>
@@ -82,26 +82,26 @@
               </button>
             </div>
             <div class="modal-body" id="new-value">
-              <label for="newHPAName">Name:</label>
+              <label for="newHPAName">이름:</label>
               <input #newhpaname type="text" class="form-control" id="new-hpa-name" name="new-hpa-name" placeholder="name">
-              <label for="newHPANamespace">Namespace:</label>
+              <label for="newHPANamespace">네임스페이스:</label>
               <select #newhpanamespace class="custom-select rounded-0" name="new-hpa-namespace" id="new-hpa-namespace" (change)="onChangeNamespace(newhpanamespace.value)">
                   <option></option>
               </select>
-              <label for="newHPATargetPool">VM Pool:</label>
+              <label for="newHPATargetPool">VM 풀:</label>
               <select #newhpatargetpool class="custom-select rounded-0" name="new-hpa-targetpool" id="new-hpa-targetpool">
                   <option></option>
               </select>
-              <label for="newHPAMin">Min Replicas</label>
+              <label for="newHPAMin">최소 레플리카</label>
               <input #newhpamin type="number" class="form-control" id="new-hpa-min" name="new-hpa-min" placeholder="1">
-              <label for="newHPAMax">Max Replicas</label>
+              <label for="newHPAMax">최대 레플리카</label>
               <input #newhpamax type="number" class="form-control" id="new-hpa-max" name="new-hpa-max" placeholder="1">
-              <label for="newHPAThreshold">Target CPU Utilization Threshold (%)</label>
+              <label for="newHPAThreshold">대상 CPU 사용률 임계값 (%)</label>
               <input #newhpathreshold type="number" class="form-control" id="new-hpa-threshold" name="new-hpa-threshold" placeholder="75">
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)='applyNew(newhpaname.value, newhpanamespace.value, newhpatargetpool.value, newhpamin.value, newhpamax.value, newhpathreshold.value)'>Create</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)='applyNew(newhpaname.value, newhpanamespace.value, newhpatargetpool.value, newhpamin.value, newhpamax.value, newhpathreshold.value)'>생성</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -124,16 +124,16 @@
             <div class="modal-body" id="edit-value">
               <input #edithpaname type="hidden" class="form-control" id="edit-hpa-name" name="edit-hpa-name">
               <input #edithpanamespace type="hidden" name="edit-hpa-namespace" id="edit-hpa-namespace">
-              <label for="editHPAMin">Min Replicas</label>
+              <label for="editHPAMin">최소 레플리카</label>
               <input #edithpamin type="number" class="form-control" id="edit-hpa-min" name="edit-hpa-min" value="1">
-              <label for="editHPAMax">Max Replicas</label>
+              <label for="editHPAMax">최대 레플리카</label>
               <input #edithpamax type="number" class="form-control" id="edit-hpa-max" name="edit-hpa-max" value="1">
-              <label for="editHPAThreshold">Target CPU Utilization Threshold (%)</label>
+              <label for="editHPAThreshold">대상 CPU 사용률 임계값 (%)</label>
               <input #edithpathreshold type="number" class="form-control" id="edit-hpa-threshold" name="edit-hpa-threshold" value="75">
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-edit")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)='applyEdit(edithpanamespace.value, edithpaname.value, edithpamin.value, edithpamax.value, edithpathreshold.value)'>Save</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-edit")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)='applyEdit(edithpanamespace.value, edithpaname.value, edithpamin.value, edithpamax.value, edithpathreshold.value)'>저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -159,8 +159,8 @@
               <p>BODY_TEMPLATE</p>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>Close</button>
-              <button type="button" class="btn btn-danger" (click)="applyDelete()">Delete</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>닫기</button>
+              <button type="button" class="btn btn-danger" (click)="applyDelete()">삭제</button>
             </div>
           </div>
           <!-- /.modal-content -->

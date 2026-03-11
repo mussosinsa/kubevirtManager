@@ -6,14 +6,14 @@
           <div class="card-header">
             <h3 class="card-title">
               <i class="fas fa-server"></i>
-              &nbsp;&nbsp;Virtual Machine Pools
+              &nbsp;&nbsp;가상 머신 풀
             </h3>
             <div class="card-tools">
-              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="Refresh..." title="Refresh..." class="btn btn-tool" (click)="fullReload()">
-                  <i class="fas fa-sync" (click)="fullReload()" title="Refresh..."></i>
+              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새로고침..." title="새로고침..." class="btn btn-tool" (click)="fullReload()">
+                  <i class="fas fa-sync" (click)="fullReload()" title="새로고침..."></i>
               </button>
-              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="New VM Pool..." title="New VM Pool..." class="btn btn-tool" (click)='showNewPool()' *ngIf="cdiCheck">
-                  <i class="fas fa-plus-square" (click)='showNewPool()' title="New VM Pool..."></i>
+              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새 VM 풀..." title="새 VM 풀..." class="btn btn-tool" (click)='showNewPool()' *ngIf="cdiCheck">
+                  <i class="fas fa-plus-square" (click)='showNewPool()' title="새 VM 풀..."></i>
               </button>
             </div>
           </div>
@@ -23,14 +23,14 @@
                 <thead>
                     <tr>
                         <th style="width: 10px">&nbsp;</th>
-                        <th style="width: 130px">Namespace</th>
-                        <th style="width: 180px">Pool Name</th>
-                        <th style="width: 60px">VM Type</th>
+                        <th style="width: 130px">네임스페이스</th>
+                        <th style="width: 180px">풀 이름</th>
+                        <th style="width: 60px">VM 유형</th>
                         <th style="width: 18px">vCPU</th>
-                        <th style="width: 18px">Memory</th>
-                        <!-- <th style="width: 18px">Running</th> -->
-                        <th style="width: 25px">Replicas</th>
-                        <th style="width: 25px">Ready</th>
+                        <th style="width: 18px">메모리</th>
+                        <!-- <th style="width: 18px">실행 중</th> -->
+                        <th style="width: 25px">레플리카</th>
+                        <th style="width: 25px">준비됨</th>
                         <th style="width: 180px">&nbsp;</th>
                     </tr>
                 </thead>
@@ -47,60 +47,60 @@
                           </span>
                         </span>
                     </td>
-                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">{{thisPool.namespace}}</a></td>
-                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">{{thisPool.name}}</a></td>
-                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">{{thisPool.instType}}</a></td>
-                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">{{thisPool.cores * thisPool.sockets * thisPool.threads}}</a></td>
-                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">{{thisPool.memory}}</a></td>
-                    <!-- <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">{{thisPool.running}}</a></td> -->
-                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">{{thisPool.replicas}}</a></td>
-                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">{{thisPool.readyReplicas || "0"}}</a></td>
+                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">{{thisPool.namespace}}</a></td>
+                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">{{thisPool.name}}</a></td>
+                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">{{thisPool.instType}}</a></td>
+                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">{{thisPool.cores * thisPool.sockets * thisPool.threads}}</a></td>
+                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">{{thisPool.memory}}</a></td>
+                    <!-- <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">{{thisPool.running}}</a></td> -->
+                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">{{thisPool.replicas}}</a></td>
+                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">{{thisPool.readyReplicas || "0"}}</a></td>
                     <td style="line-height: 2.2 !important;">
                         <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">Actions</button>
+                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">작업</button>
                             <div class="dropdown-menu">
                                 <!--- INFO BUTTON -->
                                 <span>
-                                    <a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="Pool details...">
+                                    <a class="btn" routerLink="/vmpooldetail/{{thisPool.namespace}}/{{thisPool.name}}" title="풀 세부 정보...">
                                     <i class="fas fa-info"></i>
                                     </a>
                                 </span>
                                 <!--- POWER ON BUTTON -->
                                 <span [ngSwitch]="thisPool.running">
-                                    <a class="btn disabled" (click)='poolOperations("start", thisPool.namespace, thisPool.name)' title="Power on..." *ngSwitchCase="true">
+                                    <a class="btn disabled" (click)='poolOperations("start", thisPool.namespace, thisPool.name)' title="전원 켜기..." *ngSwitchCase="true">
                                     <i class="fas fa-plug disabled"></i>
                                     </a>
-                                    <a class="btn" (click)='poolOperations("start", thisPool.namespace, thisPool.name)' title="Power on..." *ngSwitchDefault>
+                                    <a class="btn" (click)='poolOperations("start", thisPool.namespace, thisPool.name)' title="전원 켜기..." *ngSwitchDefault>
                                     <i class="fas fa-plug"></i>
                                     </a>
                                 </span>
                                 <!--- POWER OFF BUTTON -->
                                 <span [ngSwitch]="thisPool.running">
-                                    <a class="btn" (click)='poolOperations("stop", thisPool.namespace, thisPool.name)' title="Power off..." *ngSwitchCase="true">
+                                    <a class="btn" (click)='poolOperations("stop", thisPool.namespace, thisPool.name)' title="전원 끄기..." *ngSwitchCase="true">
                                     <i class="fas fa-power-off"></i>
                                     </a>
-                                    <a class="btn disabled" (click)='poolOperations("stop", thisPool.namespace, thisPool.name)' title="Power off..." *ngSwitchDefault>
+                                    <a class="btn disabled" (click)='poolOperations("stop", thisPool.namespace, thisPool.name)' title="전원 끄기..." *ngSwitchDefault>
                                     <i class="fas fa-power-off disabled"></i>
                                     </a>
                                 </span>
                                 <!--- SCALE REPLICAS -->
                                 <span>
-                                    <a class="btn"  (click)='showReplicas(thisPool.namespace, thisPool.name)' title="Scale...">
+                                    <a class="btn"  (click)='showReplicas(thisPool.namespace, thisPool.name)' title="확장...">
                                     <i class="fas fa-arrow-up"></i>
                                     </a>
                                 </span>
                                 <!--- CONFIG BUTTON -->
                                 <span [ngSwitch]="thisPool.instType">
-                                    <a class="btn" (click)="showResize(thisPool.name, thisPool.namespace, thisPool.sockets, thisPool.cores, thisPool.threads, thisPool.memory)" title="Config..." *ngSwitchCase="'custom'">
+                                    <a class="btn" (click)="showResize(thisPool.name, thisPool.namespace, thisPool.sockets, thisPool.cores, thisPool.threads, thisPool.memory)" title="설정..." *ngSwitchCase="'custom'">
                                     <i class="fas fa-cog"></i>
                                     </a>
-                                    <a class="btn" (click)="showType(thisPool.name, thisPool.namespace)" title="Config..." *ngSwitchDefault>
+                                    <a class="btn" (click)="showType(thisPool.name, thisPool.namespace)" title="설정..." *ngSwitchDefault>
                                     <i class="fas fa-cog"></i>
                                     </a>
                                 </span>
                                 <!--- DELETE BUTTON -->
                                 <span>
-                                    <a class="btn" (click)='showDelete(thisPool.namespace, thisPool.name)' title="Delete...">
+                                    <a class="btn" (click)='showDelete(thisPool.namespace, thisPool.name)' title="삭제...">
                                     <i class="fas fa-trash"></i>
                                     </a>
                                 </span>
@@ -136,31 +136,31 @@
                   <!-- TABS Selector-->
                   <ul class="nav nav-tabs" id="custom-tabs-two-tab" role="tablist">
                     <li class="nav-item">
-                      <a class="nav-link active" id="newpool-home-tab" data-toggle="pill" href="#newpool-home" role="tab" aria-controls="newpool-home" aria-selected="false">Basic</a>
+                      <a class="nav-link active" id="newpool-home-tab" data-toggle="pill" href="#newpool-home" role="tab" aria-controls="newpool-home" aria-selected="false">기본</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" id="newpool-meta-tab" data-toggle="pill" href="#newpool-meta" role="tab" aria-controls="newpool-meta" aria-selected="false">Metadata</a>
+                      <a class="nav-link" id="newpool-meta-tab" data-toggle="pill" href="#newpool-meta" role="tab" aria-controls="newpool-meta" aria-selected="false">메타데이터</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" id="newpool-cpumem-tab" data-toggle="pill" href="#newpool-cpumem" role="tab" aria-controls="newpool-cpumem" aria-selected="false">CPU/Memory</a>
+                      <a class="nav-link" id="newpool-cpumem-tab" data-toggle="pill" href="#newpool-cpumem" role="tab" aria-controls="newpool-cpumem" aria-selected="false">CPU/메모리</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" id="newpool-disks-tab" data-toggle="pill" href="#newpool-disks" role="tab" aria-controls="newpool-disks" aria-selected="false">Disk</a>
+                      <a class="nav-link" id="newpool-disks-tab" data-toggle="pill" href="#newpool-disks" role="tab" aria-controls="newpool-disks" aria-selected="false">디스크</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" id="newpool-net-tab" data-toggle="pill" href="#newpool-net" role="tab" aria-controls="newpool-net" aria-selected="false">Networking</a>
+                      <a class="nav-link" id="newpool-net-tab" data-toggle="pill" href="#newpool-net" role="tab" aria-controls="newpool-net" aria-selected="false">네트워킹</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="newpool-liveness-tab" data-toggle="pill" href="#newpool-liveness" role="tab" aria-controls="newpool-liveness" aria-selected="false">Liveness Probe</a>
+                        <a class="nav-link" id="newpool-liveness-tab" data-toggle="pill" href="#newpool-liveness" role="tab" aria-controls="newpool-liveness" aria-selected="false">활성 프로브</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="newpool-readiness-tab" data-toggle="pill" href="#newpool-readiness" role="tab" aria-controls="newpool-readiness" aria-selected="false">Readiness Probe</a>
+                        <a class="nav-link" id="newpool-readiness-tab" data-toggle="pill" href="#newpool-readiness" role="tab" aria-controls="newpool-readiness" aria-selected="false">준비 프로브</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" id="newpool-userdata-tab" data-toggle="pill" href="#newpool-userdata" role="tab" aria-controls="newpool-userdata" aria-selected="false">User Data</a>
+                      <a class="nav-link" id="newpool-userdata-tab" data-toggle="pill" href="#newpool-userdata" role="tab" aria-controls="newpool-userdata" aria-selected="false">사용자 데이터</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="newpool-initscript-tab" data-toggle="pill" href="#newpool-initscript" role="tab" aria-controls="newpool-initscript" aria-selected="false">Init Script</a>
+                        <a class="nav-link" id="newpool-initscript-tab" data-toggle="pill" href="#newpool-initscript" role="tab" aria-controls="newpool-initscript" aria-selected="false">초기화 스크립트</a>
                     </li>
                   </ul>
                 </div>
@@ -168,20 +168,20 @@
                   <!-- HOME TAB -->
                   <div class="tab-content" id="custom-tabs-two-tabContent">
                     <div class="tab-pane fade show active" id="newpool-home" role="tabpanel" aria-labelledby="newpool-home-tab">
-                      <label for="newpool-name">Name:</label>
+                      <label for="newpool-name">이름:</label>
                       <input #newpoolname type="text" class="form-control" id="newpool-name" name="newpool-name">
-                      <label for="newpool-namespaces">Namespace:</label>
+                      <label for="newpool-namespaces">네임스페이스:</label>
                       <select #newpoolnamespace class="custom-select rounded-0" name="newpool-namespace" id="newpool-namespace" (change)="onChangeNamespace(newpoolnamespace.value)">
                         <option>Value 1</option>
                       </select>
-                      <label for="newpool-replicas">Replicas:</label>
+                      <label for="newpool-replicas">레플리카:</label>
                       <input #newpoolreplicas type="number" class="form-control" id="newpool-replicas" name="newpool-replicas">
                     </div>
                     <!-- LABELS TAB -->
                     <div class="tab-pane fade" id="newpool-meta" role="tabpanel" aria-labelledby="newpool-meta-tab">
                         <div class="row">
-                            <label for="newpool-labels">Labels:&nbsp;
-                            <a class="btn" (click)="addLabel()" title="Add new label...">
+                            <label for="newpool-labels">레이블:&nbsp;
+                            <a class="btn" (click)="addLabel()" title="새 레이블 추가...">
                                 <i class="fas fa-plus"></i>
                             </a>
                             </label>
@@ -191,17 +191,17 @@
                                 <table class="table table-sm" style="vertical-align: middle !important;">
                                     <thead>
                                         <tr>
-                                        <th style="width: 500px">Key</th>
-                                        <th style="width: 500px">Value</th>
+                                        <th style="width: 500px">키</th>
+                                        <th style="width: 500px">값</th>
                                         <th style="width: 100px">&nbsp;</th>
                                         </tr>
                                     </thead>
-                                    <tbody formArrayName="labels"> 
+                                    <tbody formArrayName="labels">
                                         <tr *ngFor="let label of labels.controls; let i = index" [formGroupName]="i">
                                         <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-labelkey" id="labelKey{{i}}" formControlName="labelKey"></td>
                                         <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-labelvalue" id="labelValue{{i}}" formControlName="labelValue"></td>
                                         <td style="line-height: 2.2 !important;">
-                                            <a class="btn" (click)="removeLabel(i)" title="Remove label...">
+                                            <a class="btn" (click)="removeLabel(i)" title="레이블 제거...">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>
@@ -211,8 +211,8 @@
                             </form>
                         </div>
                         <div class="row">
-                            <label for="newvm-annotations">Annotations:&nbsp;
-                            <a class="btn" (click)="addAnnotation()" title="Add new annotation...">
+                            <label for="newvm-annotations">어노테이션:&nbsp;
+                            <a class="btn" (click)="addAnnotation()" title="새 어노테이션 추가...">
                                 <i class="fas fa-plus"></i>
                             </a>
                             </label>
@@ -222,17 +222,17 @@
                                 <table class="table table-sm" style="vertical-align: middle !important;">
                                     <thead>
                                         <tr>
-                                        <th style="width: 500px">Key</th>
-                                        <th style="width: 500px">Value</th>
+                                        <th style="width: 500px">키</th>
+                                        <th style="width: 500px">값</th>
                                         <th style="width: 100px">&nbsp;</th>
                                         </tr>
                                     </thead>
-                                    <tbody formArrayName="annotations"> 
+                                    <tbody formArrayName="annotations">
                                         <tr *ngFor="let annotation of annotations.controls; let i = index" [formGroupName]="i">
                                         <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-annotationkey" id="annotKey{{i}}" formControlName="annotKey"></td>
                                         <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-annotationvalue" id="annotValue{{i}}" formControlName="annotValue"></td>
                                         <td style="line-height: 2.2 !important;">
-                                            <a class="btn" (click)="removeAnnotation(i)" title="Remove annotation...">
+                                            <a class="btn" (click)="removeAnnotation(i)" title="어노테이션 제거...">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>
@@ -244,30 +244,30 @@
                     </div>
                     <!-- CPU/MEM TAB -->
                     <div class="tab-pane fade" id="newpool-cpumem" role="tabpanel" aria-labelledby="newpool-cpumem-tab">
-                      <label for="newpool-namespaces">Virtual Machine Type:</label>
+                      <label for="newpool-namespaces">가상 머신 유형:</label>
                       <select #newpooltype class="custom-select rounded-0" name="newpool-type" id="newpool-type" (change)="onChangeType(newpooltype.value)">
                           <option>Value 1</option>
                       </select>
                       <div class="pane fade" id="custom-cpu-memory" name="custom-cpu-memory" style="display: none;" aria-hidden="true">
-                          <label for="newpool-cpumem-sockets">Sockets:</label>
+                          <label for="newpool-cpumem-sockets">소켓:</label>
                           <input #newpoolcpumemsockets type="number" class="form-control" id="newpool-cpumem-sockets" name="newpool-cpumem-sockets">
-                          <label for="newpool-cpumem-cores">Cores:</label>
+                          <label for="newpool-cpumem-cores">코어:</label>
                           <input #newpoolcpumemcores type="number" class="form-control" id="newpool-cpumem-cores" name="newpool-cpumem-cores">
-                          <label for="newpool-cpumem-threads">Threads:</label>
+                          <label for="newpool-cpumem-threads">스레드:</label>
                           <input #newpoolcpumemthreads type="number" class="form-control" id="newpool-cpumem-threads" name="newpool-cpumem-threads">
-                          <label for="newpool-cpumem-memory">Memory (in GB):</label>
+                          <label for="newpool-cpumem-memory">메모리 (GB):</label>
                           <input #newpoolcpumemmemory type="number" class="form-control" id="newpool-cpumem-memory" name="newpool-cpumem-memory">
                       </div>
-                      <label for="newpool-priorityclass">Priority Class:</label>
+                      <label for="newpool-priorityclass">우선순위 클래스:</label>
                       <select #newpoolpc class="custom-select rounded-0" name="newpool-pc" id="newpool-pc">
                           <option>Value 1</option>
                       </select>
-                      <label for="newpool-firmware">Firmware:</label>
+                      <label for="newpool-firmware">펌웨어:</label>
                     <select #newpoolfirmware class="custom-select rounded-0" name="newpool-firmware" id="newpool-firmware" (change)="onChangeFirmware(newpoolfirmware.value)">
                         <option value="bios" selected>BIOS</option>
                         <option value="uefi">UEFI</option>
                     </select>
-                    <label for="newpool-secureboot">Secure Boot:</label>
+                    <label for="newpool-secureboot">보안 부팅:</label>
                     <select #newpoolsecureboot class="custom-select rounded-0" name="newpool-secureboot" id="newpool-secureboot" disabled>
                         <option value="false" selected>false</option>
                         <option value="true">true</option>
@@ -276,8 +276,8 @@
                     <!-- DISK TAB -->
                     <div class="tab-pane fade" id="newpool-disks" role="tabpanel" aria-labelledby="newpool-disks-tab">
                         <div class="row">
-                            <label for="newpool-disks">Disks:&nbsp;
-                              <a class="btn" (click)="addDisk()" title="Add new disk...">
+                            <label for="newpool-disks">디스크:&nbsp;
+                              <a class="btn" (click)="addDisk()" title="새 디스크 추가...">
                                 <i class="fas fa-plus"></i>
                               </a>
                             </label>
@@ -289,7 +289,7 @@
                                         <div class="card-header">
                                             <b class="card-title" style="font-weight: bold;"><i class="fas fa-hdd"></i> &nbsp; disk{{i}}</b>
                                             <div class="card-tools">
-                                                <button type="button" class="btn btn-tool" (click)="removeDisk(i)" title="Remove disk...">
+                                                <button type="button" class="btn btn-tool" (click)="removeDisk(i)" title="디스크 제거...">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                               <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -300,21 +300,21 @@
                                         <div class="card-body" style="display: block;">
                                             <div class="row">
                                                 <div class="col-2" name="newpool-disk-type-col">
-                                                    <label for="newpool-disktype-{{i}}">Type:</label>
+                                                    <label for="newpool-disktype-{{i}}">유형:</label>
                                                     <select #newpooldisktype class="custom-select rounded-0" name="newpool-disktype-{{i}}" id="diskType-{{i}}" formControlName="diskType" (change)="onChangeDisk(newpoolnamespace.value, i)">
                                                         <option selected></option>
-                                                        <option value="blank">Blank Disk</option>
-                                                        <option value="image">Image</option>
+                                                        <option value="blank">빈 디스크</option>
+                                                        <option value="image">이미지</option>
                                                         <option value="dv">DataVolume</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-2">
-                                                    <label for="newpool-disksc-{{i}}">Storage Class:</label>
+                                                    <label for="newpool-disksc-{{i}}">스토리지 클래스:</label>
                                                     <select #newpooldisksc class="custom-select rounded-0" name="newpool-disksc-{{i}}" id="diskStorageClass-{{i}}" formControlName="diskStorageClass">
                                                     </select>
                                                 </div>
                                                 <div class="col-2">
-                                                    <label for="newpool-diskam-{{i}}">Access Mode:</label>
+                                                    <label for="newpool-diskam-{{i}}">접근 모드:</label>
                                                     <select #newpooldiskam class="custom-select rounded-0" name="newpool-diskeam-{{i}}" id="diskAccessMode-{{i}}" formControlName="diskAccessMode">
                                                         <option selected></option>
                                                         <option>ReadWriteOnce</option>
@@ -323,21 +323,21 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-3">
-                                                    <label for="newpool-diskvalue-{{i}}">Value:</label>
+                                                    <label for="newpool-diskvalue-{{i}}">값:</label>
                                                     <select #newpooldiskvalue class="custom-select rounded-0" name="newpool-diskvalue-{{i}}" id="diskValue-{{i}}" formControlName="diskValue">
                                                     </select>
                                                 </div>
                                                 <div class="col-1">
-                                                    <label for="newpool-disksize-{{i}}">Size/GB:</label>
+                                                    <label for="newpool-disksize-{{i}}">크기/GB:</label>
                                                     <input #newpooldisksize type=number class="form-control" name="newpool-disksize-{{i}}" id="diskSize-{{i}}" formControlName="diskSize">
                                                 </div>
                                                 <div class="col-2">
-                                                    <label for="newpool-diskcm-{{i}}">Cache Mode:</label>
+                                                    <label for="newpool-diskcm-{{i}}">캐시 모드:</label>
                                                     <select #newpooldiskcm class="custom-select rounded-0" name="newpool-diskcm-{{i}}" id="diskCacheMode-{{i}}" formControlName="diskCacheMode">
-                                                        <option value="" selected>Automatic</option>
-                                                        <option value="none">None</option>
-                                                        <option value="writethrough">WriteThrough</option>
-                                                        <option value="writeback">WriteBack</option>
+                                                        <option value="" selected>자동</option>
+                                                        <option value="none">없음</option>
+                                                        <option value="writethrough">쓰기 투과</option>
+                                                        <option value="writeback">쓰기 백</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -350,8 +350,8 @@
                     <!-- NETWORK TAB -->
                     <div class="tab-pane fade" id="newpool-net" role="tabpanel" aria-labelledby="newpool-net-tab">
                         <div class="row">
-                            <label for="newpool-nics">Interfaces:&nbsp;
-                              <a class="btn" (click)="addNic()" title="Add new network...">
+                            <label for="newpool-nics">인터페이스:&nbsp;
+                              <a class="btn" (click)="addNic()" title="새 네트워크 추가...">
                                 <i class="fas fa-plus"></i>
                               </a>
                             </label>
@@ -363,7 +363,7 @@
                                         <div class="card-header">
                                             <b class="card-title" style="font-weight: bold;"><i class="fas fa-network-wired"></i> &nbsp; nic{{j}}</b>
                                             <div class="card-tools">
-                                                <button type="button" class="btn btn-tool" (click)="removeNic(j)" title="Remove network...">
+                                                <button type="button" class="btn btn-tool" (click)="removeNic(j)" title="네트워크 제거...">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                               <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -374,7 +374,7 @@
                                         <div class="card-body" style="display: block;">
                                             <div class="row">
                                                 <div class="col-3" name="newpool-netname-col">
-                                                    <label for="newpool-netname-{{j}}">Network:</label>
+                                                    <label for="newpool-netname-{{j}}">네트워크:</label>
                                                     <select style="min-width: 300px;" class="custom-select rounded-0" name="newpool-netname-{{j}}" id="networkName-{{j}}" formControlName="networkName" (change)="onChangeNetwork(j)">
                                                         <option value="" selected></option>
                                                         <option value=podNetwork>podNetwork</option>
@@ -382,7 +382,7 @@
                                                 </div>
                                                 <div class="col-1">&nbsp;</div>
                                                 <div class="col-3" name="newpool-nettype-col">
-                                                    <label for="newpool-nettype-{{j}}">Type:</label>
+                                                    <label for="newpool-nettype-{{j}}">유형:</label>
                                                     <select #nettype style="min-width: 300px;" class="custom-select rounded-0" name="newpool-nettype-{{j}}" id="networkType-{{j}}" formControlName="networkType">
                                                         <option value=bridge>bridge</option>
                                                         <option value=macvtap>macvtap</option>
@@ -391,7 +391,7 @@
                                                 </div>
                                                 <div class="col-1">&nbsp;</div>
                                                 <div class="col-3" name="newpool-netdrv-col">
-                                                    <label for="newpool-netdrv-{{j}}">Driver:</label>
+                                                    <label for="newpool-netdrv-{{j}}">드라이버:</label>
                                                     <select #netdrv style="min-width: 300px;" class="custom-select rounded-0" name="newpool-netdrv-{{j}}" id="networkDriver-{{j}}" formControlName="networkDriver">
                                                         <option value=virtio selected>virtio</option>
                                                         <option value=e1000>e1000</option>
@@ -411,77 +411,77 @@
                     </div>
                     <!-- LIVENESS CHECK TAB -->
                     <div class="tab-pane fade" id="newpool-liveness" role="tabpanel" aria-labelledby="newpool-liveness-tab">
-                      <label for="newpool-liveness-enable">Liveness Probe:</label>
+                      <label for="newpool-liveness-enable">활성 프로브:</label>
                       <select #newpoollivenessenable class="custom-select rounded-0" name="newpool-liveness-enable" id="newpool-liveness-enable" (change)="onChangeLiveness(newpoollivenessenable.value)">
-                        <option value="disabled">Disabled</option>
-                        <option value="enabled">Enabled</option>
+                        <option value="disabled">비활성화됨</option>
+                        <option value="enabled">활성화됨</option>
                       </select>
-                      <label for="newpool-liveness-type">Probe Type:</label>
+                      <label for="newpool-liveness-type">프로브 유형:</label>
                       <select #newpoollivenesstype class="custom-select rounded-0" name="newpool-liveness-type" id="newpool-liveness-type" (change)="onChangeLivenessType(newpoollivenesstype.value)" disabled>
                         <option value="tcp">TCP</option>
                         <option value="http">HTTP</option>
                       </select>
                       <div class="pane fade" id="newpool-liveness-path-panel" name="newpool-liveness-path-panel" style="display: none;" aria-hidden="true">
-                        <label for="newpool-liveness-path">HTTP Path:</label>
+                        <label for="newpool-liveness-path">HTTP 경로:</label>
                         <input #newpoollivenesspath type="text" class="form-control" id="newpool-liveness-path" name="newpool-liveness-path">
                       </div>
-                      <label for="newpool-liveness-port">Port:</label>
+                      <label for="newpool-liveness-port">포트:</label>
                       <input #newpoollivenessport type="number" class="form-control" id="newpool-liveness-port" name="newpool-liveness-port" disabled>
-                      <label for="newpool-liveness-initialdelay">Initial Delay (s):</label>
+                      <label for="newpool-liveness-initialdelay">초기 지연 (초):</label>
                       <input #newpoollivenessinitialdelay type="number" class="form-control" id="newpool-liveness-initialdelay" name="newpool-liveness-initialdelay" disabled>
-                      <label for="newpool-liveness-interval">Interval (s):</label>
+                      <label for="newpool-liveness-interval">간격 (초):</label>
                       <input #newpoollivenessinterval type="number" class="form-control" id="newpool-liveness-interval" name="newpool-liveness-interval" disabled>
-                      <label for="newpool-liveness-timeout">Timeout (s):</label>
+                      <label for="newpool-liveness-timeout">타임아웃 (초):</label>
                       <input #newpoollivenesstimeout type="number" class="form-control" id="newpool-liveness-timeout" name="newpool-liveness-timeout" disabled>
-                      <label for="newpool-liveness-failure">Failure Threshold:</label>
+                      <label for="newpool-liveness-failure">실패 임계값:</label>
                       <input #newpoollivenessfailure type="number" class="form-control" id="newpool-liveness-failure" name="newpool-liveness-failure" disabled>
                       <input #newpoollivenesssuccess type="hidden" class="form-control" id="newpool-liveness-success" name="newpool-liveness-success" value="1">
                     </div>
                     <!-- READINESS CHECK TAB -->
                     <div class="tab-pane fade" id="newpool-readiness" role="tabpanel" aria-labelledby="newpool-readiness-tab">
-                        <label for="newpool-readiness-enable">Readiness Probe:</label>
+                        <label for="newpool-readiness-enable">준비 프로브:</label>
                         <select #newpoolreadinessenable class="custom-select rounded-0" name="newpool-readiness-enable" id="newpool-readiness-enable" (change)="onChangeReadiness(newpoolreadinessenable.value)">
-                          <option value="disabled">Disabled</option>
-                          <option value="enabled">Enabled</option>
+                          <option value="disabled">비활성화됨</option>
+                          <option value="enabled">활성화됨</option>
                         </select>
-                        <label for="newpool-readiness-type">Probe Type:</label>
+                        <label for="newpool-readiness-type">프로브 유형:</label>
                         <select #newpoolreadinesstype class="custom-select rounded-0" name="newpool-readiness-type" id="newpool-readiness-type" (change)="onChangeReadinessType(newpoolreadinesstype.value)" disabled>
                           <option value="tcp">TCP</option>
                           <option value="http">HTTP</option>
                         </select>
                         <div class="pane fade" id="newpool-readiness-path-panel" name="newpool-readiness-path-panel" style="display: none;" aria-hidden="true">
-                          <label for="newpool-readiness-path">HTTP Path:</label>
+                          <label for="newpool-readiness-path">HTTP 경로:</label>
                           <input #newpoolreadinesspath type="text" class="form-control" id="newpool-readiness-path" name="newpool-readiness-path">
                         </div>
-                        <label for="newpool-readiness-port">Port:</label>
+                        <label for="newpool-readiness-port">포트:</label>
                         <input #newpoolreadinessport type="number" class="form-control" id="newpool-readiness-port" name="newpool-readiness-port" disabled>
-                        <label for="newpool-readiness-initialdelay">Initial Delay (s):</label>
+                        <label for="newpool-readiness-initialdelay">초기 지연 (초):</label>
                         <input #newpoolreadinessinitialdelay type="number" class="form-control" id="newpool-readiness-initialdelay" name="newpool-readiness-initialdelay" disabled>
-                        <label for="newpool-readiness-interval">Interval (s):</label>
+                        <label for="newpool-readiness-interval">간격 (초):</label>
                         <input #newpoolreadinessinterval type="number" class="form-control" id="newpool-readiness-interval" name="newpool-readiness-interval" disabled>
-                        <label for="newpool-readiness-timeout">Timeout (s):</label>
+                        <label for="newpool-readiness-timeout">타임아웃 (초):</label>
                         <input #newpoolreadinesstimeout type="number" class="form-control" id="newpool-readiness-timeout" name="newpool-readiness-timeout" disabled>
-                        <label for="newpool-readiness-failure">Failure Threshold:</label>
+                        <label for="newpool-readiness-failure">실패 임계값:</label>
                         <input #newpoolreadinessfailure type="number" class="form-control" id="newpool-readiness-failure" name="newpool-readiness-failure" disabled>
                         <input #newpoolreadinesssuccess type="hidden" class="form-control" id="newpool-readiness-success" name="newpool-readiness-success" value="1">
                     </div>
                     <!-- USERDATA TAB -->
                     <div class="tab-pane fade" id="newpool-userdata" role="tabpanel" aria-labelledby="newpool-userdata-tab">
-                        <label for="newpool-userdata-username">Username:</label>
+                        <label for="newpool-userdata-username">사용자 이름:</label>
                         <input #newpooluserdatausername type="text" class="form-control" id="newpool-userdata-username" name="newpool-userdata-username">
-                        <label for="newpool-userdata-auth">Authentication:</label>
+                        <label for="newpool-userdata-auth">인증:</label>
                         <select #newpooluserdataauth class="custom-select rounded-0" name="newpool-userdata-auth" id="newpool-userdata-auth" (change)="onChangeAuthType(newpooluserdataauth.value, newpoolnamespace.value)">
-                          <option value="password">User/Password</option>
-                          <option value="ssh">SSH Private Key</option>
+                          <option value="password">사용자/비밀번호</option>
+                          <option value="ssh">SSH 개인 키</option>
                         </select>
                         <div class="pane fade show" id="newpool-userdata-password-panel" name="newpool-userdata-password-panel" style="display: contents;" aria-hidden="false">
-                          <label for="newpool-userdata-password">Password:</label>
+                          <label for="newpool-userdata-password">비밀번호:</label>
                           <input #newpooluserdatapassword type="password" class="form-control" id="newpool-userdata-password" name="newpool-userdata-password">
                         </div>
                         <div class="pane fade" id="newpool-userdata-ssh-panel" name="newpool-userdata-ssh-panel" style="display: none;" aria-hidden="true">
-                          <label for="newpool-userdata-ssh">SSH Key:</label>
+                          <label for="newpool-userdata-ssh">SSH 키:</label>
                           <select #newpooluserdatassh class="custom-select rounded-0" name="newpool-userdata-ssh" id="newpool-userdata-ssh">
-                            <option>Loading...</option>
+                            <option>로딩 중...</option>
                           </select>
                         </div>
                       </div>
@@ -495,8 +495,8 @@
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-newpool")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyNewPool(newpoolname.value, newpoolnamespace.value, newpoolreplicas.value, newpooltype.value, newpoolcpumemsockets.value, newpoolcpumemcores.value, newpoolcpumemthreads.value, newpoolcpumemmemory.value, newpoolpc.value, newpoolfirmware.value, newpoolsecureboot.value, newpoollivenessenable.value, newpoollivenesstype.value, newpoollivenesspath.value, newpoollivenessport.value, newpoollivenessinitialdelay.value, newpoollivenessinterval.value, newpoollivenesstimeout.value, newpoollivenessfailure.value, newpoollivenesssuccess.value, newpoolreadinessenable.value, newpoolreadinesstype.value, newpoolreadinesspath.value, newpoolreadinessport.value, newpoolreadinessinitialdelay.value, newpoolreadinessinterval.value, newpoolreadinesstimeout.value, newpoolreadinessfailure.value, newpoolreadinesssuccess.value, newpooluserdatausername.value, newpooluserdataauth.value, newpooluserdatapassword.value, newpooluserdatassh.value, newpoolinitscript.value)">Create</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-newpool")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyNewPool(newpoolname.value, newpoolnamespace.value, newpoolreplicas.value, newpooltype.value, newpoolcpumemsockets.value, newpoolcpumemcores.value, newpoolcpumemthreads.value, newpoolcpumemmemory.value, newpoolpc.value, newpoolfirmware.value, newpoolsecureboot.value, newpoollivenessenable.value, newpoollivenesstype.value, newpoollivenesspath.value, newpoollivenessport.value, newpoollivenessinitialdelay.value, newpoollivenessinterval.value, newpoollivenesstimeout.value, newpoollivenessfailure.value, newpoollivenesssuccess.value, newpoolreadinessenable.value, newpoolreadinesstype.value, newpoolreadinesspath.value, newpoolreadinessport.value, newpoolreadinessinitialdelay.value, newpoolreadinessinterval.value, newpoolreadinesstimeout.value, newpoolreadinessfailure.value, newpoolreadinesssuccess.value, newpooluserdatausername.value, newpooluserdataauth.value, newpooluserdatapassword.value, newpooluserdatassh.value, newpoolinitscript.value)">생성</button>
             </div>
           </form>
           </div>
@@ -523,8 +523,8 @@
               <p>BODY_TEMPLATE</p>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>Close</button>
-              <button type="button" class="btn btn-danger" (click)="applyDelete()">Delete</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>닫기</button>
+              <button type="button" class="btn btn-danger" (click)="applyDelete()">삭제</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -550,8 +550,8 @@
               <p>BODY_TEMPLATE</p>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-deletevm")'>Close</button>
-              <button type="button" class="btn btn-danger" (click)="applyDeleteVM()">Delete</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-deletevm")'>닫기</button>
+              <button type="button" class="btn btn-danger" (click)="applyDeleteVM()">삭제</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -574,21 +574,21 @@
             <input type="hidden" id="type-pool" name="type-pool" value="">
             <input type="hidden" id="type-namespace" name="type-namespace" value="">
             <div class="modal-body" id="type-value">
-              <label for="newType">Virtual Machine Pool Type:</label>
+              <label for="newType">가상 머신 풀 유형:</label>
               <select #changepooltype class="custom-select rounded-0" name="changepool-type" id="changepool-type">
                   <option>Value 1</option>
               </select>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyType(changepooltype.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyType(changepooltype.value)">변경 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
     </div>
-  
+
 
     <!--               -->
     <!-- Modal: Resize -->
@@ -605,18 +605,18 @@
             <div class="modal-body" id="resize-value">
               <input #resizeName type="hidden" id="resize-name" name="resize-name" value="">
               <input #resizeNamespace type="hidden" id="resize-namespace" name="resize-namespace" value="">
-              <label for="resize-sockets">Sockets:</label>
+              <label for="resize-sockets">소켓:</label>
               <input #resizeSockets type="number" class="form-control" id="resize-sockets" name="resize-sockets">
-              <label for="resize-cores">Cores:</label>
+              <label for="resize-cores">코어:</label>
               <input #resizeCores type="number" class="form-control" id="resize-cores" name="resize-cores">
-              <label for="resize-threads">Threads:</label>
+              <label for="resize-threads">스레드:</label>
               <input #resizeThreads type="number" class="form-control" id="resize-threads" name="resize-threas">
-              <label for="resize-memory">Memory (in GB):</label>
+              <label for="resize-memory">메모리 (GB):</label>
               <input #resizeMemory type="number" class="form-control" id="resize-memory" name="resize-memory">
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyResize(resizeSockets.value, resizeCores.value, resizeThreads.value, resizeMemory.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyResize(resizeSockets.value, resizeCores.value, resizeThreads.value, resizeMemory.value)">변경 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -641,20 +641,19 @@
               <div class="form-group">
                 <input type="hidden" id="replicas-namespace" name="replicas-namespace" value="">
                 <input type="hidden" id="replicas-pool" name="replicas-pool" value="">
-                <label for="replicasInput">New number of replicas</label>
+                <label for="replicasInput">새 레플리카 수</label>
                 <input #replicasinput type="number" class="form-control" id="replicas-input" name="replicas-input" placeholder="0">
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-replicas")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyReplicas(replicasinput.value)">Resize</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-replicas")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyReplicas(replicasinput.value)">크기 조정</button>
             </div>
           </div>
           <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
-      </div> 
+      </div>
     </div>
 
   </div>
-

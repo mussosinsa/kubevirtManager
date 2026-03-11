@@ -6,10 +6,10 @@
         <div class="card-header">
           <h3 class="card-title">
             <i class="fas fa-shield-alt"></i>
-            &nbsp;&nbsp;Firewall Rules
+            &nbsp;&nbsp;방화벽 규칙
           </h3>
           <div class="card-tools">
-            <button type="button" class="btn btn-tool" (click)="showNew()" title="New Rule...">
+            <button type="button" class="btn btn-tool" (click)="showNew()" title="새 규칙...">
               <i class="fas fa-plus-square"></i>
           </button>
           </div>
@@ -19,14 +19,14 @@
             <thead>
               <tr>
                 <th style="width: 10px">&nbsp;</th>
-                <th style="width: 100px">Namespace</th>
-                <th style="width: 100px">Name</th>
-                <th style="width: 20px">Type</th>
-                <th style="width: 60px">Target Type</th>
-                <th style="width: 20px">Target</th>
-                <th style="width: 100px">Filter Type</th>
-                <th style="width: 100px">Filter</th>                
-                <th style="width: 80px">Ports</th>
+                <th style="width: 100px">네임스페이스</th>
+                <th style="width: 100px">이름</th>
+                <th style="width: 20px">유형</th>
+                <th style="width: 60px">대상 유형</th>
+                <th style="width: 20px">대상</th>
+                <th style="width: 100px">필터 유형</th>
+                <th style="width: 100px">필터</th>
+                <th style="width: 80px">포트</th>
                 <th style="width: 20px">&nbsp;</th>
               </tr>
             </thead>
@@ -45,9 +45,9 @@
                   </td>
                   <td style="line-height: 0 !important;">
                     <a class="btn">
-                      <i class="fas fa-info" title="Info..."></i>
+                      <i class="fas fa-info" title="정보..."></i>
                     </a>
-                    <a class="btn" title="Delete...">
+                    <a class="btn" title="삭제...">
                       <i class="fas fa-trash"></i>
                     </a>
                   </td>
@@ -75,22 +75,22 @@
             <input type="hidden" id="new-node" name="new-node" value="">
             <div class="modal-body" id="new-value">
 
-                <label for="newRuleName">Rule Name</label>
+                <label for="newRuleName">규칙 이름</label>
                 <input #newrulename type="text" class="form-control" id="new-rule-name" name="new-rule-name" placeholder="rule-name">
-                <label for="newRuleNamespace">Namespace:</label>
+                <label for="newRuleNamespace">네임스페이스:</label>
                 <select #newrulenamespace class="custom-select rounded-0" name="new-rule-namespace" id="new-rule-namespace">
                     <option>Value 1</option>
                 </select>
-                <label for="newRuleTargetType">Target Type:</label>
+                <label for="newRuleTargetType">대상 유형:</label>
                 <select #newruletargettype class="custom-select rounded-0" name="new-rule-targettype" id="new-rule-targettype">
-                    <option value="namespace">Namespace</option>
-                    <option value="vm">VirtualMachine</option>
-                    <option value="vmpool">VirtualMachinePool</option>
-                    <option value="kcluster">Cluster</option>
-                    <option value="masterpool">ClusterMasterPool</option>
-                    <option value="workerpool">ClusterWorkerPool</option>
+                    <option value="namespace">네임스페이스</option>
+                    <option value="vm">가상 머신</option>
+                    <option value="vmpool">가상 머신 풀</option>
+                    <option value="kcluster">쿠버네티스 클러스터</option>
+                    <option value="masterpool">쿠버네티스 마스터 풀</option>
+                    <option value="workerpool">쿠버네티스 워커 풀</option>
                 </select>
-                <label for="newRuleTargetValue">Target Value:</label>
+                <label for="newRuleTargetValue">대상 값:</label>
                 <select #newruletargetvalue class="custom-select rounded-0" name="new-rule-targetvalue" id="new-rule-targetvalue">
                     <option>A</option>
                     <option>B</option>
@@ -99,16 +99,16 @@
                     <option>E</option>
                     <option>F</option>
                 </select>
-                <label for="newRuleSourceType">Source Type:</label>
+                <label for="newRuleSourceType">소스 유형:</label>
                 <select #newrulesourcetype class="custom-select rounded-0" name="new-rule-sourcetype" id="new-rule-sourcetype">
-                    <option value="namespace">Namespace</option>
-                    <option value="vm">Virtual Machine</option>
-                    <option value="vmpool">Virtual Machine Pool</option>
-                    <option value="kcluster">Kubernetes Cluster</option>
-                    <option value="masterpool">Kubernetes Master Pool</option>
-                    <option value="workerpool">Kubernetes Worker Pool</option>
+                    <option value="namespace">네임스페이스</option>
+                    <option value="vm">가상 머신</option>
+                    <option value="vmpool">가상 머신 풀</option>
+                    <option value="kcluster">쿠버네티스 클러스터</option>
+                    <option value="masterpool">쿠버네티스 마스터 풀</option>
+                    <option value="workerpool">쿠버네티스 워커 풀</option>
                 </select>
-                <label for="newRuleSourceValue">Source Value:</label>
+                <label for="newRuleSourceValue">소스 값:</label>
                 <select #newrulesourcevalue class="custom-select rounded-0" name="new-rule-sourcevalue" id="new-rule-sourcevalue">
                     <option>A</option>
                     <option>B</option>
@@ -118,13 +118,13 @@
                     <option>F</option>
                 </select>
                 <br/>
-                <label for="newRuleAllowAll">Protocol/Ports:</label><br>
+                <label for="newRuleAllowAll">프로토콜/포트:</label><br>
                 <div class="row">
                     <div class="col-1">
                         <input #newruleallowall type="hidden" name="new-rule-allowall" id="new-rule-allowall" value="yes">
                     </div>
-                    <div class="col-3"><input class="form-check-input" type="radio" name="rule-allowall" id="rule-allowall" value="yes" checked="true" aria-checked="true" (change)='changeRule("yes")'><label class="form-check-label">Allow all</label></div>
-                    <div class="col-3"><input class="form-check-input" type="radio" name="rule-allowall" id="rule-allowall" value="no" (change)='changeRule("no")'><label class="form-check-label">Specific protocols/ports</label></div>
+                    <div class="col-3"><input class="form-check-input" type="radio" name="rule-allowall" id="rule-allowall" value="yes" checked="true" aria-checked="true" (change)='changeRule("yes")'><label class="form-check-label">모두 허용</label></div>
+                    <div class="col-3"><input class="form-check-input" type="radio" name="rule-allowall" id="rule-allowall" value="no" (change)='changeRule("no")'><label class="form-check-label">특정 프로토콜/포트</label></div>
                     <div class="col-5">&nbsp;</div>
                 </div>
                 <br/>
@@ -153,8 +153,8 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>Close</button>
-              <button type="button" class="btn btn-primary">Create</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>닫기</button>
+              <button type="button" class="btn btn-primary">생성</button>
             </div>
           </div>
           <!-- /.modal-content -->

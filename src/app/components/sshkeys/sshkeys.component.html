@@ -6,14 +6,14 @@
           <div class="card-header">
             <h3 class="card-title">
               <i class="fas fa-key"></i>
-              &nbsp;&nbsp;SSH Keys
+              &nbsp;&nbsp;SSH 키
             </h3>
             <div class="card-tools">
-              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="Refresh..." title="Refresh..." class="btn btn-tool" (click)="fullReload()">
-                  <i class="fas fa-sync" (click)="fullReload()" title="Refresh..."></i>
+              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새로고침..." title="새로고침..." class="btn btn-tool" (click)="fullReload()">
+                  <i class="fas fa-sync" (click)="fullReload()" title="새로고침..."></i>
               </button>
-              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="New Key..." title="New Key..." class="btn btn-tool" (click)="showNew()">
-                <i class="fas fa-plus-square"(click)="showNew()" title="New Key..."></i>
+              <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새 키..." title="새 키..." class="btn btn-tool" (click)="showNew()">
+                <i class="fas fa-plus-square"(click)="showNew()" title="새 키..."></i>
             </button>
             </div>
           </div>
@@ -22,9 +22,9 @@
               <thead>
                 <tr>
                   <th style="width: 10px">&nbsp;</th>
-                  <th style="width: 60px">Namespace</th>
-                  <th style="width: 100px">Name</th>
-                  <th style="width: 150px">Created At</th>
+                  <th style="width: 60px">네임스페이스</th>
+                  <th style="width: 100px">이름</th>
+                  <th style="width: 150px">생성일</th>
                   <th style="width: 20px">&nbsp;</th>
                 </tr>
               </thead>
@@ -36,8 +36,8 @@
                     <td style="line-height: 2.2 !important;">{{thisKey.creationTimestamp}}</td>
                     <td style="line-height: 0 !important;">
                       <!--- DELETE BUTTON -->
-                      <a class="btn" (click)="showDelete(thisKey.name, thisKey.namespace)" title="Delete...">
-                        <i class="fas fa-trash" (click)="showDelete(thisKey.name, thisKey.namespace)" title="Delete..."></i>
+                      <a class="btn" (click)="showDelete(thisKey.name, thisKey.namespace)" title="삭제...">
+                        <i class="fas fa-trash" (click)="showDelete(thisKey.name, thisKey.namespace)" title="삭제..."></i>
                       </a>
                     </td>
                   </tr>
@@ -63,18 +63,18 @@
             </div>
             <input type="hidden" id="new-node" name="new-node" value="">
             <div class="modal-body" id="new-value">
-                <label for="newkeyname">Name:</label>
+                <label for="newkeyname">이름:</label>
                 <input #newkeyname type="text" class="form-control" id="new-key-name" name="new-key-name" placeholder="name">
-                <label for="newkeynamespace">Namespace:</label>
+                <label for="newkeynamespace">네임스페이스:</label>
                 <select #newkeynamespace class="custom-select rounded-0" name="new-key-namespace" id="new-key-namespace">
                     <option>Value 1</option>
                 </select>
-                <label for="newkeyvalue">Value:</label>
+                <label for="newkeyvalue">값:</label>
                 <textarea #newkeyvalue class="form-control" rows="3" cols="10" id="new-key-value" name="new-key-value"></textarea>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyNew(newkeyname.value, newkeynamespace.value, newkeyvalue.value)">Create</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyNew(newkeyname.value, newkeynamespace.value, newkeyvalue.value)">생성</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -100,8 +100,8 @@
                 <p>BODY_TEMPLATE</p>
                 </div>
                 <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>Close</button>
-                <button type="button" class="btn btn-danger" (click)="applyDelete()">Delete</button>
+                <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>닫기</button>
+                <button type="button" class="btn btn-danger" (click)="applyDelete()">삭제</button>
                 </div>
             </div>
             <!-- /.modal-content -->
