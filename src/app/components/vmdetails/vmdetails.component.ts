@@ -1496,15 +1496,6 @@ export class VmdetailsComponent implements OnInit {
         return "badge-secondary";
     }
 
-    hideComponent(id: string): void {
-        const el = document.getElementById(id);
-        if (el) {
-            el.setAttribute("class", "modal fade");
-            el.setAttribute("aria-hidden", "true");
-            el.setAttribute("style", "display: none;");
-        }
-    }
-
     /*
      * Reload Charts and Logs
      */
