@@ -13,23 +13,44 @@ export class SettingsComponent implements OnInit {
 
     myConstants!: Constants;
 
-    /* 클러스터 연결 상태 */
+    /* 탭 상태 */
+    activeTab: string = 'connection';
+
+    /* ──────────────────────────────────────────
+       연결 설정 폼
+    ────────────────────────────────────────── */
+    connForm = {
+        apiServerUrl: '',
+        authType: 'token',          // 'token' | 'cert' | 'kubeconfig'
+        token: '',
+        caCert: '',
+        clientCert: '',
+        clientKey: '',
+        kubeconfig: '',
+        skipTlsVerify: false
+    };
+
+    connSaveMsg: string = '';
+    connSaveMsgType: string = '';   // 'success' | 'danger'
+    connTesting: boolean = false;
+    connTestMsg: string = '';
+    connTestMsgType: string = '';
+    showToken: boolean = false;
+
+    /* ──────────────────────────────────────────
+       클러스터 현황
+    ────────────────────────────────────────── */
     clusterConnected: boolean = false;
     clusterVersion: string = '-';
     clusterPlatform: string = '-';
 
-    /* 노드 정보 */
     nodeList: any[] = [];
     nodeCount: number = 0;
     readyNodeCount: number = 0;
 
-    /* 네임스페이스 */
     namespaceList: string[] = [];
-
-    /* 스토리지 클래스 */
     storageClassList: any[] = [];
 
-    /* CRD 설치 현황 */
     crdList: any[] = [];
     kubevirtInstalled: boolean = false;
     cdiInstalled: boolean = false;
@@ -37,12 +58,14 @@ export class SettingsComponent implements OnInit {
     multusInstalled: boolean = false;
     imagesInstalled: boolean = false;
 
-    /* 로딩 상태 */
     loadingCluster: boolean = true;
     loadingNodes: boolean = true;
     loadingNamespaces: boolean = true;
     loadingStorage: boolean = true;
     loadingCrds: boolean = true;
+
+    /* localStorage 키 */
+    private readonly STORAGE_KEY = 'kpaas_cluster_conn';
 
     constructor(
         private k8sService: K8sService,
@@ -51,6 +74,7 @@ export class SettingsComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.myConstants = new Constants();
+        this.loadSavedConnection();
         await Promise.all([
             this.loadClusterInfo(),
             this.loadNodes(),
@@ -60,16 +84,102 @@ export class SettingsComponent implements OnInit {
         ]);
     }
 
+    /* ──────────────────────────────────────────
+       연결 설정 관련
+    ────────────────────────────────────────── */
+
+    loadSavedConnection(): void {
+        try {
+            const saved = localStorage.getItem(this.STORAGE_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                this.connForm = { ...this.connForm, ...parsed };
+            }
+        } catch (_) { }
+    }
+
+    saveConnection(): void {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.connForm));
+            this.connSaveMsg = '연결 설정이 저장되었습니다.';
+            this.connSaveMsgType = 'success';
+        } catch (_) {
+            this.connSaveMsg = '설정 저장에 실패했습니다.';
+            this.connSaveMsgType = 'danger';
+        }
+        setTimeout(() => { this.connSaveMsg = ''; }, 4000);
+    }
+
+    resetConnection(): void {
+        localStorage.removeItem(this.STORAGE_KEY);
+        this.connForm = {
+            apiServerUrl: '',
+            authType: 'token',
+            token: '',
+            caCert: '',
+            clientCert: '',
+            clientKey: '',
+            kubeconfig: '',
+            skipTlsVerify: false
+        };
+        this.connSaveMsg = '설정이 초기화되었습니다.';
+        this.connSaveMsgType = 'success';
+        setTimeout(() => { this.connSaveMsg = ''; }, 4000);
+    }
+
+    async testConnection(): Promise<void> {
+        this.connTesting = true;
+        this.connTestMsg = '';
+        try {
+            const data = await lastValueFrom(this.k8sService.getNodes());
+            if (data && data.items) {
+                this.connTestMsg = `연결 성공 — 노드 ${data.items.length}개 감지됨`;
+                this.connTestMsgType = 'success';
+            } else {
+                this.connTestMsg = '응답을 받았으나 노드 정보가 없습니다.';
+                this.connTestMsgType = 'warning';
+            }
+        } catch (e: any) {
+            this.connTestMsg = `연결 실패: ${e?.message || '알 수 없는 오류'}`;
+            this.connTestMsgType = 'danger';
+        } finally {
+            this.connTesting = false;
+        }
+    }
+
+    parseKubeconfig(): void {
+        if (!this.connForm.kubeconfig.trim()) return;
+        try {
+            const lines = this.connForm.kubeconfig.split('\n');
+            const serverLine = lines.find(l => l.trim().startsWith('server:'));
+            if (serverLine) {
+                this.connForm.apiServerUrl = serverLine.split('server:')[1].trim();
+            }
+            const tokenLine = lines.find(l => l.trim().startsWith('token:'));
+            if (tokenLine) {
+                this.connForm.token = tokenLine.split('token:')[1].trim();
+                this.connForm.authType = 'token';
+            }
+        } catch (_) { }
+    }
+
+    /* ──────────────────────────────────────────
+       클러스터 현황 로딩
+    ────────────────────────────────────────── */
+
     async loadClusterInfo(): Promise<void> {
         try {
             const data = await lastValueFrom(this.k8sService.getNodes());
-            if (data && data.items && data.items.length > 0) {
+            if (data?.items?.length > 0) {
                 const node = data.items[0];
                 this.clusterVersion = node.status?.nodeInfo?.kubeletVersion || '-';
-                this.clusterPlatform = node.status?.nodeInfo?.operatingSystem + ' / ' + node.status?.nodeInfo?.architecture || '-';
+                this.clusterPlatform =
+                    (node.status?.nodeInfo?.operatingSystem || '') +
+                    ' / ' +
+                    (node.status?.nodeInfo?.architecture || '');
                 this.clusterConnected = true;
             }
-        } catch (e: any) {
+        } catch (_) {
             this.clusterConnected = false;
         } finally {
             this.loadingCluster = false;
@@ -81,11 +191,10 @@ export class SettingsComponent implements OnInit {
             const data = await lastValueFrom(this.k8sService.getNodes());
             this.nodeList = data.items || [];
             this.nodeCount = this.nodeList.length;
-            this.readyNodeCount = this.nodeList.filter((n: any) => {
-                const conditions = n.status?.conditions || [];
-                return conditions.some((c: any) => c.type === 'Ready' && c.status === 'True');
-            }).length;
-        } catch (e: any) {
+            this.readyNodeCount = this.nodeList.filter((n: any) =>
+                (n.status?.conditions || []).some((c: any) => c.type === 'Ready' && c.status === 'True')
+            ).length;
+        } catch (_) {
             this.nodeList = [];
         } finally {
             this.loadingNodes = false;
@@ -96,7 +205,7 @@ export class SettingsComponent implements OnInit {
         try {
             const data = await lastValueFrom(this.k8sService.getNamespaces());
             this.namespaceList = (data.items || []).map((ns: any) => ns.metadata.name);
-        } catch (e: any) {
+        } catch (_) {
             this.namespaceList = [];
         } finally {
             this.loadingNamespaces = false;
@@ -107,7 +216,7 @@ export class SettingsComponent implements OnInit {
         try {
             const data = await lastValueFrom(this.k8sApisService.getStorageClasses());
             this.storageClassList = data.items || [];
-        } catch (e: any) {
+        } catch (_) {
             this.storageClassList = [];
         } finally {
             this.loadingStorage = false;
@@ -119,7 +228,7 @@ export class SettingsComponent implements OnInit {
             const data = await lastValueFrom(this.k8sApisService.getCrds());
             this.crdList = data.items || [];
             this.checkCrdStatus();
-        } catch (e: any) {
+        } catch (_) {
             this.crdList = [];
         } finally {
             this.loadingCrds = false;
@@ -127,28 +236,24 @@ export class SettingsComponent implements OnInit {
     }
 
     checkCrdStatus(): void {
-        const crdNames = this.crdList.map((c: any) => c.metadata?.name || '');
-
-        this.kubevirtInstalled = crdNames.some((n: string) => n.includes('kubevirt.io'));
-        this.cdiInstalled = crdNames.includes(this.myConstants.ContainerizedDataImporter);
-        this.multusInstalled = crdNames.includes(this.myConstants.NetworkAttachmentDefinition);
-        this.imagesInstalled = crdNames.includes(this.myConstants.KubevirtManagerImages);
-        this.capkInstalled = crdNames.includes(this.myConstants.Clusters) &&
-                             crdNames.includes(this.myConstants.KubevirtClusters);
+        const names = this.crdList.map((c: any) => c.metadata?.name || '');
+        this.kubevirtInstalled = names.some((n: string) => n.includes('kubevirt.io'));
+        this.cdiInstalled      = names.includes(this.myConstants.ContainerizedDataImporter);
+        this.multusInstalled   = names.includes(this.myConstants.NetworkAttachmentDefinition);
+        this.imagesInstalled   = names.includes(this.myConstants.KubevirtManagerImages);
+        this.capkInstalled     = names.includes(this.myConstants.Clusters) &&
+                                 names.includes(this.myConstants.KubevirtClusters);
     }
 
     getNodeRole(node: any): string {
         const labels = node.metadata?.labels || {};
-        if (labels['node-role.kubernetes.io/control-plane'] !== undefined ||
-            labels['node-role.kubernetes.io/master'] !== undefined) {
-            return '컨트롤 플레인';
-        }
-        return '워커';
+        return (labels['node-role.kubernetes.io/control-plane'] !== undefined ||
+                labels['node-role.kubernetes.io/master'] !== undefined)
+            ? '컨트롤 플레인' : '워커';
     }
 
     getNodeStatus(node: any): string {
-        const conditions = node.status?.conditions || [];
-        const ready = conditions.find((c: any) => c.type === 'Ready');
+        const ready = (node.status?.conditions || []).find((c: any) => c.type === 'Ready');
         return ready?.status === 'True' ? 'Ready' : 'NotReady';
     }
 
@@ -156,12 +261,7 @@ export class SettingsComponent implements OnInit {
         return this.getNodeStatus(node) === 'Ready';
     }
 
-    getStorageClassProvisioner(sc: any): string {
-        return sc.provisioner || '-';
-    }
-
     isDefaultStorageClass(sc: any): boolean {
-        const annotations = sc.metadata?.annotations || {};
-        return annotations['storageclass.kubernetes.io/is-default-class'] === 'true';
+        return sc.metadata?.annotations?.['storageclass.kubernetes.io/is-default-class'] === 'true';
     }
 }

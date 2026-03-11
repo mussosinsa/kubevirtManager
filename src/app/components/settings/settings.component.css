@@ -1,0 +1,18 @@
+.font-size-sm {
+    font-size: 0.8rem;
+    font-family: 'Courier New', monospace;
+}
+
+pre {
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.nav-tabs .nav-link {
+    cursor: pointer;
+}
+
+.card[style*="cursor:pointer"]:hover {
+    box-shadow: 0 0 0 2px #007bff;
+}

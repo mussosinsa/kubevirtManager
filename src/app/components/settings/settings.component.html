@@ -1,4 +1,5 @@
 <div class="content-wrapper">
+  <!-- 페이지 헤더 -->
   <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
@@ -18,296 +19,565 @@
   <section class="content">
     <div class="container-fluid">
 
-      <!-- 클러스터 연결 상태 -->
+      <!-- 탭 네비게이션 -->
       <div class="row">
         <div class="col-12">
-          <div class="card card-outline card-primary">
-            <div class="card-header">
-              <h3 class="card-title">
-                <i class="fas fa-network-wired mr-2"></i>클러스터 연결 상태
-              </h3>
-            </div>
-            <div class="card-body">
-              <div *ngIf="loadingCluster" class="text-center py-3">
-                <i class="fas fa-spinner fa-spin fa-2x"></i>
-                <p class="mt-2">연결 확인 중...</p>
-              </div>
-              <div *ngIf="!loadingCluster" class="row">
-                <div class="col-md-4">
-                  <div class="info-box"
-                       [ngClass]="clusterConnected ? 'bg-success' : 'bg-danger'">
-                    <span class="info-box-icon">
-                      <i [ngClass]="clusterConnected ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+          <div class="card card-primary card-tabs">
+            <div class="card-header p-0 pt-1">
+              <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link"
+                     [class.active]="activeTab === 'connection'"
+                     (click)="activeTab = 'connection'"
+                     href="javascript:void(0)">
+                    <i class="fas fa-plug mr-1"></i>클러스터 연결 설정
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link"
+                     [class.active]="activeTab === 'status'"
+                     (click)="activeTab = 'status'"
+                     href="javascript:void(0)">
+                    <i class="fas fa-tachometer-alt mr-1"></i>클러스터 현황
+                    <span class="badge ml-1"
+                          [ngClass]="clusterConnected ? 'badge-success' : 'badge-danger'">
+                      {{ clusterConnected ? '연결됨' : '연결 실패' }}
                     </span>
-                    <div class="info-box-content">
-                      <span class="info-box-text">연결 상태</span>
-                      <span class="info-box-number">
-                        {{ clusterConnected ? '연결됨' : '연결 실패' }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           탭 1: 클러스터 연결 설정
+      ════════════════════════════════════════ -->
+      <div *ngIf="activeTab === 'connection'">
+
+        <!-- 저장 알림 -->
+        <div *ngIf="connSaveMsg" class="row">
+          <div class="col-12">
+            <div class="alert" [ngClass]="'alert-' + connSaveMsgType" role="alert">
+              <i class="fas mr-2"
+                 [ngClass]="connSaveMsgType === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+              {{ connSaveMsg }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- 연결 설정 폼 -->
+          <div class="col-lg-8">
+            <div class="card card-outline card-primary">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-server mr-2"></i>API 서버 연결 정보
+                </h3>
+              </div>
+              <div class="card-body">
+
+                <!-- API 서버 URL -->
+                <div class="form-group">
+                  <label for="apiServerUrl">
+                    <i class="fas fa-link mr-1 text-primary"></i>API 서버 URL
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input id="apiServerUrl"
+                         type="url"
+                         class="form-control"
+                         [(ngModel)]="connForm.apiServerUrl"
+                         placeholder="https://192.168.0.10:6443">
+                  <small class="form-text text-muted">쿠버네티스 API 서버 주소를 입력하세요.</small>
+                </div>
+
+                <!-- TLS 검증 건너뛰기 -->
+                <div class="form-group">
+                  <div class="custom-control custom-switch">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="skipTlsVerify"
+                           [(ngModel)]="connForm.skipTlsVerify">
+                    <label class="custom-control-label" for="skipTlsVerify">
+                      TLS 인증서 검증 건너뛰기
+                      <small class="text-warning ml-1">(자체 서명 인증서 환경)</small>
+                    </label>
+                  </div>
+                </div>
+
+                <hr>
+
+                <!-- 인증 방식 선택 -->
+                <div class="form-group">
+                  <label>
+                    <i class="fas fa-shield-alt mr-1 text-primary"></i>인증 방식
+                  </label>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="card cursor-pointer mb-2"
+                           [ngClass]="connForm.authType === 'token' ? 'border-primary bg-light' : ''"
+                           (click)="connForm.authType = 'token'"
+                           style="cursor:pointer">
+                        <div class="card-body text-center py-3">
+                          <i class="fas fa-key fa-2x mb-2"
+                             [ngClass]="connForm.authType === 'token' ? 'text-primary' : 'text-secondary'"></i>
+                          <p class="mb-0 font-weight-bold">Bearer Token</p>
+                          <small class="text-muted">서비스 계정 토큰</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="card cursor-pointer mb-2"
+                           [ngClass]="connForm.authType === 'cert' ? 'border-primary bg-light' : ''"
+                           (click)="connForm.authType = 'cert'"
+                           style="cursor:pointer">
+                        <div class="card-body text-center py-3">
+                          <i class="fas fa-certificate fa-2x mb-2"
+                             [ngClass]="connForm.authType === 'cert' ? 'text-primary' : 'text-secondary'"></i>
+                          <p class="mb-0 font-weight-bold">클라이언트 인증서</p>
+                          <small class="text-muted">TLS 클라이언트 인증</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="card cursor-pointer mb-2"
+                           [ngClass]="connForm.authType === 'kubeconfig' ? 'border-primary bg-light' : ''"
+                           (click)="connForm.authType = 'kubeconfig'"
+                           style="cursor:pointer">
+                        <div class="card-body text-center py-3">
+                          <i class="fas fa-file-code fa-2x mb-2"
+                             [ngClass]="connForm.authType === 'kubeconfig' ? 'text-primary' : 'text-secondary'"></i>
+                          <p class="mb-0 font-weight-bold">KubeConfig</p>
+                          <small class="text-muted">설정 파일 붙여넣기</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bearer Token 입력 -->
+                <div *ngIf="connForm.authType === 'token'">
+                  <div class="form-group">
+                    <label for="bearerToken">
+                      <i class="fas fa-key mr-1 text-warning"></i>Bearer Token
+                    </label>
+                    <div class="input-group">
+                      <input id="bearerToken"
+                             [type]="showToken ? 'text' : 'password'"
+                             class="form-control"
+                             [(ngModel)]="connForm.token"
+                             placeholder="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary"
+                                type="button"
+                                (click)="showToken = !showToken">
+                          <i [ngClass]="showToken ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <small class="form-text text-muted">
+                      서비스 계정 토큰을 입력하세요.
+                      (<code>kubectl create token &lt;sa-name&gt; -n &lt;namespace&gt;</code>)
+                    </small>
+                  </div>
+                </div>
+
+                <!-- 클라이언트 인증서 입력 -->
+                <div *ngIf="connForm.authType === 'cert'">
+                  <div class="form-group">
+                    <label for="caCert">
+                      <i class="fas fa-shield-alt mr-1 text-info"></i>CA 인증서 (Base64)
+                    </label>
+                    <textarea id="caCert"
+                              class="form-control font-size-sm"
+                              rows="3"
+                              [(ngModel)]="connForm.caCert"
+                              placeholder="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="clientCert">
+                      <i class="fas fa-id-card mr-1 text-info"></i>클라이언트 인증서 (Base64)
+                    </label>
+                    <textarea id="clientCert"
+                              class="form-control font-size-sm"
+                              rows="3"
+                              [(ngModel)]="connForm.clientCert"
+                              placeholder="LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="clientKey">
+                      <i class="fas fa-key mr-1 text-info"></i>클라이언트 키 (Base64)
+                    </label>
+                    <textarea id="clientKey"
+                              class="form-control font-size-sm"
+                              rows="3"
+                              [(ngModel)]="connForm.clientKey"
+                              placeholder="LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVkt..."></textarea>
+                  </div>
+                </div>
+
+                <!-- KubeConfig 입력 -->
+                <div *ngIf="connForm.authType === 'kubeconfig'">
+                  <div class="form-group">
+                    <label for="kubeconfig">
+                      <i class="fas fa-file-code mr-1 text-success"></i>KubeConfig 내용
+                    </label>
+                    <textarea id="kubeconfig"
+                              class="form-control font-size-sm"
+                              rows="10"
+                              [(ngModel)]="connForm.kubeconfig"
+                              placeholder="apiVersion: v1&#10;clusters:&#10;- cluster:&#10;    server: https://...&#10;..."></textarea>
+                    <small class="form-text text-muted">
+                      <code>kubectl config view --raw --minify</code> 출력 내용을 붙여넣으세요.
+                    </small>
+                  </div>
+                  <button class="btn btn-sm btn-outline-secondary mb-3"
+                          type="button"
+                          (click)="parseKubeconfig()">
+                    <i class="fas fa-magic mr-1"></i>KubeConfig에서 URL/Token 자동 추출
+                  </button>
+                </div>
+
+              </div>
+
+              <!-- 버튼 영역 -->
+              <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                  <div>
+                    <!-- 연결 테스트 -->
+                    <button class="btn btn-info mr-2"
+                            type="button"
+                            [disabled]="connTesting"
+                            (click)="testConnection()">
+                      <i class="fas mr-1"
+                         [ngClass]="connTesting ? 'fa-spinner fa-spin' : 'fa-plug'"></i>
+                      {{ connTesting ? '테스트 중...' : '연결 테스트' }}
+                    </button>
+                    <!-- 저장 -->
+                    <button class="btn btn-primary"
+                            type="button"
+                            (click)="saveConnection()">
+                      <i class="fas fa-save mr-1"></i>설정 저장
+                    </button>
+                  </div>
+                  <!-- 초기화 -->
+                  <button class="btn btn-outline-danger"
+                          type="button"
+                          (click)="resetConnection()">
+                    <i class="fas fa-undo mr-1"></i>초기화
+                  </button>
+                </div>
+
+                <!-- 연결 테스트 결과 -->
+                <div *ngIf="connTestMsg" class="mt-3">
+                  <div class="alert mb-0" [ngClass]="'alert-' + connTestMsgType">
+                    <i class="fas mr-2"
+                       [ngClass]="{
+                         'fa-check-circle': connTestMsgType === 'success',
+                         'fa-times-circle': connTestMsgType === 'danger',
+                         'fa-exclamation-triangle': connTestMsgType === 'warning'
+                       }"></i>
+                    {{ connTestMsg }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 안내 카드 -->
+          <div class="col-lg-4">
+            <!-- 인증 방식 가이드 -->
+            <div class="card card-outline card-secondary">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-info-circle mr-2 text-info"></i>인증 방식 안내
+                </h3>
+              </div>
+              <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <strong><i class="fas fa-key text-warning mr-2"></i>Bearer Token</strong>
+                    <p class="mb-0 mt-1 small text-muted">
+                      서비스 계정 토큰을 사용합니다. 클러스터 내부에서 실행 시 권장됩니다.
+                    </p>
+                  </li>
+                  <li class="list-group-item">
+                    <strong><i class="fas fa-certificate text-info mr-2"></i>클라이언트 인증서</strong>
+                    <p class="mb-0 mt-1 small text-muted">
+                      CA/클라이언트 인증서와 키를 사용합니다. 고가용성 환경에 적합합니다.
+                    </p>
+                  </li>
+                  <li class="list-group-item">
+                    <strong><i class="fas fa-file-code text-success mr-2"></i>KubeConfig</strong>
+                    <p class="mb-0 mt-1 small text-muted">
+                      <code>~/.kube/config</code> 파일을 그대로 붙여넣습니다. 가장 간편한 방법입니다.
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- 서비스 계정 토큰 생성 가이드 -->
+            <div class="card card-outline card-warning mt-3">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-terminal mr-2 text-warning"></i>토큰 생성 예시
+                </h3>
+              </div>
+              <div class="card-body">
+                <p class="small mb-2">관리자 권한의 서비스 계정 생성:</p>
+                <pre class="bg-dark text-light p-2 rounded small mb-2">kubectl create sa kpaas-admin \
+  -n kube-system
+
+kubectl create clusterrolebinding \
+  kpaas-admin \
+  --clusterrole=cluster-admin \
+  --serviceaccount=\
+  kube-system:kpaas-admin
+
+kubectl create token kpaas-admin \
+  -n kube-system</pre>
+                <p class="small text-muted mb-0">
+                  <i class="fas fa-exclamation-triangle text-warning mr-1"></i>
+                  운영 환경에서는 최소 권한 원칙을 적용하세요.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════
+           탭 2: 클러스터 현황
+      ════════════════════════════════════════ -->
+      <div *ngIf="activeTab === 'status'">
+
+        <!-- 연결 상태 요약 -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-outline card-primary">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-network-wired mr-2"></i>연결 상태
+                </h3>
+              </div>
+              <div class="card-body">
+                <div *ngIf="loadingCluster" class="text-center py-3">
+                  <i class="fas fa-spinner fa-spin fa-2x"></i>
+                  <p class="mt-2">연결 확인 중...</p>
+                </div>
+                <div *ngIf="!loadingCluster" class="row">
+                  <div class="col-md-4">
+                    <div class="info-box"
+                         [ngClass]="clusterConnected ? 'bg-success' : 'bg-danger'">
+                      <span class="info-box-icon">
+                        <i [ngClass]="clusterConnected ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
                       </span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="info-box bg-info">
-                    <span class="info-box-icon">
-                      <i class="fas fa-code-branch"></i>
-                    </span>
-                    <div class="info-box-content">
-                      <span class="info-box-text">쿠버네티스 버전</span>
-                      <span class="info-box-number">{{ clusterVersion }}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="info-box bg-secondary">
-                    <span class="info-box-icon">
-                      <i class="fas fa-server"></i>
-                    </span>
-                    <div class="info-box-content">
-                      <span class="info-box-text">플랫폼</span>
-                      <span class="info-box-number">{{ clusterPlatform }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CRD 설치 현황 -->
-      <div class="row">
-        <div class="col-12">
-          <div class="card card-outline card-info">
-            <div class="card-header">
-              <h3 class="card-title">
-                <i class="fas fa-puzzle-piece mr-2"></i>컴포넌트 설치 현황
-              </h3>
-            </div>
-            <div class="card-body">
-              <div *ngIf="loadingCrds" class="text-center py-3">
-                <i class="fas fa-spinner fa-spin fa-2x"></i>
-                <p class="mt-2">CRD 확인 중...</p>
-              </div>
-              <div *ngIf="!loadingCrds" class="row">
-                <div class="col-md-4 col-sm-6 mb-3">
-                  <div class="card h-100" [ngClass]="kubevirtInstalled ? 'border-success' : 'border-secondary'">
-                    <div class="card-body text-center">
-                      <i class="fas fa-cube fa-3x mb-2"
-                         [ngClass]="kubevirtInstalled ? 'text-success' : 'text-secondary'"></i>
-                      <h5 class="card-title">KubeVirt</h5>
-                      <p class="card-text">
-                        <span class="badge"
-                              [ngClass]="kubevirtInstalled ? 'badge-success' : 'badge-secondary'">
-                          {{ kubevirtInstalled ? '설치됨' : '미설치' }}
+                      <div class="info-box-content">
+                        <span class="info-box-text">연결 상태</span>
+                        <span class="info-box-number">
+                          {{ clusterConnected ? '연결됨' : '연결 실패' }}
                         </span>
-                      </p>
-                      <small class="text-muted">가상 머신 실행 엔진</small>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                  <div class="card h-100" [ngClass]="cdiInstalled ? 'border-success' : 'border-secondary'">
-                    <div class="card-body text-center">
-                      <i class="fas fa-database fa-3x mb-2"
-                         [ngClass]="cdiInstalled ? 'text-success' : 'text-secondary'"></i>
-                      <h5 class="card-title">CDI (데이터 임포터)</h5>
-                      <p class="card-text">
-                        <span class="badge"
-                              [ngClass]="cdiInstalled ? 'badge-success' : 'badge-secondary'">
-                          {{ cdiInstalled ? '설치됨' : '미설치' }}
-                        </span>
-                      </p>
-                      <small class="text-muted">컨테이너화된 데이터 임포터</small>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                  <div class="card h-100" [ngClass]="capkInstalled ? 'border-success' : 'border-secondary'">
-                    <div class="card-body text-center">
-                      <i class="fas fa-cubes fa-3x mb-2"
-                         [ngClass]="capkInstalled ? 'text-success' : 'text-secondary'"></i>
-                      <h5 class="card-title">CAPK (클러스터 API)</h5>
-                      <p class="card-text">
-                        <span class="badge"
-                              [ngClass]="capkInstalled ? 'badge-success' : 'badge-secondary'">
-                          {{ capkInstalled ? '설치됨' : '미설치' }}
-                        </span>
-                      </p>
-                      <small class="text-muted">KubeVirt 클러스터 프로바이더</small>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                  <div class="card h-100" [ngClass]="multusInstalled ? 'border-success' : 'border-secondary'">
-                    <div class="card-body text-center">
-                      <i class="fas fa-network-wired fa-3x mb-2"
-                         [ngClass]="multusInstalled ? 'text-success' : 'text-secondary'"></i>
-                      <h5 class="card-title">Multus CNI</h5>
-                      <p class="card-text">
-                        <span class="badge"
-                              [ngClass]="multusInstalled ? 'badge-success' : 'badge-secondary'">
-                          {{ multusInstalled ? '설치됨' : '미설치' }}
-                        </span>
-                      </p>
-                      <small class="text-muted">다중 네트워크 인터페이스</small>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                  <div class="card h-100" [ngClass]="imagesInstalled ? 'border-success' : 'border-secondary'">
-                    <div class="card-body text-center">
-                      <i class="fas fa-compact-disc fa-3x mb-2"
-                         [ngClass]="imagesInstalled ? 'text-success' : 'text-secondary'"></i>
-                      <h5 class="card-title">이미지 관리자</h5>
-                      <p class="card-text">
-                        <span class="badge"
-                              [ngClass]="imagesInstalled ? 'badge-success' : 'badge-secondary'">
-                          {{ imagesInstalled ? '설치됨' : '미설치' }}
-                        </span>
-                      </p>
-                      <small class="text-muted">K-PaaS Manager 이미지 CRD</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 노드 목록 -->
-      <div class="row">
-        <div class="col-12">
-          <div class="card card-outline card-success">
-            <div class="card-header">
-              <h3 class="card-title">
-                <i class="fas fa-hdd mr-2"></i>노드 현황
-                <span class="badge badge-info ml-2">{{ nodeCount }}개</span>
-                <span class="badge badge-success ml-1">준비됨 {{ readyNodeCount }}개</span>
-              </h3>
-            </div>
-            <div class="card-body p-0">
-              <div *ngIf="loadingNodes" class="text-center py-3">
-                <i class="fas fa-spinner fa-spin fa-2x"></i>
-                <p class="mt-2">노드 목록 로딩 중...</p>
-              </div>
-              <table *ngIf="!loadingNodes" class="table table-hover table-striped mb-0">
-                <thead>
-                  <tr>
-                    <th>노드 이름</th>
-                    <th>역할</th>
-                    <th>상태</th>
-                    <th>OS 이미지</th>
-                    <th>컨테이너 런타임</th>
-                    <th>CPU</th>
-                    <th>메모리</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let node of nodeList">
-                    <td><strong>{{ node.metadata?.name }}</strong></td>
-                    <td>
-                      <span class="badge"
-                            [ngClass]="getNodeRole(node) === '컨트롤 플레인' ? 'badge-primary' : 'badge-secondary'">
-                        {{ getNodeRole(node) }}
+                  <div class="col-md-4">
+                    <div class="info-box bg-info">
+                      <span class="info-box-icon">
+                        <i class="fas fa-code-branch"></i>
                       </span>
-                    </td>
-                    <td>
-                      <span class="badge"
-                            [ngClass]="isNodeReady(node) ? 'badge-success' : 'badge-danger'">
-                        {{ getNodeStatus(node) }}
+                      <div class="info-box-content">
+                        <span class="info-box-text">쿠버네티스 버전</span>
+                        <span class="info-box-number">{{ clusterVersion }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="info-box bg-secondary">
+                      <span class="info-box-icon">
+                        <i class="fas fa-server"></i>
                       </span>
-                    </td>
-                    <td>{{ node.status?.nodeInfo?.osImage || '-' }}</td>
-                    <td>{{ node.status?.nodeInfo?.containerRuntimeVersion || '-' }}</td>
-                    <td>{{ node.status?.capacity?.cpu || '-' }} 코어</td>
-                    <td>{{ node.status?.capacity?.memory || '-' }}</td>
-                  </tr>
-                  <tr *ngIf="nodeList.length === 0">
-                    <td colspan="7" class="text-center text-muted">노드가 없습니다.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 스토리지 클래스 및 네임스페이스 -->
-      <div class="row">
-        <!-- 스토리지 클래스 -->
-        <div class="col-md-6">
-          <div class="card card-outline card-warning">
-            <div class="card-header">
-              <h3 class="card-title">
-                <i class="fas fa-layer-group mr-2"></i>스토리지 클래스
-                <span class="badge badge-info ml-2">{{ storageClassList.length }}개</span>
-              </h3>
-            </div>
-            <div class="card-body p-0">
-              <div *ngIf="loadingStorage" class="text-center py-3">
-                <i class="fas fa-spinner fa-spin fa-2x"></i>
-                <p class="mt-2">스토리지 클래스 로딩 중...</p>
-              </div>
-              <table *ngIf="!loadingStorage" class="table table-hover table-striped mb-0">
-                <thead>
-                  <tr>
-                    <th>이름</th>
-                    <th>프로비저너</th>
-                    <th>기본값</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let sc of storageClassList">
-                    <td>
-                      <strong>{{ sc.metadata?.name }}</strong>
-                      <span *ngIf="isDefaultStorageClass(sc)"
-                            class="badge badge-primary ml-1">기본</span>
-                    </td>
-                    <td><small>{{ getStorageClassProvisioner(sc) }}</small></td>
-                    <td>
-                      <i [ngClass]="isDefaultStorageClass(sc) ? 'fas fa-check text-success' : 'fas fa-minus text-secondary'"></i>
-                    </td>
-                  </tr>
-                  <tr *ngIf="storageClassList.length === 0">
-                    <td colspan="3" class="text-center text-muted">스토리지 클래스가 없습니다.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- 네임스페이스 목록 -->
-        <div class="col-md-6">
-          <div class="card card-outline card-secondary">
-            <div class="card-header">
-              <h3 class="card-title">
-                <i class="fas fa-folder-open mr-2"></i>네임스페이스
-                <span class="badge badge-info ml-2">{{ namespaceList.length }}개</span>
-              </h3>
-            </div>
-            <div class="card-body">
-              <div *ngIf="loadingNamespaces" class="text-center py-3">
-                <i class="fas fa-spinner fa-spin fa-2x"></i>
-                <p class="mt-2">네임스페이스 로딩 중...</p>
-              </div>
-              <div *ngIf="!loadingNamespaces" class="row">
-                <div class="col-6" *ngFor="let ns of namespaceList">
-                  <div class="d-flex align-items-center mb-2">
-                    <i class="fas fa-circle text-info mr-2" style="font-size: 8px;"></i>
-                    <span>{{ ns }}</span>
+                      <div class="info-box-content">
+                        <span class="info-box-text">플랫폼</span>
+                        <span class="info-box-number">{{ clusterPlatform }}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div *ngIf="namespaceList.length === 0" class="col-12">
-                  <p class="text-muted text-center">네임스페이스가 없습니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 컴포넌트 설치 현황 -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-outline card-info">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-puzzle-piece mr-2"></i>컴포넌트 설치 현황
+                </h3>
+              </div>
+              <div class="card-body">
+                <div *ngIf="loadingCrds" class="text-center py-3">
+                  <i class="fas fa-spinner fa-spin fa-2x"></i>
+                  <p class="mt-2">확인 중...</p>
+                </div>
+                <div *ngIf="!loadingCrds" class="row">
+                  <div class="col-md-4 col-sm-6 mb-3"
+                       *ngFor="let item of [
+                         { label: 'KubeVirt',            icon: 'fa-cube',          desc: '가상 머신 실행 엔진',       installed: kubevirtInstalled },
+                         { label: 'CDI (데이터 임포터)', icon: 'fa-database',      desc: '컨테이너화된 데이터 임포터', installed: cdiInstalled },
+                         { label: 'CAPK (클러스터 API)', icon: 'fa-cubes',         desc: 'KubeVirt 클러스터 프로바이더', installed: capkInstalled },
+                         { label: 'Multus CNI',          icon: 'fa-network-wired', desc: '다중 네트워크 인터페이스',   installed: multusInstalled },
+                         { label: '이미지 관리자',       icon: 'fa-compact-disc',  desc: 'K-PaaS Manager 이미지 CRD', installed: imagesInstalled }
+                       ]">
+                    <div class="card h-100"
+                         [ngClass]="item.installed ? 'border-success' : 'border-secondary'">
+                      <div class="card-body text-center">
+                        <i class="fas fa-3x mb-2"
+                           [ngClass]="[item.icon, item.installed ? 'text-success' : 'text-secondary']"></i>
+                        <h5 class="card-title">{{ item.label }}</h5>
+                        <span class="badge"
+                              [ngClass]="item.installed ? 'badge-success' : 'badge-secondary'">
+                          {{ item.installed ? '설치됨' : '미설치' }}
+                        </span>
+                        <p class="mt-2 mb-0"><small class="text-muted">{{ item.desc }}</small></p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+
+        <!-- 노드 현황 -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-outline card-success">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-hdd mr-2"></i>노드 현황
+                  <span class="badge badge-info ml-2">{{ nodeCount }}개</span>
+                  <span class="badge badge-success ml-1">준비됨 {{ readyNodeCount }}개</span>
+                </h3>
+              </div>
+              <div class="card-body p-0">
+                <div *ngIf="loadingNodes" class="text-center py-3">
+                  <i class="fas fa-spinner fa-spin fa-2x"></i>
+                  <p class="mt-2">노드 목록 로딩 중...</p>
+                </div>
+                <table *ngIf="!loadingNodes" class="table table-hover table-striped mb-0">
+                  <thead>
+                    <tr>
+                      <th>노드 이름</th>
+                      <th>역할</th>
+                      <th>상태</th>
+                      <th>OS 이미지</th>
+                      <th>컨테이너 런타임</th>
+                      <th>CPU</th>
+                      <th>메모리</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let node of nodeList">
+                      <td><strong>{{ node.metadata?.name }}</strong></td>
+                      <td>
+                        <span class="badge"
+                              [ngClass]="getNodeRole(node) === '컨트롤 플레인' ? 'badge-primary' : 'badge-secondary'">
+                          {{ getNodeRole(node) }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="badge"
+                              [ngClass]="isNodeReady(node) ? 'badge-success' : 'badge-danger'">
+                          {{ getNodeStatus(node) }}
+                        </span>
+                      </td>
+                      <td>{{ node.status?.nodeInfo?.osImage || '-' }}</td>
+                      <td>{{ node.status?.nodeInfo?.containerRuntimeVersion || '-' }}</td>
+                      <td>{{ node.status?.capacity?.cpu || '-' }} 코어</td>
+                      <td>{{ node.status?.capacity?.memory || '-' }}</td>
+                    </tr>
+                    <tr *ngIf="nodeList.length === 0">
+                      <td colspan="7" class="text-center text-muted">노드가 없습니다.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 스토리지 클래스 & 네임스페이스 -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card card-outline card-warning">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-layer-group mr-2"></i>스토리지 클래스
+                  <span class="badge badge-info ml-2">{{ storageClassList.length }}개</span>
+                </h3>
+              </div>
+              <div class="card-body p-0">
+                <div *ngIf="loadingStorage" class="text-center py-3">
+                  <i class="fas fa-spinner fa-spin fa-2x"></i>
+                </div>
+                <table *ngIf="!loadingStorage" class="table table-hover table-striped mb-0">
+                  <thead>
+                    <tr><th>이름</th><th>프로비저너</th><th>기본값</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let sc of storageClassList">
+                      <td>
+                        <strong>{{ sc.metadata?.name }}</strong>
+                        <span *ngIf="isDefaultStorageClass(sc)" class="badge badge-primary ml-1">기본</span>
+                      </td>
+                      <td><small>{{ sc.provisioner || '-' }}</small></td>
+                      <td>
+                        <i [ngClass]="isDefaultStorageClass(sc) ? 'fas fa-check text-success' : 'fas fa-minus text-secondary'"></i>
+                      </td>
+                    </tr>
+                    <tr *ngIf="storageClassList.length === 0">
+                      <td colspan="3" class="text-center text-muted">스토리지 클래스가 없습니다.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card card-outline card-secondary">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-folder-open mr-2"></i>네임스페이스
+                  <span class="badge badge-info ml-2">{{ namespaceList.length }}개</span>
+                </h3>
+              </div>
+              <div class="card-body">
+                <div *ngIf="loadingNamespaces" class="text-center py-3">
+                  <i class="fas fa-spinner fa-spin fa-2x"></i>
+                </div>
+                <div *ngIf="!loadingNamespaces" class="row">
+                  <div class="col-6" *ngFor="let ns of namespaceList">
+                    <div class="d-flex align-items-center mb-2">
+                      <i class="fas fa-circle text-info mr-2" style="font-size:8px"></i>
+                      <span>{{ ns }}</span>
+                    </div>
+                  </div>
+                  <div *ngIf="namespaceList.length === 0" class="col-12">
+                    <p class="text-muted text-center">네임스페이스가 없습니다.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /탭 2 -->
 
     </div>
   </section>
