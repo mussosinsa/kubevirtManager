@@ -14,83 +14,83 @@
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item">
-          <a routerLink="/" class="nav-link" alt="#" title="Dashboard...">
+          <a routerLink="/" class="nav-link" alt="#" title="대시보드...">
             <i class="nav-icon fas fa-tachometer-alt"></i>
-            <p>Dashboard</p>
+            <p>대시보드</p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/vmlist" class="nav-link" alt="#" title="Virtual Machines...">
+          <a routerLink="/vmlist" class="nav-link" alt="#" title="가상 머신...">
             <i class="nav-icon fas fa-desktop"></i>
-            <p>Virtual Machines</p>
+            <p>가상 머신</p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/vmpools" class="nav-link" alt="#" title="Virtual Machine Pools...">
+          <a routerLink="/vmpools" class="nav-link" alt="#" title="가상 머신 풀...">
             <i class="nav-icon fas fa-server"></i>
-            <p>VM Pools</p>
+            <p>VM 풀</p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/autoscale" class="nav-link" alt="#" title="Auto Scaling...">
+          <a routerLink="/autoscale" class="nav-link" alt="#" title="자동 확장...">
             <i class="nav-icon fas fa-expand-alt"></i>
-            <p>Auto Scaling</p>
+            <p>자동 확장</p>
           </a>
         </li>
         <li class="nav-item" *ngIf="capkCheck">
-          <a routerLink="/kcluster" class="nav-link" alt="#" title="Clusters...">
+          <a routerLink="/kcluster" class="nav-link" alt="#" title="클러스터...">
             <i class="nav-icon fas fa-cubes"></i>
-            <p>Clusters</p>
+            <p>클러스터</p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/nodelist" class="nav-link" alt="#" title="Nodes...">
+          <a routerLink="/nodelist" class="nav-link" alt="#" title="노드...">
             <i class="nav-icon fas fa-hdd"></i>
-            <p>Nodes</p>
+            <p>노드</p>
           </a>
         </li>
         <li class="nav-item" *ngIf="cdiCheck">
-          <a routerLink="/dsklist" class="nav-link" alt="#" title="Disks..">
+          <a routerLink="/dsklist" class="nav-link" alt="#" title="디스크...">
             <i class="nav-icon fas fa-database"></i>
-            <p>Data Volumes</p>
+            <p>데이터 볼륨</p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/citlist" class="nav-link" alt="#" title="Instance Types...">
+          <a routerLink="/citlist" class="nav-link" alt="#" title="인스턴스 유형...">
             <i class="nav-icon fas fa-book"></i>
-            <p>Instance Types</p>
+            <p>인스턴스 유형</p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/lblist" class="nav-link" alt="#" title="Load Balancers...">
+          <a routerLink="/lblist" class="nav-link" alt="#" title="로드 밸런서...">
             <i class="nav-icon fas fa-sitemap"></i>
-            <p>Load Balancers</p>
+            <p>로드 밸런서</p>
            </a>
         </li>
         <li class="nav-item" *ngIf="imgCheck">
-          <a routerLink="/imagelist" class="nav-link" alt="#" title="Images...">
+          <a routerLink="/imagelist" class="nav-link" alt="#" title="이미지...">
             <i class="nav-icon fas fa-compact-disc"></i>
-            <p>Images</p>
+            <p>이미지</p>
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/sshkeys" class="nav-link" alt="#" title="SSH Keys...">
+          <a routerLink="/sshkeys" class="nav-link" alt="#" title="SSH 키...">
             <i class="nav-icon fas fa-key"></i>
-            <p>SSH Keys</p>
+            <p>SSH 키</p>
           </a>
         </li>
       <!--
         <li class="nav-item">
-          <a routerLink="/firewalls" class="nav-link" alt="#" title="Firewall...">
+          <a routerLink="/firewalls" class="nav-link" alt="#" title="방화벽...">
             <i class="nav-icon fas fa-shield-alt"></i>
-            <p>Firewall</p>
+            <p>방화벽</p>
           </a>
         </li>
       -->
         <li class="nav-item" *ngIf="networkCheck">
-          <a routerLink="/netlist" class="nav-link" alt="#" title="Network...">
+          <a routerLink="/netlist" class="nav-link" alt="#" title="네트워크...">
             <i class="nav-icon fas fa-network-wired"></i>
-            <p>Network</p>
+            <p>네트워크</p>
           </a>
         </li>
       <!--

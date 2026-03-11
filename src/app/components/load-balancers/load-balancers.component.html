@@ -6,14 +6,14 @@
           <div class="card-header">
             <h3 class="card-title">
               <i class="fas fa-sitemap"></i>
-              &nbsp;&nbsp;Load Balancers
+              &nbsp;&nbsp;로드 밸런서
             </h3>
             <div class="card-tools">
-                <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="Refresh..." title="Refresh..." class="btn btn-tool" (click)="fullReload()">
-                    <i class="fas fa-sync" (click)="fullReload()" title="Refresh..."></i>
+                <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새로고침..." title="새로고침..." class="btn btn-tool" (click)="fullReload()">
+                    <i class="fas fa-sync" (click)="fullReload()" title="새로고침..."></i>
                 </button>
-                <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="New Load Balancer..." title="New Load Balancer..." class="btn btn-tool" (click)="showNew()">
-                    <i class="fas fa-plus-square" (click)="showNew()" title="New Load Balancer..."></i>
+                <button type="button" data-placement="bottom" data-toggle="tooltip" data-original-title="새 로드 밸런서..." title="새 로드 밸런서..." class="btn btn-tool" (click)="showNew()">
+                    <i class="fas fa-plus-square" (click)="showNew()" title="새 로드 밸런서..."></i>
                 </button>
             </div>
           </div>
@@ -22,12 +22,12 @@
                 <thead>
                   <tr>
                     <th style="width: 10px">&nbsp;</th>
-                    <th style="width: 35px">Namespace</th>
-                    <th style="width: 70px">Name</th>
-                    <th style="width: 40px">Type</th>
+                    <th style="width: 35px">네임스페이스</th>
+                    <th style="width: 70px">이름</th>
+                    <th style="width: 40px">유형</th>
                     <th style="width: 20px">ClusterIP</th>
-                    <th style="width: 20px">Load Balancer</th>
-                    <th style="width: 80px">Target Resource</th>
+                    <th style="width: 20px">로드 밸런서</th>
+                    <th style="width: 80px">대상 리소스</th>
                     <th style="width: 90px">&nbsp;</th>
                   </tr>
                 </thead>
@@ -42,18 +42,18 @@
                     <td style="line-height: 2.2 !important;">{{thisLoadBalancer.targetResource}}</td>
                     <td style="line-height: 0 !important;">
                         <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">Actions</button>
+                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">작업</button>
                             <div class="dropdown-menu">
                                 <!--- INFO BUTTON -->
-                                <a class="btn" (click)="showInfo(thisLoadBalancer.namespace, thisLoadBalancer.name)" title="Info...">
+                                <a class="btn" (click)="showInfo(thisLoadBalancer.namespace, thisLoadBalancer.name)" title="정보...">
                                 <i class="fas fa-info" (click)="showInfo(thisLoadBalancer.namespace, thisLoadBalancer.name)"></i>
                                 </a>
                                 <!--- TYPE BUTTON -->
-                                <a class="btn" (click)="showType(thisLoadBalancer.namespace, thisLoadBalancer.name)" title="Config...">
+                                <a class="btn" (click)="showType(thisLoadBalancer.namespace, thisLoadBalancer.name)" title="설정...">
                                     <i class="fas fa-cog" (click)="showType(thisLoadBalancer.namespace, thisLoadBalancer.name)"></i>
                                 </a>
                                 <!--- DELETE BUTTON -->
-                                <a class="btn" (click)="showDelete(thisLoadBalancer.namespace, thisLoadBalancer.name)" title="Delete...">
+                                <a class="btn" (click)="showDelete(thisLoadBalancer.namespace, thisLoadBalancer.name)" title="삭제...">
                                     <i class="fas fa-trash" (click)="showDelete(thisLoadBalancer.namespace, thisLoadBalancer.name)"></i>
                                 </a>
                             </div>
@@ -84,13 +84,13 @@
                       <!-- TABS Selector-->
                       <ul class="nav nav-tabs" id="custom-tabs-two-tab" role="tablist">
                         <li class="nav-item">
-                          <a class="nav-link active" id="newlb-home-tab" data-toggle="pill" href="#newlb-home" role="tab" aria-controls="newlb-home" aria-selected="false">Home</a>
+                          <a class="nav-link active" id="newlb-home-tab" data-toggle="pill" href="#newlb-home" role="tab" aria-controls="newlb-home" aria-selected="false">홈</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" id="newlb-meta-tab" data-toggle="pill" href="#newlb-meta" role="tab" aria-controls="newlb-meta" aria-selected="false">Metadata</a>
+                          <a class="nav-link" id="newlb-meta-tab" data-toggle="pill" href="#newlb-meta" role="tab" aria-controls="newlb-meta" aria-selected="false">메타데이터</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" id="newlb-ports-tab" data-toggle="pill" href="#newlb-ports" role="tab" aria-controls="newlb-ports" aria-selected="false">Ports</a>
+                          <a class="nav-link" id="newlb-ports-tab" data-toggle="pill" href="#newlb-ports" role="tab" aria-controls="newlb-ports" aria-selected="false">포트</a>
                         </li>
                       </ul>
                     </div>
@@ -98,32 +98,32 @@
                         <div class="tab-content" id="custom-tabs-two-tabContent">
                             <!-- HOME TAB -->
                             <div class="tab-pane fade show active" id="newlb-home" role="tabpanel" aria-labelledby="newlb-home-tab">
-                                <label for="newlb-name">Name:</label>
+                                <label for="newlb-name">이름:</label>
                                 <input #newlbname type="text" class="form-control" id="newlb-name" name="newlb-name">
-                                <label for="newlb-namespaces">Namespace:</label>
+                                <label for="newlb-namespaces">네임스페이스:</label>
                                 <select #newlbnamespace class="custom-select rounded-0" name="newlb-namespace" id="newlb-namespace" (change)="onChangeNamespaceOrResourceType(newlbnamespace.value, newlbtargetresourcetype.value)">
                                     <option>Value 1</option>
                                 </select>
-                                <label for="newlb-targettype">Type:</label>
+                                <label for="newlb-targettype">유형:</label>
                                 <select #newlbtargettype class="custom-select rounded-0" name="newlb-targettype" id="newlb-targettype">
                                     <option value="ClusterIP">ClusterIP</option>
                                     <option value="LoadBalancer">LoadBalancer</option>
                                     <option value="NodePort">NodePort</option>
                                 </select>
-                                <label for="newlb-targetresourcetype">Target Type:</label>
+                                <label for="newlb-targetresourcetype">대상 유형:</label>
                                 <select #newlbtargetresourcetype class="custom-select rounded-0" name="newlb-targetresourcetype" id="newlb-targetresourcetype" (change)="onChangeNamespaceOrResourceType(newlbnamespace.value, newlbtargetresourcetype.value)">
-                                    <option value="vminstance">VM Instance</option>
-                                    <option value="vmpool">VM Pool</option>
+                                    <option value="vminstance">VM 인스턴스</option>
+                                    <option value="vmpool">VM 풀</option>
                                 </select>
-                                <label for="newlb-targetresource">Target Resource:</label>
+                                <label for="newlb-targetresource">대상 리소스:</label>
                                 <select #newlbtargetresource class="custom-select rounded-0" name="newlb-targetresource" id="newlb-targetresource">
                                 </select>
                             </div>
                             <!-- METADATA TAB -->
                             <div class="tab-pane fade" id="newlb-meta" role="tabpanel" aria-labelledby="newlb-meta-tab">
                                 <div class="row">
-                                    <label for="newlb-ports">Labels:&nbsp;
-                                      <a class="btn" (click)="addLabel()" title="Add new label...">
+                                    <label for="newlb-ports">레이블:&nbsp;
+                                      <a class="btn" (click)="addLabel()" title="새 레이블 추가...">
                                         <i class="fas fa-plus"></i>
                                       </a>
                                     </label>
@@ -133,17 +133,17 @@
                                         <table class="table table-sm" style="vertical-align: middle !important;">
                                             <thead>
                                                 <tr>
-                                                <th style="width: 400px">Key</th>
-                                                <th style="width: 400px">Value</th>
+                                                <th style="width: 400px">키</th>
+                                                <th style="width: 400px">값</th>
                                                 <th style="width: 60px">&nbsp;</th>
                                                 </tr>
                                             </thead>
-                                            <tbody formArrayName="labels"> 
+                                            <tbody formArrayName="labels">
                                                 <tr *ngFor="let label of labels.controls; let i = index" [formGroupName]="i">
                                                   <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-labelkey" id="labelKey{{i}}" formControlName="labelKey"></td>
                                                   <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-labelvalue" id="labelValue{{i}}" formControlName="labelValue"></td>
                                                   <td style="line-height: 2.2 !important;">
-                                                    <a class="btn" (click)="removeLabel(i)" title="Remove label...">
+                                                    <a class="btn" (click)="removeLabel(i)" title="레이블 제거...">
                                                         <i class="fas fa-trash"></i>
                                                     </a>
                                                   </td>
@@ -153,8 +153,8 @@
                                     </form>
                                 </div>
                                 <div class="row">
-                                    <label for="newlb-ports">Annotations:&nbsp;
-                                      <a class="btn" (click)="addAnnotation()" title="Add new annotation...">
+                                    <label for="newlb-ports">주석:&nbsp;
+                                      <a class="btn" (click)="addAnnotation()" title="새 주석 추가...">
                                         <i class="fas fa-plus"></i>
                                       </a>
                                     </label>
@@ -164,17 +164,17 @@
                                         <table class="table table-sm" style="vertical-align: middle !important;">
                                             <thead>
                                                 <tr>
-                                                <th style="width: 400px">Key</th>
-                                                <th style="width: 400px">Value</th>
+                                                <th style="width: 400px">키</th>
+                                                <th style="width: 400px">값</th>
                                                 <th style="width: 60px">&nbsp;</th>
                                                 </tr>
                                             </thead>
-                                            <tbody formArrayName="annotations"> 
+                                            <tbody formArrayName="annotations">
                                                 <tr *ngFor="let annotation of annotations.controls; let i = index" [formGroupName]="i">
                                                   <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-annotationkey" id="annotKey{{i}}" formControlName="annotKey"></td>
                                                   <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-annotationvalue" id="annotValue{{i}}" formControlName="annotValue"></td>
                                                   <td style="line-height: 2.2 !important;">
-                                                    <a class="btn" (click)="removeAnnotation(i)" title="Remove annotation...">
+                                                    <a class="btn" (click)="removeAnnotation(i)" title="주석 제거...">
                                                         <i class="fas fa-trash"></i>
                                                     </a>
                                                   </td>
@@ -187,8 +187,8 @@
                             <!-- PORTS TAB -->
                             <div class="tab-pane fade" id="newlb-ports" role="tabpanel" aria-labelledby="newlb-ports-tab">
                                 <div class="row">
-                                    <label for="newlb-ports">Ports:&nbsp;
-                                      <a class="btn" (click)="addPort()" title="Add new port...">
+                                    <label for="newlb-ports">포트:&nbsp;
+                                      <a class="btn" (click)="addPort()" title="새 포트 추가...">
                                         <i class="fas fa-plus"></i>
                                       </a>
                                     </label>
@@ -198,14 +198,14 @@
                                         <table class="table table-sm" style="vertical-align: middle !important;">
                                             <thead>
                                                 <tr>
-                                                <th style="width: 260px">Name</th>
-                                                <th style="width: 260px">Port</th>
-                                                <th style="width: 260px">Target Port</th>
-                                                <th style="width: 260px">Protocol</th>
+                                                <th style="width: 260px">이름</th>
+                                                <th style="width: 260px">포트</th>
+                                                <th style="width: 260px">대상 포트</th>
+                                                <th style="width: 260px">프로토콜</th>
                                                 <th style="width: 60px">&nbsp;</th>
                                                 </tr>
                                             </thead>
-                                            <tbody formArrayName="ports"> 
+                                            <tbody formArrayName="ports">
                                                 <tr *ngFor="let port of ports.controls; let i = index" [formGroupName]="i">
                                                   <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-port" id="portName{{i}}" formControlName="portName"></td>
                                                   <td style="line-height: 2.2 !important;"><input type="text" class="form-control" name="newlb-port" id="srcPort{{i}}" formControlName="srcPort"></td>
@@ -217,7 +217,7 @@
                                                     </select>
                                                   </td>
                                                   <td style="line-height: 2.2 !important;">
-                                                    <a class="btn" (click)="removePort(i)" title="Remove port...">
+                                                    <a class="btn" (click)="removePort(i)" title="포트 제거...">
                                                         <i class="fas fa-trash"></i>
                                                     </a>
                                                   </td>
@@ -232,8 +232,8 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>Close</button>
-                <button type="button" class="btn btn-primary" (click)="applyNew(newlbname.value, newlbnamespace.value, newlbtargetresourcetype.value, newlbtargetresource.value, newlbtargettype.value)">Create</button>
+                <button type="button" class="btn btn-default" (click)='hideComponent("modal-new")'>닫기</button>
+                <button type="button" class="btn btn-primary" (click)="applyNew(newlbname.value, newlbnamespace.value, newlbtargetresourcetype.value, newlbtargetresource.value, newlbtargettype.value)">생성</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -260,7 +260,7 @@
               </ul>
             </div>
             <div class="modal-footer justify-content-center">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-info")'>Close</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-info")'>닫기</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -283,7 +283,7 @@
             <input type="hidden" id="type-name" name="type-name" value="">
             <input type="hidden" id="type-namespace" name="type-namespace" value="">
             <div class="modal-body" id="type-value">
-              <label for="newType">Load Balancer Type:</label>
+              <label for="newType">로드 밸런서 유형:</label>
               <select #changelbtype class="custom-select rounded-0" name="changelb-type" id="changelb-type">
                   <option value="ClusterIP">ClusterIP</option>
                   <option value="LoadBalancer">LoadBalancer</option>
@@ -291,8 +291,8 @@
               </select>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyType(changelbtype.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyType(changelbtype.value)">변경 사항 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -318,8 +318,8 @@
               <p>BODY_TEMPLATE</p>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>Close</button>
-              <button type="button" class="btn btn-danger" (click)="applyDelete()">Delete</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-delete")'>닫기</button>
+              <button type="button" class="btn btn-danger" (click)="applyDelete()">삭제</button>
             </div>
           </div>
           <!-- /.modal-content -->
