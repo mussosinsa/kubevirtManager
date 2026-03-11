@@ -10,25 +10,25 @@
             <div class="card-tools">
                 <!--- SCALE REPLICAS -->
                 <span>
-                    <a class="btn"  (click)='showReplicas()' title="Scale...">
+                    <a class="btn"  (click)='showReplicas()' title="확장...">
                     <i class="fas fa-arrow-up"></i>
                     </a>
                 </span>
                 <!--- POWER ON BUTTON -->
                 <span [ngSwitch]="activePool.running">
-                    <a class="btn disabled" (click)='poolOperations("start", activePool.namespace, activePool.name)' title="Power on..." *ngSwitchCase="true">
+                    <a class="btn disabled" (click)='poolOperations("start", activePool.namespace, activePool.name)' title="전원 켜기..." *ngSwitchCase="true">
                     <i class="fas fa-plug disabled"></i>
                     </a>
-                    <a class="btn" (click)='poolOperations("start", activePool.namespace, activePool.name)' title="Power on..." *ngSwitchDefault>
+                    <a class="btn" (click)='poolOperations("start", activePool.namespace, activePool.name)' title="전원 켜기..." *ngSwitchDefault>
                     <i class="fas fa-plug"></i>
                     </a>
                 </span>
                 <!--- POWER OFF BUTTON -->
                 <span [ngSwitch]="activePool.running">
-                    <a class="btn" (click)='poolOperations("stop", activePool.namespace, activePool.name)' title="Power off..." *ngSwitchCase="true">
+                    <a class="btn" (click)='poolOperations("stop", activePool.namespace, activePool.name)' title="전원 끄기..." *ngSwitchCase="true">
                     <i class="fas fa-power-off"></i>
                     </a>
-                    <a class="btn disabled" (click)='poolOperations("stop", activePool.namespace, activePool.name)' title="Power off..." *ngSwitchDefault>
+                    <a class="btn disabled" (click)='poolOperations("stop", activePool.namespace, activePool.name)' title="전원 끄기..." *ngSwitchDefault>
                     <i class="fas fa-power-off disabled"></i>
                     </a>
                 </span>
@@ -36,90 +36,90 @@
           </div>
           <div class="card-body">
             <div class="card">
-                <div class="card-header p-2"> 
+                <div class="card-header p-2">
                   <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active" href="#overview" data-toggle="tab">Overview</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#template" data-toggle="tab">Pool Template</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#networking" data-toggle="tab">Networking</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#disks" data-toggle="tab">Disks</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#liveness" data-toggle="tab">Liveness Probe</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#readiness" data-toggle="tab">Readiness Probe</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#virtualmachines" data-toggle="tab">Instances</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="#overview" data-toggle="tab">개요</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#template" data-toggle="tab">풀 템플릿</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#networking" data-toggle="tab">네트워킹</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#disks" data-toggle="tab">디스크</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#liveness" data-toggle="tab">활성 프로브</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#readiness" data-toggle="tab">준비 프로브</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#virtualmachines" data-toggle="tab">인스턴스</a></li>
                   </ul>
                 </div>
                 <div class="card-body">
                   <div class="tab-content">
                     <!-- Overview -->
                     <div class="active tab-pane" id="overview">
-                       <dt>Metadata</dt>
+                       <dt>메타데이터</dt>
                        <br>
-                       <dd>Name: {{activePool.name}} </dd>
-                       <dd>Namespace: {{activePool.namespace}} </dd>
-                       <dd>Labels:</dd>
+                       <dd>이름: {{activePool.name}} </dd>
+                       <dd>네임스페이스: {{activePool.namespace}} </dd>
+                       <dd>레이블:</dd>
                        <ul *ngFor="let thisLabel of activePool.labels | keyvalue">
                            <li>{{thisLabel.key}} : {{thisLabel.value}}</li>
                        </ul>
                        <hr>
-                       <dt>Spec</dt>
+                       <dt>사양</dt>
                       <br>
-                       <dd>Desired Replicas: {{activePool.replicas}} <a class="btn float-right" title="Edit..."><i class="fas fa-pen" (click)="showReplicas()"></i></a></dd>
-                       <dd>Ready Replicas: {{activePool.readyReplicas}} </dd>
-                       <dd>Run Strategy: {{activePool.runStrategy}} <a class="btn float-right" title="Edit..."><i class="fas fa-pen" (click)="showRunStrategy()"></i></a></dd>
-                       <dd>Running: {{activePool.running}} </dd>
+                       <dd>원하는 레플리카: {{activePool.replicas}} <a class="btn float-right" title="편집..."><i class="fas fa-pen" (click)="showReplicas()"></i></a></dd>
+                       <dd>준비된 레플리카: {{activePool.readyReplicas}} </dd>
+                       <dd>실행 전략: {{activePool.runStrategy}} <a class="btn float-right" title="편집..."><i class="fas fa-pen" (click)="showRunStrategy()"></i></a></dd>
+                       <dd>실행 중: {{activePool.running}} </dd>
                        <hr>
-                       <dt>Status</dt>
+                       <dt>상태</dt>
                        <br>
-                       <dd>Created At: {{activePool.creationTimestamp}} </dd>
+                       <dd>생성일: {{activePool.creationTimestamp}} </dd>
                     </div>
                     <!-- Template -->
                     <div class="tab-pane" id="template">
                         <!-- Custom VM -->
                         <div *ngIf="customTemplate; else vmTemplated">
                           <dt>
-                            General Hardware
-                            <a class="btn float-right" title="Edit...">
+                            일반 하드웨어
+                            <a class="btn float-right" title="편집...">
                                 <i class="fas fa-pen" (click)="showResize(activePool.sockets, activePool.cores, activePool.threads, activePool.memory)"></i>
                             </a>
                           </dt>
                           <br>
-                          <dd>Instance Type: {{activePool.instType}} </dd>
-                          <dd>CPU Sockets: {{activePool.sockets || 0}} </dd>
-                          <dd>CPU Cores: {{activePool.cores || 0}} </dd>
-                          <dd>CPU Threads: {{activePool.threads || 0}} </dd>
-                          <dd>Total VM Memory: {{activePool.memory}} </dd>
-                          <dd>Firmware: {{activePool.firmware}} </dd>
-                          <dd>Secure Boot: {{activePool.secureBoot}} </dd>
+                          <dd>인스턴스 유형: {{activePool.instType}} </dd>
+                          <dd>CPU 소켓: {{activePool.sockets || 0}} </dd>
+                          <dd>CPU 코어: {{activePool.cores || 0}} </dd>
+                          <dd>CPU 스레드: {{activePool.threads || 0}} </dd>
+                          <dd>전체 VM 메모리: {{activePool.memory}} </dd>
+                          <dd>펌웨어: {{activePool.firmware}} </dd>
+                          <dd>보안 부팅: {{activePool.secureBoot}} </dd>
                        </div>
                        <!-- Templated VM -->
                        <ng-template #vmTemplated>
                           <dt>
-                            General Hardware
-                            <a class="btn float-right" title="Edit...">
+                            일반 하드웨어
+                            <a class="btn float-right" title="편집...">
                                 <i class="fas fa-pen" (click)="showType()"></i>
                             </a>
                           </dt>
                           <br>
-                          <dd>Instance Type: {{activePool.instType}} </dd>
-                          <dd>Total vCPU: {{activePool.cores * activePool.sockets * activePool.threads || 0}}</dd>
-                          <dd>Total VM Memory: {{activePool.memory}} </dd>
-                          <dd>Firmware: {{activePool.firmware}} </dd>
-                          <dd>Secure Boot: {{activePool.secureBoot}} </dd>
+                          <dd>인스턴스 유형: {{activePool.instType}} </dd>
+                          <dd>전체 vCPU: {{activePool.cores * activePool.sockets * activePool.threads || 0}}</dd>
+                          <dd>전체 VM 메모리: {{activePool.memory}} </dd>
+                          <dd>펌웨어: {{activePool.firmware}} </dd>
+                          <dd>보안 부팅: {{activePool.secureBoot}} </dd>
                        </ng-template>
                        <hr>
                        <dt>
-                        Execution
-                        <a class="btn float-right" title="Edit...">
+                        실행
+                        <a class="btn float-right" title="편집...">
                             <i class="fas fa-pen" (click)="showPc()"></i>
                         </a>
                        </dt>
                        <br>
-                       <dd>Priority Class: {{activePool.priorityClass}}</dd>
+                       <dd>우선순위 클래스: {{activePool.priorityClass}}</dd>
                     </div>
                     <!-- Networking Tab -->
                     <div class="tab-pane" id="networking">
                        <dt>
-                        Networking
-                        <!-- <a class="btn float-right" title="Edit...">
+                        네트워킹
+                        <!-- <a class="btn float-right" title="편집...">
                             <i class="fas fa-pen"></i>
                         </a> -->
                        </dt>
@@ -131,16 +131,16 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                    <li>Name: {{actualNet.name}}</li>
-                                    <li>Type: {{actualNet.type}}</li>
-                                    <li>Driver: {{actualNet.driver}}</li>
-                                    <li>Network: {{actualNet.network}}</li>
+                                    <li>이름: {{actualNet.name}}</li>
+                                    <li>유형: {{actualNet.type}}</li>
+                                    <li>드라이버: {{actualNet.driver}}</li>
+                                    <li>네트워크: {{actualNet.network}}</li>
                             </div>
                        </div>
                     </div>
                     <!-- Disks Tab -->
                     <div class="tab-pane" id="disks">
-                       <dt>Disks</dt>
+                       <dt>디스크</dt>
                        <br>
                        <div class="card" *ngFor="let actualDisk of diskList">
                             <div class="card-header">
@@ -150,18 +150,18 @@
                             </div>
                             <div class="card-body">
                                 <ul>
-                                    <li>Name: {{actualDisk.name}} </li>
-                                    <li>Namespace: {{actualDisk.namespace}} </li>
-                                    <li>Type: {{actualDisk.type}} </li>
-                                    <li>Backend: {{actualDisk.backend}} </li>
-                                    <li>Data Volume Name: {{actualDisk.dataVolumeName}} </li>
-                                    <li>Data Volume Namespace: {{actualDisk.dataVolumeNamespace}} </li>
-                                    <li>Source Type: {{actualDisk.dataVolumeSource}} </li>
-                                    <li>Source Value: {{actualDisk.dataVolumeSourceValue}} </li>
-                                    <li>Access Mode: {{actualDisk.accessMode}}</li>
-                                    <li>Cache Mode: {{actualDisk.cacheMode || ""}} </li>
-                                    <li>Capacity: {{actualDisk.capacity}} </li>
-                                    <li>Storage Class: {{actualDisk.storageClass}}</li>
+                                    <li>이름: {{actualDisk.name}} </li>
+                                    <li>네임스페이스: {{actualDisk.namespace}} </li>
+                                    <li>유형: {{actualDisk.type}} </li>
+                                    <li>백엔드: {{actualDisk.backend}} </li>
+                                    <li>데이터 볼륨 이름: {{actualDisk.dataVolumeName}} </li>
+                                    <li>데이터 볼륨 네임스페이스: {{actualDisk.dataVolumeNamespace}} </li>
+                                    <li>소스 유형: {{actualDisk.dataVolumeSource}} </li>
+                                    <li>소스 값: {{actualDisk.dataVolumeSourceValue}} </li>
+                                    <li>접근 모드: {{actualDisk.accessMode}}</li>
+                                    <li>캐시 모드: {{actualDisk.cacheMode || ""}} </li>
+                                    <li>용량: {{actualDisk.capacity}} </li>
+                                    <li>스토리지 클래스: {{actualDisk.storageClass}}</li>
                                 </ul>
                             </div>
                        </div>
@@ -170,8 +170,8 @@
                     <div class="tab-pane" id="liveness">
                        <div *ngIf="activePool.hasLiveness; else createLiveness">
                           <dt>
-                            General Config
-                            <a class="btn float-right" title="Edit...">
+                            일반 설정
+                            <a class="btn float-right" title="편집...">
                                 <i class="fas fa-pen" (click)="showLiveness()"></i>
                             </a>
                           </dt>
@@ -182,19 +182,19 @@
                           <dd>failureThreshold: {{activePool.livenessProbe.failureThreshold}}</dd>
                           <dd>successThreshold: {{activePool.livenessProbe.successThreshold}}</dd>
                           <div *ngIf="activePool.livenessProbe.httpGet.port; else tcpSocket">
-                              <dd>Probe Type: HTTP</dd>
-                              <dd>HTTP Path: {{activePool.livenessProbe.httpGet.path}}</dd>
-                              <dd>HTTP Port: {{activePool.livenessProbe.httpGet.port}}</dd>
+                              <dd>프로브 유형: HTTP</dd>
+                              <dd>HTTP 경로: {{activePool.livenessProbe.httpGet.path}}</dd>
+                              <dd>HTTP 포트: {{activePool.livenessProbe.httpGet.port}}</dd>
                           </div>
                           <ng-template #tcpSocket>
-                              <dd>Probe Type: TCP</dd>
-                              <dd>TCP Port: {{activePool.livenessProbe.tcpSocket.port}}</dd>
+                              <dd>프로브 유형: TCP</dd>
+                              <dd>TCP 포트: {{activePool.livenessProbe.tcpSocket.port}}</dd>
                           </ng-template>
                        </div>
                        <ng-template #createLiveness>
                         <dt>
-                            Disabled
-                            <a class="btn float-right" title="Edit...">
+                            비활성화됨
+                            <a class="btn float-right" title="편집...">
                                 <i class="fas fa-pen" (click)="showLiveness()"></i>
                             </a>
                         </dt>
@@ -204,8 +204,8 @@
                     <div class="tab-pane" id="readiness">
                         <div *ngIf="activePool.hasReadiness; else createReadiness">
                           <dt>
-                            General Config
-                            <a class="btn float-right" title="Edit...">
+                            일반 설정
+                            <a class="btn float-right" title="편집...">
                                 <i class="fas fa-pen" (click)="showReadiness()"></i>
                             </a>
                           </dt>
@@ -216,35 +216,35 @@
                           <dd>failureThreshold: {{activePool.readinessProbe.failureThreshold}}</dd>
                           <dd>successThreshold: {{activePool.readinessProbe.successThreshold}}</dd>
                           <div *ngIf="activePool.readinessProbe.httpGet.port; else tcpSocket">
-                              <dd>Probe Type: HTTP</dd>
-                              <dd>HTTP Path: {{activePool.readinessProbe.httpGet.path}}</dd>
-                              <dd>HTTP Port: {{activePool.readinessProbe.httpGet.port}}</dd>
+                              <dd>프로브 유형: HTTP</dd>
+                              <dd>HTTP 경로: {{activePool.readinessProbe.httpGet.path}}</dd>
+                              <dd>HTTP 포트: {{activePool.readinessProbe.httpGet.port}}</dd>
                           </div>
                           <ng-template #tcpSocket>
-                              <dd>Probe Type: TCP</dd>
-                              <dd>TCP Port: {{activePool.readinessProbe.tcpSocket.port}}</dd>
+                              <dd>프로브 유형: TCP</dd>
+                              <dd>TCP 포트: {{activePool.readinessProbe.tcpSocket.port}}</dd>
                           </ng-template>
                        </div>
                        <ng-template #createReadiness>
                         <dt>
-                            Disabled
-                            <a class="btn float-right" title="Edit...">
+                            비활성화됨
+                            <a class="btn float-right" title="편집...">
                                 <i class="fas fa-pen" (click)="showReadiness()"></i>
                             </a>
                         </dt>
                        </ng-template>
                     </div>
-                    <!-- Virtual Mahcines -->
-                    <div class="tab-pane" id="virtualmachines">  
+                    <!-- Virtual Machines -->
+                    <div class="tab-pane" id="virtualmachines">
                         <table class="table table-sm" style="vertical-align: middle !important;">
                             <thead>
                                 <tr>
                                 <th style="width: 10px">&nbsp;</th>
-                                <th style="width: 140px">Virtual Machine</th>
-                                <th style="width: 60px">Node</th>
-                                <th style="width: 50px">Status</th>
-                                <!-- <th style="width: 50px">IP Address</th> -->
-                                <th style="width: 50px">Ready</th>
+                                <th style="width: 140px">가상 머신</th>
+                                <th style="width: 60px">노드</th>
+                                <th style="width: 50px">상태</th>
+                                <!-- <th style="width: 50px">IP 주소</th> -->
+                                <th style="width: 50px">준비됨</th>
                                 <th style="width: 180px">&nbsp;</th>
                                 </tr>
                             </thead>
@@ -257,78 +257,78 @@
                                         </span>
                                     </span>
                                     </td>
-                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.name}}</a></td>
-                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.nodeSel}}</a></td>
-                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.status}}</a></td>
+                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.name}}</a></td>
+                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.nodeSel}}</a></td>
+                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.status}}</a></td>
                                     <!--<td style="line-height: 2.2 !important;">
                                     <span [ngSwitch]="thisVM.status">
                                         <span *ngSwitchCase="'running'">
-                                            <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.vmi.ifAddr}}</a>
+                                            <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.vmi.ifAddr}}</a>
                                         </span>
                                         <span *ngSwitchDefault>
-                                            <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">&nbsp;</a>
+                                            <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">&nbsp;</a>
                                         </span>
                                     </span>
                                     </td> -->
-                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM details...">{{thisVM.ready}}</a></td>
+                                    <td style="line-height: 2.2 !important;"><a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="VM 세부 정보...">{{thisVM.ready}}</a></td>
                                     <td style="line-height: 0 !important;">
                                         <div class="dropdown">
-                                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">Actions</button>
+                                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" href="#" aria-expanded="false">작업</button>
                                             <div class="dropdown-menu">
                                                 <!--- INFO BUTTON -->
                                                 <span>
-                                                    <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="Show info...">
+                                                    <a class="btn" routerLink="/vmdetail/{{thisVM.namespace}}/{{thisVM.name}}" title="정보 보기...">
                                                     <i class="fas fa-info"></i>
                                                     </a>
                                                 </span>
                                                 <!--- REMOVE BUTTON -->
                                                 <span>
-                                                    <a class="btn" (click)='removeVmFromPool(thisVM.namespace, thisVM.name, thisVM.nodeSel)' title="Remove from pool...">
+                                                    <a class="btn" (click)='removeVmFromPool(thisVM.namespace, thisVM.name, thisVM.nodeSel)' title="풀에서 제거...">
                                                     <i class="fas fa-minus"></i>
                                                     </a>
                                                 </span>
                                                 <!--- VNC BUTTON -->
                                                 <span [ngSwitch]="thisVM.status">
-                                                    <a class="btn" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="Open console..." *ngSwitchCase="'running'">
+                                                    <a class="btn" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="콘솔 열기..." *ngSwitchCase="'running'">
                                                     <i class="fas fa-desktop"></i>
                                                     </a>
-                                                    <a class="btn disabled" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="Open console..." *ngSwitchDefault>
+                                                    <a class="btn disabled" (click)='openNoVNC(thisVM.namespace, thisVM.name)' title="콘솔 열기..." *ngSwitchDefault>
                                                     <i class="fas fa-desktop disabled"></i>
                                                     </a>
                                                 </span>
                                                 <!--- POWER ON BUTTON -->
                                                 <span [ngSwitch]="thisVM.running">
-                                                    <a class="btn disabled" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="Power on..." *ngSwitchCase="true">
+                                                    <a class="btn disabled" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="전원 켜기..." *ngSwitchCase="true">
                                                     <i class="fas fa-plug disabled"></i>
                                                     </a>
-                                                    <a class="btn" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="Power on..." *ngSwitchDefault>
+                                                    <a class="btn" (click)='vmOperations("start", thisVM.namespace, thisVM.name)' title="전원 켜기..." *ngSwitchDefault>
                                                     <i class="fas fa-plug"></i>
                                                     </a>
                                                 </span>
                                                 <!--- POWER OFF BUTTON -->
                                                 <span [ngSwitch]="thisVM.running">
-                                                    <a class="btn" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="Power off..." *ngSwitchCase="true">
+                                                    <a class="btn" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="전원 끄기..." *ngSwitchCase="true">
                                                     <i class="fas fa-power-off"></i>
                                                     </a>
-                                                    <a class="btn disabled" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="Power off..." *ngSwitchDefault>
+                                                    <a class="btn disabled" (click)='vmOperations("stop", thisVM.namespace, thisVM.name)' title="전원 끄기..." *ngSwitchDefault>
                                                     <i class="fas fa-power-off disabled"></i>
                                                     </a>
                                                 </span>
                                                 <!--- RESTART BUTTON -->
                                                 <span [ngSwitch]="thisVM.running">
-                                                    <a class="btn" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="Restart..." *ngSwitchCase="true">
+                                                    <a class="btn" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="재시작..." *ngSwitchCase="true">
                                                     <i class="fas fa-redo"></i>
                                                     </a>
-                                                    <a class="btn disabled" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="Restart..." *ngSwitchDefault>
+                                                    <a class="btn disabled" (click)='vmOperations("reboot", thisVM.namespace, thisVM.name)' title="재시작..." *ngSwitchDefault>
                                                     <i class="fas fa-redo disabled"></i>
                                                     </a>
                                                 </span>
                                                 <!--- DELETE BUTTON -->
                                                 <span [ngSwitch]="thisVM.running">
-                                                    <a class="btn disabled" (click)="showDeleteVM(thisVM.name, thisVM.namespace)" title="Delete..." *ngSwitchCase="true">
+                                                    <a class="btn disabled" (click)="showDeleteVM(thisVM.name, thisVM.namespace)" title="삭제..." *ngSwitchCase="true">
                                                         <i class="fas fa-trash disabled"></i>
                                                     </a>
-                                                    <a class="btn" (click)="showDeleteVM(thisVM.name, thisVM.namespace)" title="Delete..." *ngSwitchDefault>
+                                                    <a class="btn" (click)="showDeleteVM(thisVM.name, thisVM.namespace)" title="삭제..." *ngSwitchDefault>
                                                         <i class="fas fa-trash"></i>
                                                     </a>
                                                 </span>
@@ -342,7 +342,7 @@
                   </div>
                 </div>
               </div>
-            
+
           </div>
           <!-- /.card-body -->
         </div>
@@ -367,8 +367,8 @@
               <p>BODY_TEMPLATE</p>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-deletevm")'>Close</button>
-              <button type="button" class="btn btn-danger" (click)="applyDeleteVM()">Delete</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-deletevm")'>닫기</button>
+              <button type="button" class="btn btn-danger" (click)="applyDeleteVM()">삭제</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -383,26 +383,26 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="replicas-title">Scale: {{activePool.namespace}} - {{activePool.name}}</h4>
+              <h4 class="modal-title" id="replicas-title">확장: {{activePool.namespace}} - {{activePool.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-replicas")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="replicas-value">
               <div class="form-group">
-                <label for="replicasInput">New number of replicas</label>
+                <label for="replicasInput">새 레플리카 수</label>
                 <input #replicasinput type="number" class="form-control" id="replicas-input" name="replicas-input" placeholder="0">
               </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-replicas")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyReplicas(activePool.namespace, activePool.name, replicasinput.value)">Resize</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-replicas")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyReplicas(activePool.namespace, activePool.name, replicasinput.value)">크기 조정</button>
             </div>
           </div>
           <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
-      </div> 
+      </div>
 
     <!--                           -->
     <!-- Modal: Change RunStrategy -->
@@ -411,13 +411,13 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" id="type-title">Run Strategpy: {{activePool.namespace}} - {{activePool.name}}</h4>
+            <h4 class="modal-title" id="type-title">실행 전략: {{activePool.namespace}} - {{activePool.name}}</h4>
             <button type="button" class="close" (click)='hideComponent("modal-runstrategy")'>
               <span aria-hidden="true">×</span>
             </button>
           </div>
           <div class="modal-body" id="type-value">
-            <label for="newType">Run Strategy:</label>
+            <label for="newType">실행 전략:</label>
             <select #changepoolrunstrategy class="custom-select rounded-0" name="changepool-runstrategy" id="changepool-runstrategy">
               <option value="Always">Always</option>
               <option value="Halted">Halted</option>
@@ -427,8 +427,8 @@
             </select>
           </div>
           <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" (click)='hideComponent("modal-runstrategy")'>Close</button>
-            <button type="button" class="btn btn-primary" (click)="applyStrategy(changepoolrunstrategy.value)">Save changes</button>
+            <button type="button" class="btn btn-default" (click)='hideComponent("modal-runstrategy")'>닫기</button>
+            <button type="button" class="btn btn-primary" (click)="applyStrategy(changepoolrunstrategy.value)">변경 저장</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -443,20 +443,20 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="type-title">Type: {{activePool.namespace}} - {{activePool.name}}</h4>
+              <h4 class="modal-title" id="type-title">유형: {{activePool.namespace}} - {{activePool.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-type")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="type-value">
-              <label for="newType">Virtual Machine Pool Type:</label>
+              <label for="newType">가상 머신 풀 유형:</label>
               <select #changepooltype class="custom-select rounded-0" name="changepool-type" id="changepool-type">
                   <option>Value 1</option>
               </select>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyType(activePool.namespace, activePool.name, changepooltype.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-type")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyType(activePool.namespace, activePool.name, changepooltype.value)">변경 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -471,24 +471,24 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="resize-title">Resize: {{activePool.namespace}} - {{activePool.name}}</h4>
+              <h4 class="modal-title" id="resize-title">크기 조정: {{activePool.namespace}} - {{activePool.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-resize")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="resize-value">
-              <label for="resize-sockets">Sockets:</label>
+              <label for="resize-sockets">소켓:</label>
               <input #resizeSockets type="number" class="form-control" id="resize-sockets" name="resize-sockets">
-              <label for="resize-cores">Cores:</label>
+              <label for="resize-cores">코어:</label>
               <input #resizeCores type="number" class="form-control" id="resize-cores" name="resize-cores">
-              <label for="resize-threads">Threads:</label>
+              <label for="resize-threads">스레드:</label>
               <input #resizeThreads type="number" class="form-control" id="resize-threads" name="resize-threas">
-              <label for="resize-memory">Memory (in GB):</label>
+              <label for="resize-memory">메모리 (GB):</label>
               <input #resizeMemory type="number" class="form-control" id="resize-memory" name="resize-memory">
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyResize(activePool.namespace, activePool.name, resizeSockets.value, resizeCores.value, resizeThreads.value, resizeMemory.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-resize")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyResize(activePool.namespace, activePool.name, resizeSockets.value, resizeCores.value, resizeThreads.value, resizeMemory.value)">변경 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -503,20 +503,20 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="type-title">Priority Class: {{activePool.namespace}} - {{activePool.name}}</h4>
+              <h4 class="modal-title" id="type-title">우선순위 클래스: {{activePool.namespace}} - {{activePool.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-pc")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="type-value">
-              <label for="newPriority">Priority Class:</label>
+              <label for="newPriority">우선순위 클래스:</label>
               <select #changepoolpc class="custom-select rounded-0" name="changepool-pc" id="changepool-pc">
                   <option>Value 1</option>
               </select>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" (click)='hideComponent("modal-pc")'>Close</button>
-              <button type="button" class="btn btn-primary" (click)="applyPc(activePool.namespace, activePool.name, changepoolpc.value)">Save changes</button>
+              <button type="button" class="btn btn-default" (click)='hideComponent("modal-pc")'>닫기</button>
+              <button type="button" class="btn btn-primary" (click)="applyPc(activePool.namespace, activePool.name, changepoolpc.value)">변경 저장</button>
             </div>
           </div>
           <!-- /.modal-content -->
@@ -531,19 +531,19 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="type-title">Liveness: {{activePool.namespace}} - {{activePool.name}}</h4>
+              <h4 class="modal-title" id="type-title">활성 프로브: {{activePool.namespace}} - {{activePool.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-liveness")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="type-value">
               <div *ngIf="activePool.hasLiveness; else noLiveness">
-                <label for="pooldetails-liveness-enable">Liveness Probe:</label>
+                <label for="pooldetails-liveness-enable">활성 프로브:</label>
                 <select #pooldetailslivenessenable class="custom-select rounded-0" name="pooldetails-liveness-enable" id="pooldetails-liveness-enable" (change)="onChangeLiveness(pooldetailslivenessenable.value)">
-                    <option value="disabled">Disabled</option>
-                    <option value="enabled" selected>Enabled</option>
+                    <option value="disabled">비활성화됨</option>
+                    <option value="enabled" selected>활성화됨</option>
                 </select>
-                <label for="pooldetails-liveness-type">Probe Type:</label>
+                <label for="pooldetails-liveness-type">프로브 유형:</label>
                 <span id="thistypeselector" [ngSwitch]="thisLivenessType">
                     <select [(ngModel)]="selectedLivenessType" #pooldetailslivenesstype class="custom-select rounded-0" name="pooldetails-liveness-type" id="pooldetails-liveness-type" (change)="onChangeLivenessType(pooldetailslivenesstype.value)" *ngSwitchCase="'http'">
                         <option value="tcp">TCP</option>
@@ -555,57 +555,57 @@
                     </select>
                 </span>
                 <div class="modal fade show" id="pooldetails-liveness-path-panel" name="pooldetails-liveness-path-panel" style="display: contents;" aria-hidden="false" *ngIf="activePool.livenessProbe.httpGet.path">
-                    <label for="pooldetails-readiness-path">HTTP Path:</label>
+                    <label for="pooldetails-readiness-path">HTTP 경로:</label>
                     <input [(ngModel)]="inputLivenessPath" #pooldetailslivenesspath type="text" class="form-control" id="pooldetails-liveness-path" name="pooldetails-liveness-path" value={{activePool.livenessProbe.httpGet.path}}>
                 </div>
-                <label for="pooldetails-liveness-port">Port:</label>
+                <label for="pooldetails-liveness-port">포트:</label>
                 <span id="thistypeport" [ngSwitch]="thisLivenessType">
                     <input [(ngModel)]="inputLivenessPort" #pooldetailslivenessport type="number" class="form-control" id="pooldetails-liveness-port" name="pooldetails-liveness-port" value={{activePool.livenessProbe.httpGet.port}} *ngSwitchCase="'http'">
                     <input [(ngModel)]="inputLivenessPort" #pooldetailslivenessport type="number" class="form-control" id="pooldetails-liveness-port" name="pooldetails-liveness-port" value={{activePool.livenessProbe.tcpSocket.port}} *ngSwitchCase="'tcp'">
                 </span>
-                <label for="pooldetails-liveness-initialdelay">Initial Delay (s):</label>
+                <label for="pooldetails-liveness-initialdelay">초기 지연 (초):</label>
                 <input [(ngModel)]="inputLivenessDelay" #pooldetailslivenessinitialdelay type="number" class="form-control" id="pooldetails-liveness-initialdelay" name="pooldetails-liveness-initialdelay" value={{activePool.livenessProbe.initDelaySeconds}}>
-                <label for="pooldetails-liveness-interval">Interval (s):</label>
+                <label for="pooldetails-liveness-interval">간격 (초):</label>
                 <input [(ngModel)]="inputLivenessInterval" #pooldetailslivenessinterval type="number" class="form-control" id="pooldetails-liveness-interval" name="pooldetails-liveness-interval" value={{activePool.livenessProbe.periodSeconds}}>
-                <label for="pooldetails-liveness-timeout">Timeout (s):</label>
+                <label for="pooldetails-liveness-timeout">타임아웃 (초):</label>
                 <input [(ngModel)]="inputLivenessTimeout" #pooldetailslivenesstimeout type="number" class="form-control" id="pooldetails-liveness-timeout" name="pooldetails-liveness-timeout" value={{activePool.livenessProbe.timeoutSeconds}}>
-                <label for="pooldetails-liveness-failure">Failure Threshold:</label>
+                <label for="pooldetails-liveness-failure">실패 임계값:</label>
                 <input [(ngModel)]="inputLivenessFailure" #pooldetailslivenessfailure type="number" class="form-control" id="pooldetails-liveness-failure" name="pooldetails-liveness-failure" value={{activePool.livenessProbe.failureThreshold}}>
                 <input [(ngModel)]="inputLivenessSuccess" #pooldetailslivenesssuccess type="hidden" class="form-control" id="pooldetails-liveness-success" name="pooldetails-liveness-success" value="1">
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" (click)='hideComponent("modal-liveness")'>Close</button>
-                    <button type="button" class="btn btn-primary" (click)="applyLiveness(activePool.namespace, activePool.name, pooldetailslivenessenable.value)">Save changes</button>
+                    <button type="button" class="btn btn-default" (click)='hideComponent("modal-liveness")'>닫기</button>
+                    <button type="button" class="btn btn-primary" (click)="applyLiveness(activePool.namespace, activePool.name, pooldetailslivenessenable.value)">변경 저장</button>
                 </div>
               </div>
               <ng-template #noLiveness>
-                <label for="pooldetails-liveness-enable">Liveness Probe:</label>
+                <label for="pooldetails-liveness-enable">활성 프로브:</label>
                 <select #pooldetailslivenessenable class="custom-select rounded-0" name="pooldetails-liveness-enable" id="pooldetails-liveness-enable" (change)="onChangeLiveness(pooldetailslivenessenable.value)">
-                    <option value="disabled" selected>Disabled</option>
-                    <option value="enabled">Enabled</option>
+                    <option value="disabled" selected>비활성화됨</option>
+                    <option value="enabled">활성화됨</option>
                 </select>
-                <label for="pooldetails-liveness-type">Probe Type:</label>
+                <label for="pooldetails-liveness-type">프로브 유형:</label>
                 <select [(ngModel)]="selectedLivenessType" #pooldetailslivenesstype class="custom-select rounded-0" name="pooldetails-liveness-type" id="pooldetails-liveness-type" (change)="onChangeLivenessType(pooldetailslivenesstype.value)" disabled>
                   <option value="tcp">TCP</option>
                   <option value="http">HTTP</option>
                 </select>
                 <div class="pane fade" id="pooldetails-liveness-path-panel" name="pooldetails-liveness-path-panel" style="display: none;" aria-hidden="true">
-                  <label for="pooldetails-liveness-path">HTTP Path:</label>
+                  <label for="pooldetails-liveness-path">HTTP 경로:</label>
                   <input [(ngModel)]="inputLivenessPath" #pooldetailslivenesspath type="text" class="form-control" id="pooldetails-liveness-path" name="pooldetails-liveness-path">
                 </div>
-                <label for="pooldetails-liveness-port">Port:</label>
+                <label for="pooldetails-liveness-port">포트:</label>
                 <input [(ngModel)]="inputLivenessPort" #pooldetailslivenessport type="number" class="form-control" id="pooldetails-liveness-port" name="pooldetails-liveness-port" disabled>
-                <label for="pooldetails-liveness-initialdelay">Initial Delay (s):</label>
+                <label for="pooldetails-liveness-initialdelay">초기 지연 (초):</label>
                 <input [(ngModel)]="inputLivenessDelay" #pooldetailslivenessinitialdelay type="number" class="form-control" id="pooldetails-liveness-initialdelay" name="pooldetails-liveness-initialdelay" disabled>
-                <label for="pooldetails-liveness-interval">Interval (s):</label>
+                <label for="pooldetails-liveness-interval">간격 (초):</label>
                 <input [(ngModel)]="inputLivenessInterval" #pooldetailslivenessinterval type="number" class="form-control" id="pooldetails-liveness-interval" name="pooldetails-liveness-interval" disabled>
-                <label for="pooldetails-liveness-timeout">Timeout (s):</label>
+                <label for="pooldetails-liveness-timeout">타임아웃 (초):</label>
                 <input [(ngModel)]="inputLivenessTimeout" #pooldetailslivenesstimeout type="number" class="form-control" id="pooldetails-liveness-timeout" name="pooldetails-liveness-timeout" disabled>
-                <label for="pooldetails-liveness-failure">Failure Threshold:</label>
+                <label for="pooldetails-liveness-failure">실패 임계값:</label>
                 <input [(ngModel)]="inputLivenessFailure" #pooldetailslivenessfailure type="number" class="form-control" id="pooldetails-liveness-failure" name="pooldetails-liveness-failure" disabled>
                 <input [(ngModel)]="inputLivenessSuccess" #pooldetailslivenesssuccess type="hidden" class="form-control" id="pooldetails-liveness-success" name="pooldetails-liveness-success" value="1">
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" (click)='hideComponent("modal-liveness")'>Close</button>
-                    <button type="button" class="btn btn-primary" (click)="applyLiveness(activePool.namespace, activePool.name, pooldetailslivenessenable.value)">Save changes</button>
+                    <button type="button" class="btn btn-default" (click)='hideComponent("modal-liveness")'>닫기</button>
+                    <button type="button" class="btn btn-primary" (click)="applyLiveness(activePool.namespace, activePool.name, pooldetailslivenessenable.value)">변경 저장</button>
                 </div>
              </ng-template>
             </div>
@@ -622,19 +622,19 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title" id="type-title">Readiness: {{activePool.namespace}} - {{activePool.name}}</h4>
+              <h4 class="modal-title" id="type-title">준비 프로브: {{activePool.namespace}} - {{activePool.name}}</h4>
               <button type="button" class="close" (click)='hideComponent("modal-readiness")'>
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body" id="type-value">
               <div *ngIf="activePool.hasReadiness; else noReadiness">
-                <label for="pooldetails-readiness-enable">Readiness Probe:</label>
+                <label for="pooldetails-readiness-enable">준비 프로브:</label>
                 <select #pooldetailsreadinessenable class="custom-select rounded-0" name="pooldetails-readiness-enable" id="pooldetails-readiness-enable" (change)="onChangeReadiness(pooldetailsreadinessenable.value)">
-                    <option value="disabled">Disabled</option>
-                    <option value="enabled" selected>Enabled</option>
+                    <option value="disabled">비활성화됨</option>
+                    <option value="enabled" selected>활성화됨</option>
                 </select>
-                <label for="pooldetails-readiness-type">Probe Type:</label>
+                <label for="pooldetails-readiness-type">프로브 유형:</label>
                 <span id="thistypeselector" [ngSwitch]="thisReadinessType">
                     <select [(ngModel)]="selectedReadinessType" #pooldetailsreadinesstype class="custom-select rounded-0" name="pooldetails-readiness-type" id="pooldetails-readiness-type" (change)="onChangeReadinessType(pooldetailsreadinesstype.value)" *ngSwitchCase="'http'">
                         <option value="tcp">TCP</option>
@@ -646,57 +646,57 @@
                     </select>
                 </span>
                 <div class="modal fade show" id="pooldetails-readiness-path-panel" name="pooldetails-readiness-path-panel" style="display: contents;" aria-hidden="false" *ngIf="activePool.readinessProbe.httpGet.path">
-                    <label for="pooldetails-readiness-path">HTTP Path:</label>
+                    <label for="pooldetails-readiness-path">HTTP 경로:</label>
                     <input [(ngModel)]="inputReadinessPath" #pooldetailsreadinesspath type="text" class="form-control" id="pooldetails-readiness-path" name="pooldetails-readiness-path" value={{activePool.readinessProbe.httpGet.path}}>
                 </div>
-                <label for="pooldetails-readiness-port">Port:</label>
+                <label for="pooldetails-readiness-port">포트:</label>
                 <span id="thistypeport" [ngSwitch]="thisReadinessType">
                     <input [(ngModel)]="inputReadinessPort" #pooldetailsreadinessport type="number" class="form-control" id="pooldetails-readiness-port" name="pooldetails-readiness-port" value={{activePool.readinessProbe.httpGet.port}} *ngSwitchCase="'http'">
                     <input [(ngModel)]="inputReadinessPort" #pooldetailsreadinessport type="number" class="form-control" id="pooldetails-readiness-port" name="pooldetails-readiness-port" value={{activePool.readinessProbe.tcpSocket.port}} *ngSwitchCase="'tcp'">
                 </span>
-                <label for="pooldetails-readiness-initialdelay">Initial Delay (s):</label>
+                <label for="pooldetails-readiness-initialdelay">초기 지연 (초):</label>
                 <input [(ngModel)]="inputReadinessDelay" #pooldetailsreadinessinitialdelay type="number" class="form-control" id="pooldetails-readiness-initialdelay" name="pooldetails-readiness-initialdelay" value={{activePool.readinessProbe.initDelaySeconds}}>
-                <label for="pooldetails-readiness-interval">Interval (s):</label>
+                <label for="pooldetails-readiness-interval">간격 (초):</label>
                 <input [(ngModel)]="inputReadinessInterval" #pooldetailsreadinessinterval type="number" class="form-control" id="pooldetails-readiness-interval" name="pooldetails-readiness-interval" value={{activePool.readinessProbe.periodSeconds}}>
-                <label for="pooldetails-readiness-timeout">Timeout (s):</label>
+                <label for="pooldetails-readiness-timeout">타임아웃 (초):</label>
                 <input [(ngModel)]="inputReadinessTimeout" #pooldetailsreadinesstimeout type="number" class="form-control" id="pooldetails-readiness-timeout" name="pooldetails-readiness-timeout" value={{activePool.readinessProbe.timeoutSeconds}}>
-                <label for="pooldetails-readiness-failure">Failure Threshold:</label>
+                <label for="pooldetails-readiness-failure">실패 임계값:</label>
                 <input [(ngModel)]="inputReadinessFailure" #pooldetailsreadinessfailure type="number" class="form-control" id="pooldetails-readiness-failure" name="pooldetails-readiness-failure" value={{activePool.readinessProbe.failureThreshold}}>
                 <input [(ngModel)]="inputReadinessSuccess" #pooldetailsreadinesssuccess type="hidden" class="form-control" id="pooldetails-readiness-success" name="pooldetails-readiness-success" value="1">
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" (click)='hideComponent("modal-readiness")'>Close</button>
-                    <button type="button" class="btn btn-primary" (click)="applyReadiness(activePool.namespace, activePool.name, pooldetailsreadinessenable.value)">Save changes</button>
+                    <button type="button" class="btn btn-default" (click)='hideComponent("modal-readiness")'>닫기</button>
+                    <button type="button" class="btn btn-primary" (click)="applyReadiness(activePool.namespace, activePool.name, pooldetailsreadinessenable.value)">변경 저장</button>
                 </div>
               </div>
               <ng-template #noReadiness>
-                <label for="pooldetails-readiness-enable">Readiness Probe:</label>
+                <label for="pooldetails-readiness-enable">준비 프로브:</label>
                 <select #pooldetailsreadinessenable class="custom-select rounded-0" name="pooldetails-readiness-enable" id="pooldetails-readiness-enable" (change)="onChangeReadiness(pooldetailsreadinessenable.value)">
-                    <option value="disabled">Disabled</option>
-                    <option value="enabled">Enabled</option>
+                    <option value="disabled">비활성화됨</option>
+                    <option value="enabled">활성화됨</option>
                 </select>
-                <label for="pooldetails-readiness-type">Probe Type:</label>
+                <label for="pooldetails-readiness-type">프로브 유형:</label>
                 <select [(ngModel)]="selectedReadinessType" #pooldetailsreadinesstype class="custom-select rounded-0" name="pooldetails-readiness-type" id="pooldetails-readiness-type" (change)="onChangeReadinessType(pooldetailsreadinesstype.value)" disabled>
                   <option value="tcp">TCP</option>
                   <option value="http">HTTP</option>
                 </select>
                 <div class="pane fade" id="pooldetails-readiness-path-panel" name="pooldetails-readiness-path-panel" style="display: none;" aria-hidden="true">
-                  <label for="pooldetails-readiness-path">HTTP Path:</label>
+                  <label for="pooldetails-readiness-path">HTTP 경로:</label>
                   <input [(ngModel)]="inputReadinessPath" #pooldetailsreadinesspath type="text" class="form-control" id="pooldetails-readiness-path" name="pooldetails-readiness-path">
                 </div>
-                <label for="pooldetails-readiness-port">Port:</label>
+                <label for="pooldetails-readiness-port">포트:</label>
                 <input [(ngModel)]="inputReadinessPort" #pooldetailsreadinessport type="number" class="form-control" id="pooldetails-readiness-port" name="pooldetails-readiness-port" disabled>
-                <label for="pooldetails-readiness-initialdelay">Initial Delay (s):</label>
+                <label for="pooldetails-readiness-initialdelay">초기 지연 (초):</label>
                 <input [(ngModel)]="inputReadinessDelay" #pooldetailsreadinessinitialdelay type="number" class="form-control" id="pooldetails-readiness-initialdelay" name="pooldetails-readiness-initialdelay" disabled>
-                <label for="pooldetails-readiness-interval">Interval (s):</label>
+                <label for="pooldetails-readiness-interval">간격 (초):</label>
                 <input [(ngModel)]="inputReadinessInterval" #pooldetailsreadinessinterval type="number" class="form-control" id="pooldetails-readiness-interval" name="pooldetails-readiness-interval" disabled>
-                <label for="pooldetails-readiness-timeout">Timeout (s):</label>
+                <label for="pooldetails-readiness-timeout">타임아웃 (초):</label>
                 <input [(ngModel)]="inputReadinessTimeout" #pooldetailsreadinesstimeout type="number" class="form-control" id="pooldetails-readiness-timeout" name="pooldetails-readiness-timeout" disabled>
-                <label for="pooldetails-readiness-failure">Failure Threshold:</label>
+                <label for="pooldetails-readiness-failure">실패 임계값:</label>
                 <input [(ngModel)]="inputReadinessFailure" #pooldetailsreadinessfailure type="number" class="form-control" id="pooldetails-readiness-failure" name="pooldetails-readiness-failure" disabled>
                 <input [(ngModel)]="inputReadinessSuccess" #pooldetailsreadinesssuccess type="hidden" class="form-control" id="pooldetails-readiness-success" name="pooldetails-readiness-success" value="1">
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" (click)='hideComponent("modal-readiness")'>Close</button>
-                    <button type="button" class="btn btn-primary" (click)="applyReadiness(activePool.namespace, activePool.name, pooldetailsreadinessenable.value)">Save changes</button>
+                    <button type="button" class="btn btn-default" (click)='hideComponent("modal-readiness")'>닫기</button>
+                    <button type="button" class="btn btn-primary" (click)="applyReadiness(activePool.namespace, activePool.name, pooldetailsreadinessenable.value)">변경 저장</button>
                 </div>
             </ng-template>
             </div>
@@ -708,4 +708,3 @@
 
 
     </div>
-</div>
