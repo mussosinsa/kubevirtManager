@@ -1,22 +1,33 @@
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, UrlTree } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
+import { AuthService } from '../services/auth.service';
 
 /**
  * 모든 보호된 라우트에 적용되는 인증 가드.
- * 로그인되지 않은 경우 Keycloak 로그인 페이지로 리디렉션합니다.
+ * - Keycloak 사용 가능: 미인증 시 Keycloak 로그인 페이지로 리디렉션
+ * - Keycloak 미사용: 미인증 시 /login(로컬 로그인)으로 리디렉션
  */
-export const authGuard = async (): Promise<boolean> => {
-    const keycloak = inject(KeycloakService);
+export const authGuard = async (): Promise<boolean | UrlTree> => {
+    const authService = inject(AuthService);
+    const keycloak    = inject(KeycloakService);
+    const router      = inject(Router);
 
-    const isLoggedIn = await keycloak.isLoggedIn();
-    if (isLoggedIn) {
-        return true;
+    if (authService.keycloakAvailable) {
+        /* Keycloak 인증 흐름 */
+        const isLoggedIn = await keycloak.isLoggedIn();
+        if (isLoggedIn) {
+            return true;
+        }
+        await keycloak.login({
+            redirectUri: window.location.origin + window.location.pathname + window.location.search,
+        });
+        return false;
     }
 
-    /* 인증되지 않은 경우 현재 URL을 redirectUri로 설정하여 로그인 */
-    await keycloak.login({
-        redirectUri: window.location.origin + window.location.pathname + window.location.search,
-    });
-    return false;
+    /* 로컬 로그인 흐름 */
+    if (authService.isLocallyLoggedIn()) {
+        return true;
+    }
+    return router.createUrlTree(['/login']);
 };

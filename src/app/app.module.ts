@@ -8,8 +8,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 /* Keycloak */
 import { KeycloakAngularModule, KeycloakBearerInterceptor, KeycloakService } from 'keycloak-angular';
 import { environment } from '../environments/environment';
+import { AuthService } from './services/auth.service';
 
 /* Components */
+import { LocalLoginComponent } from './components/local-login/local-login.component';
 import { MainHeaderComponent } from './components/main-header/main-header.component';
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { MainFooterComponent } from './components/main-footer/main-footer.component';
@@ -39,7 +41,7 @@ import { DataTablesModule } from 'angular-datatables';
  * 앱 부트스트랩 전에 Keycloak 세션을 확인하고 인증을 설정합니다.
  * Keycloak 서버에 연결할 수 없는 경우 인증 없이 앱을 시작합니다.
  */
-function initializeKeycloak(keycloak: KeycloakService) {
+function initializeKeycloak(keycloak: KeycloakService, authService: AuthService) {
     return async () => {
         try {
             await keycloak.init({
@@ -62,9 +64,11 @@ function initializeKeycloak(keycloak: KeycloakService) {
                 /* /assets 경로는 토큰 주입 제외 */
                 bearerExcludedUrls: ['/assets'],
             });
+            /* Keycloak 초기화 성공 — Keycloak 인증 흐름 사용 */
+            authService.keycloakAvailable = true;
         } catch (error) {
-            /* Keycloak 서버 미실행 또는 설정 오류 시 인증 없이 앱 구동 */
-            console.warn('[Keycloak] 초기화 실패 — 인증 없이 실행합니다.', error);
+            /* Keycloak 서버 미실행 또는 설정 오류 — 로컬 로그인으로 전환 */
+            console.warn('[Keycloak] 초기화 실패 — 로컬 로그인으로 전환합니다.', error);
         }
     };
 }
@@ -94,6 +98,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         SSHKeysComponent,
         FirewallListComponent,
         SettingsComponent,
+        LocalLoginComponent,
     ],
     bootstrap: [AppComponent],
     imports: [
@@ -110,7 +115,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
             provide: APP_INITIALIZER,
             useFactory: initializeKeycloak,
             multi: true,
-            deps: [KeycloakService],
+            deps: [KeycloakService, AuthService],
         },
         /* 모든 HTTP 요청에 Keycloak Bearer 토큰 자동 주입 */
         {

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { authGuard } from './guards/auth.guard';
 
+import { LocalLoginComponent } from './components/local-login/local-login.component';
 import { ClusterInstanceTypeListComponent } from './components/cluster-instance-type-list/cluster-instance-type-list.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DiskListComponent } from './components/disk-list/disk-list.component';
@@ -24,6 +25,7 @@ import { FirewallListComponent } from './components/firewall-list/firewall-list.
 import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
+  { path: 'login',                                    component: LocalLoginComponent },
   { path: '',                                         component: DashboardComponent,          canActivate: [authGuard] },
   { path: 'dashboard',                                component: DashboardComponent,          canActivate: [authGuard] },
   { path: 'vmlist',                                   component: VmlistComponent,             canActivate: [authGuard] },
