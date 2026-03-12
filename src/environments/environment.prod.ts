@@ -1,4 +1,6 @@
-export const environment = {
+import { AppEnvironment } from './environment.model';
+
+export const environment: AppEnvironment = {
   production: true,
   keycloak: {
     /* 프로덕션 환경에서는 실제 Keycloak 서버 URL로 교체하세요.
