@@ -8,7 +8,7 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'kubevirt-manager';
+  title = 'OV-Works PaaS Manager';
 
   /** 로그인 페이지에서는 헤더/사이드바/푸터를 숨깁니다. */
   showShell = true;

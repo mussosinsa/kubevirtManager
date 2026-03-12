@@ -22,9 +22,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'kubevirt-manager'`, () => {
+  it(`should have as title 'OV-Works PaaS Manager'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('kubevirt-manager');
+    expect(app.title).toEqual('OV-Works PaaS Manager');
   });
 });

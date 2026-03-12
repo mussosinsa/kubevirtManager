@@ -500,7 +500,7 @@ export class KClusterPoolDetailsComponent implements OnInit {
         let url = "/assets/noVNC/vnc.html?resize=scale&autoconnect=1&path=";
         let path = "/k8s/apis/subresources.kubevirt.io/v1alpha3/namespaces/" + namespace + "/virtualmachineinstances/" + name + "/vnc";
         let fullpath = url + path;
-        window.open(fullpath, "kubevirt-manager.io: CONSOLE", "width=800,height=600,location=no,toolbar=no,menubar=no,resizable=yes");
+        window.open(fullpath, "OV-Works PaaS Manager: CONSOLE", "width=800,height=600,location=no,toolbar=no,menubar=no,resizable=yes");
     }
 
     /*

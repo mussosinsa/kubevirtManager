@@ -32,7 +32,7 @@ describe('SideMenuComponent', () => {
     const componentDoc: DebugElement = fixture.debugElement;
     const componentElem = componentDoc.query(By.css('.brand-text'))
     const contentValue = componentElem.nativeElement;
-    expect(contentValue.textContent).toContain('kubevirt-manager');
+    expect(contentValue.textContent).toContain('OV-Works PaaS Manager');
   });
   it('should contain Dashboard item', () => {
     const componentDoc: DebugElement = fixture.debugElement;

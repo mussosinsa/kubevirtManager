@@ -327,16 +327,16 @@
               </div>
               <div class="card-body">
                 <p class="small mb-2">관리자 권한의 서비스 계정 생성:</p>
-                <pre class="bg-dark text-light p-2 rounded small mb-2">kubectl create sa kpaas-admin \
+                <pre class="bg-dark text-light p-2 rounded small mb-2">kubectl create sa ovworks-admin \
   -n kube-system
 
 kubectl create clusterrolebinding \
-  kpaas-admin \
+  ovworks-admin \
   --clusterrole=cluster-admin \
   --serviceaccount=\
-  kube-system:kpaas-admin
+  kube-system:ovworks-admin
 
-kubectl create token kpaas-admin \
+kubectl create token ovworks-admin \
   -n kube-system</pre>
                 <p class="small text-muted mb-0">
                   <i class="fas fa-exclamation-triangle text-warning mr-1"></i>
@@ -431,7 +431,7 @@ kubectl create token kpaas-admin \
                          { label: 'CDI (데이터 임포터)', icon: 'fa-database',      desc: '컨테이너화된 데이터 임포터', installed: cdiInstalled },
                          { label: 'CAPK (클러스터 API)', icon: 'fa-cubes',         desc: 'KubeVirt 클러스터 프로바이더', installed: capkInstalled },
                          { label: 'Multus CNI',          icon: 'fa-network-wired', desc: '다중 네트워크 인터페이스',   installed: multusInstalled },
-                         { label: '이미지 관리자',       icon: 'fa-compact-disc',  desc: 'K-PaaS Manager 이미지 CRD', installed: imagesInstalled }
+                         { label: '이미지 관리자',       icon: 'fa-compact-disc',  desc: 'OV-Works PaaS Manager 이미지 CRD', installed: imagesInstalled }
                        ]">
                     <div class="card h-100"
                          [ngClass]="item.installed ? 'border-success' : 'border-secondary'">
