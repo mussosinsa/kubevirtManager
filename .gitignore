@@ -1,0 +1,25 @@
+# Angular 빌드 캐시 및 산출물
+.angular/
+dist/
+
+# Node.js 의존성
+node_modules/
+
+# 테스트 커버리지
+coverage/
+
+# 환경별 설정 (민감 정보 포함 가능)
+# src/environments/environment.prod.ts
+
+# OS 관련
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
