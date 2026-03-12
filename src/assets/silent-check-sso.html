@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Silent SSO Check</title>
+</head>
+<body>
+  <script>
+    /**
+     * Keycloak 사일런트 SSO 체크를 위한 페이지.
+     * 이 파일은 Keycloak이 부모 창과 메시지를 교환하는 데 사용됩니다.
+     */
+    parent.postMessage(location.href, location.origin);
+  </script>
+</body>
+</html>

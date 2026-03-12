@@ -29,6 +29,8 @@
     "datatables.net-dt": "^2.0.3",
     "jquery": "^3.6.0",
     "karma-spec-reporter": "^0.0.36",
+    "keycloak-angular": "^16.1.0",
+    "keycloak-js": "^25.0.6",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.7"

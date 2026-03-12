@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
+import { authGuard } from './guards/auth.guard';
+
 import { ClusterInstanceTypeListComponent } from './components/cluster-instance-type-list/cluster-instance-type-list.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DiskListComponent } from './components/disk-list/disk-list.component';
@@ -21,30 +24,30 @@ import { FirewallListComponent } from './components/firewall-list/firewall-list.
 import { SettingsComponent } from './components/settings/settings.component';
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'vmlist', component: VmlistComponent },
-  { path: 'vmpools', component: VMPoolsComponent},
-  { path: 'vmdetail/:namespace/:name', component: VmdetailsComponent},
-  { path: 'vmpooldetail/:namespace/:name', component: VmpooldetailsComponent},
-  { path: 'autoscale', component: AutoscaleComponent},
-  { path: 'nodelist', component: NodelistComponent },
-  { path: 'dsklist', component: DiskListComponent },
-  { path: 'netlist', component: NetworkListComponent },
-  { path: 'lblist', component: LoadBalancersComponent },
-  { path: 'citlist', component: ClusterInstanceTypeListComponent },
-  { path: 'refresh', component: RefreshComponent },
-  { path: 'kcluster', component: KClusterComponent },
-  { path: 'kclusterdetails/:namespace/:name', component: KClusterDetailsComponent },
-  { path: 'kclusterpooldetails/:namespace/:name', component: KClusterPoolDetailsComponent },
-  { path: 'imagelist', component: ImagesComponent },
-  { path: 'sshkeys', component: SSHKeysComponent },
-  { path: 'firewalls', component: FirewallListComponent },
-  { path: 'settings', component: SettingsComponent }
+  { path: '',                                         component: DashboardComponent,          canActivate: [authGuard] },
+  { path: 'dashboard',                                component: DashboardComponent,          canActivate: [authGuard] },
+  { path: 'vmlist',                                   component: VmlistComponent,             canActivate: [authGuard] },
+  { path: 'vmpools',                                  component: VMPoolsComponent,            canActivate: [authGuard] },
+  { path: 'vmdetail/:namespace/:name',                component: VmdetailsComponent,          canActivate: [authGuard] },
+  { path: 'vmpooldetail/:namespace/:name',            component: VmpooldetailsComponent,      canActivate: [authGuard] },
+  { path: 'autoscale',                                component: AutoscaleComponent,          canActivate: [authGuard] },
+  { path: 'nodelist',                                 component: NodelistComponent,           canActivate: [authGuard] },
+  { path: 'dsklist',                                  component: DiskListComponent,           canActivate: [authGuard] },
+  { path: 'netlist',                                  component: NetworkListComponent,        canActivate: [authGuard] },
+  { path: 'lblist',                                   component: LoadBalancersComponent,      canActivate: [authGuard] },
+  { path: 'citlist',                                  component: ClusterInstanceTypeListComponent, canActivate: [authGuard] },
+  { path: 'refresh',                                  component: RefreshComponent,            canActivate: [authGuard] },
+  { path: 'kcluster',                                 component: KClusterComponent,           canActivate: [authGuard] },
+  { path: 'kclusterdetails/:namespace/:name',         component: KClusterDetailsComponent,    canActivate: [authGuard] },
+  { path: 'kclusterpooldetails/:namespace/:name',     component: KClusterPoolDetailsComponent, canActivate: [authGuard] },
+  { path: 'imagelist',                                component: ImagesComponent,             canActivate: [authGuard] },
+  { path: 'sshkeys',                                  component: SSHKeysComponent,            canActivate: [authGuard] },
+  { path: 'firewalls',                                component: FirewallListComponent,       canActivate: [authGuard] },
+  { path: 'settings',                                 component: SettingsComponent,           canActivate: [authGuard] },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

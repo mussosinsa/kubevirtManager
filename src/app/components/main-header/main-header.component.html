@@ -3,7 +3,9 @@
   <!-- Left navbar links -->
   <ul class="navbar-nav">
     <li class="nav-item">
-      <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+        <i class="fas fa-bars"></i>
+      </a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
       <span id="nav-title" class="nav-link">대시보드</span>
@@ -13,12 +15,89 @@
   <!-- Right navbar links -->
   <ul class="navbar-nav ml-auto">
 
-    <!-- Fullscreen Menu -->
+    <!-- Fullscreen -->
     <li class="nav-item">
-      <a class="nav-link" data-widget="fullscreen" href="#" role="button" alt="#">
+      <a class="nav-link" data-widget="fullscreen" href="#" role="button">
         <i class="fas fa-expand-arrows-alt"></i>
       </a>
     </li>
+
+    <!-- User Profile Dropdown -->
+    <li class="nav-item dropdown" [class.show]="showDropdown">
+      <a class="nav-link d-flex align-items-center gap-2 pr-2 pl-1"
+         href="#"
+         role="button"
+         (click)="$event.preventDefault(); toggleDropdown()">
+
+        <!-- 이니셜 아바타 -->
+        <span class="user-avatar"
+              style="display:inline-flex;align-items:center;justify-content:center;
+                     width:32px;height:32px;border-radius:50%;
+                     background:linear-gradient(135deg,#007bff,#0056b3);
+                     color:#fff;font-size:0.78rem;font-weight:700;
+                     flex-shrink:0;letter-spacing:.5px;">
+          {{ initials || 'U' }}
+        </span>
+
+        <!-- 사용자 이름 (sm 이상 화면에서만 표시) -->
+        <span class="d-none d-md-inline-block" style="font-size:.9rem;font-weight:500;color:#343a40;">
+          {{ displayName || username }}
+        </span>
+        <i class="fas fa-caret-down d-none d-md-inline-block ml-1" style="font-size:.75rem;color:#6c757d;"></i>
+      </a>
+
+      <!-- Dropdown 메뉴 -->
+      <div class="dropdown-menu dropdown-menu-right shadow-sm border-0"
+           style="min-width:240px;margin-top:6px;border-radius:8px;"
+           [class.show]="showDropdown">
+
+        <!-- 사용자 정보 헤더 -->
+        <div class="px-4 py-3" style="border-bottom:1px solid #f0f0f0;">
+          <div class="d-flex align-items-center gap-3">
+            <span style="display:inline-flex;align-items:center;justify-content:center;
+                         width:44px;height:44px;border-radius:50%;
+                         background:linear-gradient(135deg,#007bff,#0056b3);
+                         color:#fff;font-size:1rem;font-weight:700;flex-shrink:0;">
+              {{ initials || 'U' }}
+            </span>
+            <div style="overflow:hidden;">
+              <div class="font-weight-bold text-dark" style="font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                {{ displayName || username }}
+              </div>
+              <div class="text-muted" style="font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                {{ email || username }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 메뉴 항목 -->
+        <div class="py-1">
+          <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-4" href="#"
+             (click)="$event.preventDefault(); closeDropdown()">
+            <i class="fas fa-user-circle fa-fw text-muted"></i>
+            <span>내 프로필</span>
+          </a>
+          <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-4"
+             routerLink="/settings"
+             (click)="closeDropdown()">
+            <i class="fas fa-cog fa-fw text-muted"></i>
+            <span>설정</span>
+          </a>
+        </div>
+
+        <div style="border-top:1px solid #f0f0f0;" class="py-1">
+          <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-4 text-danger"
+             href="#"
+             (click)="$event.preventDefault(); logout()">
+            <i class="fas fa-sign-out-alt fa-fw"></i>
+            <span>로그아웃</span>
+          </a>
+        </div>
+
+      </div>
+    </li>
+    <!-- /.User Profile -->
 
   </ul>
 </nav>

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-main-header',
@@ -7,9 +8,40 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainHeaderComponent implements OnInit {
 
-  constructor() { }
+  displayName: string   = '';
+  username: string      = '';
+  email: string         = '';
+  initials: string      = '';
+  showDropdown: boolean = false;
 
-  ngOnInit(): void {
+  constructor(private authService: AuthService) {}
+
+  async ngOnInit(): Promise<void> {
+    this.displayName = this.authService.getDisplayName();
+    this.username    = this.authService.getUsername();
+    this.email       = this.authService.getEmail();
+    this.initials    = this.authService.getInitials();
+  }
+
+  async logout(): Promise<void> {
+    await this.authService.logout();
+  }
+
+  toggleDropdown(): void {
+    this.showDropdown = !this.showDropdown;
+  }
+
+  closeDropdown(): void {
+    this.showDropdown = false;
+  }
+
+  /* 드롭다운 외부 클릭 시 닫기 */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.nav-item.dropdown')) {
+      this.showDropdown = false;
+    }
   }
 
 }

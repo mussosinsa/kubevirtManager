@@ -1,9 +1,15 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+/* Keycloak */
+import { KeycloakAngularModule, KeycloakBearerInterceptor, KeycloakService } from 'keycloak-angular';
+import { environment } from '../environments/environment';
+
+/* Components */
 import { MainHeaderComponent } from './components/main-header/main-header.component';
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { MainFooterComponent } from './components/main-footer/main-footer.component';
@@ -26,9 +32,38 @@ import { ImagesComponent } from './components/images/images.component';
 import { SSHKeysComponent } from './components/sshkeys/sshkeys.component';
 import { FirewallListComponent } from './components/firewall-list/firewall-list.component';
 import { SettingsComponent } from './components/settings/settings.component';
-import { DataTablesModule } from 'angular-datatables'
+import { DataTablesModule } from 'angular-datatables';
 
-@NgModule({ declarations: [
+/**
+ * Keycloak 초기화 팩토리 함수.
+ * 앱 부트스트랩 전에 Keycloak 세션을 확인하고 인증을 설정합니다.
+ */
+function initializeKeycloak(keycloak: KeycloakService) {
+    return () =>
+        keycloak.init({
+            config: {
+                url:      environment.keycloak.url,
+                realm:    environment.keycloak.realm,
+                clientId: environment.keycloak.clientId,
+            },
+            initOptions: {
+                /* 앱 로드 시 로그인 필수 (미인증 시 Keycloak 로그인 페이지로 이동) */
+                onLoad: 'login-required',
+                /* 사일런트 SSO 확인을 위한 리디렉션 URI */
+                silentCheckSsoRedirectUri:
+                    window.location.origin + '/assets/silent-check-sso.html',
+                /* PKCE (Proof Key for Code Exchange) 사용 */
+                pkceMethod: 'S256',
+            },
+            /* Kubernetes API로 보내는 모든 요청에 Bearer 토큰 자동 주입 */
+            bearerPrefix: 'Bearer',
+            /* /assets 경로는 토큰 주입 제외 */
+            bearerExcludedUrls: ['/assets'],
+        });
+}
+
+@NgModule({
+    declarations: [
         AppComponent,
         MainHeaderComponent,
         SideMenuComponent,
@@ -51,20 +86,32 @@ import { DataTablesModule } from 'angular-datatables'
         ImagesComponent,
         SSHKeysComponent,
         FirewallListComponent,
-        SettingsComponent
+        SettingsComponent,
     ],
-    bootstrap: [
-        AppComponent
-    ],
+    bootstrap: [AppComponent],
     imports: [
         BrowserModule,
         AppRoutingModule,
         FormsModule,
         ReactiveFormsModule,
         DataTablesModule,
+        KeycloakAngularModule,
     ],
     providers: [
-        provideHttpClient(withInterceptorsFromDi())
-    ]
+        /* Keycloak 초기화 (앱 부트스트랩 전) */
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initializeKeycloak,
+            multi: true,
+            deps: [KeycloakService],
+        },
+        /* 모든 HTTP 요청에 Keycloak Bearer 토큰 자동 주입 */
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: KeycloakBearerInterceptor,
+            multi: true,
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+    ],
 })
-export class AppModule { }
+export class AppModule {}
