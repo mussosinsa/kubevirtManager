@@ -37,29 +37,36 @@ import { DataTablesModule } from 'angular-datatables';
 /**
  * Keycloak 초기화 팩토리 함수.
  * 앱 부트스트랩 전에 Keycloak 세션을 확인하고 인증을 설정합니다.
+ * Keycloak 서버에 연결할 수 없는 경우 인증 없이 앱을 시작합니다.
  */
 function initializeKeycloak(keycloak: KeycloakService) {
-    return () =>
-        keycloak.init({
-            config: {
-                url:      environment.keycloak.url,
-                realm:    environment.keycloak.realm,
-                clientId: environment.keycloak.clientId,
-            },
-            initOptions: {
-                /* 앱 로드 시 로그인 필수 (미인증 시 Keycloak 로그인 페이지로 이동) */
-                onLoad: 'login-required',
-                /* 사일런트 SSO 확인을 위한 리디렉션 URI */
-                silentCheckSsoRedirectUri:
-                    window.location.origin + '/assets/silent-check-sso.html',
-                /* PKCE (Proof Key for Code Exchange) 사용 */
-                pkceMethod: 'S256',
-            },
-            /* Kubernetes API로 보내는 모든 요청에 Bearer 토큰 자동 주입 */
-            bearerPrefix: 'Bearer',
-            /* /assets 경로는 토큰 주입 제외 */
-            bearerExcludedUrls: ['/assets'],
-        });
+    return async () => {
+        try {
+            await keycloak.init({
+                config: {
+                    url:      environment.keycloak.url,
+                    realm:    environment.keycloak.realm,
+                    clientId: environment.keycloak.clientId,
+                },
+                initOptions: {
+                    /* 앱 로드 시 로그인 필수 (미인증 시 Keycloak 로그인 페이지로 이동) */
+                    onLoad: 'login-required',
+                    /* 사일런트 SSO 확인을 위한 리디렉션 URI */
+                    silentCheckSsoRedirectUri:
+                        window.location.origin + '/assets/silent-check-sso.html',
+                    /* PKCE (Proof Key for Code Exchange) 사용 */
+                    pkceMethod: 'S256',
+                },
+                /* Kubernetes API로 보내는 모든 요청에 Bearer 토큰 자동 주입 */
+                bearerPrefix: 'Bearer',
+                /* /assets 경로는 토큰 주입 제외 */
+                bearerExcludedUrls: ['/assets'],
+            });
+        } catch (error) {
+            /* Keycloak 서버 미실행 또는 설정 오류 시 인증 없이 앱 구동 */
+            console.warn('[Keycloak] 초기화 실패 — 인증 없이 실행합니다.', error);
+        }
+    };
 }
 
 @NgModule({
