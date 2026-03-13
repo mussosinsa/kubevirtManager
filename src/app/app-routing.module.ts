@@ -24,6 +24,7 @@ import { SSHKeysComponent } from './components/sshkeys/sshkeys.component';
 import { FirewallListComponent } from './components/firewall-list/firewall-list.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { CicdListComponent } from './components/cicd-list/cicd-list.component';
 
 const routes: Routes = [
   { path: 'login',                                    component: LocalLoginComponent },
@@ -48,6 +49,7 @@ const routes: Routes = [
   { path: 'firewalls',                                component: FirewallListComponent,       canActivate: [authGuard] },
   { path: 'settings',                                 component: SettingsComponent,           canActivate: [authGuard] },
   { path: 'profile',                                  component: ProfileComponent,            canActivate: [authGuard] },
+  { path: 'cicdlist',                                 component: CicdListComponent,           canActivate: [authGuard] },
 ];
 
 @NgModule({

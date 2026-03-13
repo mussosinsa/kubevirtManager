@@ -1,0 +1,328 @@
+<div class="content">
+  <div class="container-fluid">
+    <div class="content-wrapper">
+      &nbsp;<br>
+
+      <!-- ═══════════════════════════════════
+           앱 배포 목록 카드
+      ═══════════════════════════════════ -->
+      <div class="card card-outline">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-rocket"></i>
+            &nbsp;&nbsp;PaaS CI/CD 배포
+          </h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" (click)="fullReload()" title="새로고침...">
+              <i class="fas fa-sync"></i>
+            </button>
+            <button type="button" class="btn btn-tool" (click)="showNewApp()" title="새 앱 배포...">
+              <i class="fas fa-plus-square"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <table datatable id="cicd_datatable"
+                 [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+                 class="table table-sm" style="vertical-align: middle !important;">
+            <thead>
+              <tr>
+                <th style="width: 10px">&nbsp;</th>
+                <th style="width: 120px">네임스페이스</th>
+                <th style="width: 160px">앱 이름</th>
+                <th style="width: 220px">이미지</th>
+                <th style="width: 80px">레플리카</th>
+                <th style="width: 60px">포트</th>
+                <th style="width: 90px">상태</th>
+                <th style="width: 120px">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let app of appList">
+                <td style="line-height: 2.2 !important; align-content: center;">
+                  <i class="fas fa-rocket"></i>
+                </td>
+                <td style="line-height: 2.2 !important;">{{ app.namespace }}</td>
+                <td style="line-height: 2.2 !important;">{{ app.name }}</td>
+                <td style="line-height: 2.2 !important; word-break: break-all;">{{ app.image }}</td>
+                <td style="line-height: 2.2 !important;">
+                  {{ app.readyReplicas }}<span class="text-muted">/{{ app.replicas }}</span>
+                </td>
+                <td style="line-height: 2.2 !important;">
+                  {{ app.port > 0 ? app.port : '-' }}
+                </td>
+                <td style="line-height: 2.2 !important;">
+                  <span class="badge" [ngClass]="statusBadge(app.status)">
+                    {{ statusLabel(app.status) }}
+                  </span>
+                </td>
+                <td style="line-height: 0 !important;">
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle btn-sm" type="button"
+                            data-toggle="dropdown" aria-expanded="false">작업</button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <!-- 이미지 업데이트 -->
+                      <a class="dropdown-item" (click)="showUpdateImage(app)" style="cursor:pointer;">
+                        <i class="fas fa-sync-alt mr-2 text-primary"></i>이미지 업데이트
+                      </a>
+                      <!-- 스케일 -->
+                      <a class="dropdown-item" (click)="showScale(app)" style="cursor:pointer;">
+                        <i class="fas fa-expand-alt mr-2 text-info"></i>스케일 조정
+                      </a>
+                      <!-- 재시작 -->
+                      <a class="dropdown-item" (click)="onRestart(app)" style="cursor:pointer;">
+                        <i class="fas fa-redo mr-2 text-warning"></i>롤아웃 재시작
+                      </a>
+                      <div class="dropdown-divider"></div>
+                      <!-- 삭제 -->
+                      <a class="dropdown-item text-danger" (click)="showDelete(app)" style="cursor:pointer;">
+                        <i class="fas fa-trash mr-2"></i>삭제
+                      </a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     Modal: 새 앱 배포
+═══════════════════════════════════ -->
+<div class="modal fade" id="modal-new" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header bg-primary">
+        <h4 class="modal-title text-white">
+          <i class="fas fa-rocket mr-2"></i>새 앱 배포
+        </h4>
+        <button type="button" class="close text-white" (click)="hideModal('modal-new')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+
+          <!-- 앱 이름 -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>앱 이름 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm"
+                     [(ngModel)]="newName" placeholder="my-app"
+                     pattern="[a-z0-9]([a-z0-9\-]*[a-z0-9])?"
+                     title="소문자, 숫자, 하이픈만 허용"/>
+            </div>
+          </div>
+
+          <!-- 네임스페이스 -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>네임스페이스 <span class="text-danger">*</span></label>
+              <select class="form-control form-control-sm" [(ngModel)]="newNamespace">
+                <option *ngFor="let ns of namespaceList" [value]="ns">{{ ns }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 컨테이너 이미지 -->
+          <div class="col-md-12">
+            <div class="form-group">
+              <label>컨테이너 이미지 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm"
+                     [(ngModel)]="newImage" placeholder="nginx:latest 또는 registry.example.com/myapp:v1.2.3"/>
+              <small class="text-muted">이미지 태그를 명시하면 롤링 업데이트 시 추적이 쉽습니다.</small>
+            </div>
+          </div>
+
+          <!-- 레플리카 수 -->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>레플리카 수</label>
+              <input type="number" class="form-control form-control-sm"
+                     [(ngModel)]="newReplicas" min="1" max="50"/>
+            </div>
+          </div>
+
+          <!-- 컨테이너 포트 -->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>컨테이너 포트</label>
+              <input type="number" class="form-control form-control-sm"
+                     [(ngModel)]="newPort" min="1" max="65535"/>
+            </div>
+          </div>
+
+          <!-- 서비스 노출 여부 -->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>서비스 생성</label>
+              <div class="custom-control custom-switch mt-1">
+                <input type="checkbox" class="custom-control-input" id="expose-switch"
+                       [(ngModel)]="newExpose"/>
+                <label class="custom-control-label" for="expose-switch">
+                  {{ newExpose ? '활성화' : '비활성화' }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 서비스 유형 (expose가 true일 때만) -->
+          <div class="col-md-6" *ngIf="newExpose">
+            <div class="form-group">
+              <label>서비스 유형</label>
+              <select class="form-control form-control-sm" [(ngModel)]="newExposeType">
+                <option value="ClusterIP">ClusterIP (클러스터 내부)</option>
+                <option value="NodePort">NodePort (노드 포트)</option>
+                <option value="LoadBalancer">LoadBalancer (외부 노출)</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="alert alert-info mt-2 mb-0" style="font-size:0.85rem;">
+          <i class="fas fa-info-circle mr-1"></i>
+          배포된 앱에는 <code>kubevirt-manager.io/type=paas-app</code> 레이블이 자동으로 추가됩니다.
+          이미지 업데이트 시 롤링 업데이트 전략이 적용됩니다.
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-new')">취소</button>
+        <button type="button" class="btn btn-primary" (click)="onCreateApp()">
+          <i class="fas fa-rocket mr-1"></i>배포
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     Modal: 이미지 업데이트 (롤링 업데이트)
+═══════════════════════════════════ -->
+<div class="modal fade" id="modal-update-image" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header bg-primary">
+        <h4 class="modal-title text-white">
+          <i class="fas fa-sync-alt mr-2"></i>이미지 업데이트
+        </h4>
+        <button type="button" class="close text-white" (click)="hideModal('modal-update-image')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>앱</label>
+          <input type="text" class="form-control form-control-sm" [value]="activeName" readonly/>
+        </div>
+        <div class="form-group">
+          <label>새 이미지 <span class="text-danger">*</span></label>
+          <input type="text" class="form-control form-control-sm"
+                 [(ngModel)]="updateImage"
+                 placeholder="registry.example.com/myapp:v2.0.0"/>
+          <small class="text-muted">
+            변경 즉시 롤링 업데이트가 시작됩니다. 이전 파드는 새 파드가 Ready 상태가 된 후 종료됩니다.
+          </small>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-update-image')">취소</button>
+        <button type="button" class="btn btn-primary" (click)="onUpdateImage()">
+          <i class="fas fa-sync-alt mr-1"></i>업데이트
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     Modal: 스케일 조정
+═══════════════════════════════════ -->
+<div class="modal fade" id="modal-scale" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header bg-info">
+        <h4 class="modal-title text-white">
+          <i class="fas fa-expand-alt mr-2"></i>스케일 조정
+        </h4>
+        <button type="button" class="close text-white" (click)="hideModal('modal-scale')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>앱</label>
+          <input type="text" class="form-control form-control-sm" [value]="activeName" readonly/>
+        </div>
+        <div class="form-group">
+          <label>레플리카 수</label>
+          <input type="number" class="form-control form-control-sm"
+                 [(ngModel)]="scaleReplicas" min="0" max="100"/>
+          <small class="text-muted">0으로 설정하면 모든 파드가 중지됩니다.</small>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-scale')">취소</button>
+        <button type="button" class="btn btn-info" (click)="onScale()">
+          <i class="fas fa-expand-alt mr-1"></i>적용
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     Modal: 삭제 확인
+═══════════════════════════════════ -->
+<div class="modal fade" id="modal-delete" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white">
+          <i class="fas fa-trash mr-2"></i>앱 삭제
+        </h4>
+        <button type="button" class="close text-white" (click)="hideModal('modal-delete')">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle mr-1"></i>
+          <strong>{{ activeName }}</strong> 앱과 관련 서비스를 삭제합니다. 이 작업은 되돌릴 수 없습니다.
+        </div>
+        <p>네임스페이스: <strong>{{ activeNamespace }}</strong></p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-delete')">취소</button>
+        <button type="button" class="btn btn-danger" (click)="onDelete()">
+          <i class="fas fa-trash mr-1"></i>삭제
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

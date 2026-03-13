@@ -35,6 +35,7 @@ import { SSHKeysComponent } from './components/sshkeys/sshkeys.component';
 import { FirewallListComponent } from './components/firewall-list/firewall-list.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { CicdListComponent } from './components/cicd-list/cicd-list.component';
 import { DataTablesModule } from 'angular-datatables';
 
 /** Keycloak 응답 대기 최대 시간 (ms). 초과 시 로컬 로그인으로 전환합니다. */
@@ -114,6 +115,7 @@ function initializeKeycloak(keycloak: KeycloakService, authService: AuthService)
         SettingsComponent,
         ProfileComponent,
         LocalLoginComponent,
+        CicdListComponent,
     ],
     bootstrap: [AppComponent],
     imports: [

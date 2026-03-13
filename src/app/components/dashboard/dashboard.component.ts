@@ -7,6 +7,7 @@ import { KubeVirtService } from 'src/app/services/kube-virt.service';
 import { PrometheusService } from 'src/app/services/prometheus.service';
 import { Chart } from 'chart.js/auto'
 import { XK8sService } from 'src/app/services/x-k8s.service';
+import { CicdService } from 'src/app/services/cicd.service';
 import { Constants } from 'src/app/classes/constants';
 import { Toasts } from 'src/app/classes/toasts';
 
@@ -38,6 +39,7 @@ export class DashboardComponent implements OnInit {
     autoscaleInfo     = 0;
     instanceTypesInfo = 0;
     loadBalancers     = 0;
+    paasAppsInfo      = 0;
 
     /* Prometheus */
     promStartTime = 0;
@@ -64,7 +66,8 @@ export class DashboardComponent implements OnInit {
         private kubeVirtService: KubeVirtService,
         private dataVolumesService: DataVolumesService,
         private prometheusService: PrometheusService,
-        private xK8sService: XK8sService
+        private xK8sService: XK8sService,
+        private cicdService: CicdService
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -83,6 +86,7 @@ export class DashboardComponent implements OnInit {
         this.getScalingGroups();
         this.getInstanceTypes();
         this.getLoadBalancers();
+        this.getPaasApps();
         this.loadPrometheus();
     }
 
@@ -283,6 +287,13 @@ export class DashboardComponent implements OnInit {
         try {
             const data = await lastValueFrom(this.k8sService.getServices());
             this.loadBalancers = data.items.length;
+        } catch (_) { }
+    }
+
+    async getPaasApps(): Promise<void> {
+        try {
+            const data = await lastValueFrom(this.cicdService.getDeployments());
+            this.paasAppsInfo = data.items.length;
         } catch (_) { }
     }
 
