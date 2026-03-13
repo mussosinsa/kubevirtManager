@@ -72,8 +72,8 @@ export class DashboardComponent implements OnInit {
         if (navTitle != null) { navTitle.replaceChildren(this.pageName); }
         this.myConstants = new Constants();
         this.myToasts = new Toasts();
-        await this.getNodes();
-        await this.loadCrds();
+        /* getNodes()와 loadCrds()는 독립적이므로 병렬 실행 */
+        await Promise.all([this.getNodes(), this.loadCrds()]);
         await this.checkCDI();
         this.getVMs();
         this.getDisks();

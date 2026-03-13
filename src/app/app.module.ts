@@ -37,38 +37,51 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { DataTablesModule } from 'angular-datatables';
 
+/** Keycloak 응답 대기 최대 시간 (ms). 초과 시 로컬 로그인으로 전환합니다. */
+const KEYCLOAK_INIT_TIMEOUT_MS = 3000;
+
 /**
  * Keycloak 초기화 팩토리 함수.
  * 앱 부트스트랩 전에 Keycloak 세션을 확인하고 인증을 설정합니다.
- * Keycloak 서버에 연결할 수 없는 경우 인증 없이 앱을 시작합니다.
+ * Keycloak 서버에 연결할 수 없거나 타임아웃(3초) 초과 시 로컬 로그인으로 전환합니다.
  */
 function initializeKeycloak(keycloak: KeycloakService, authService: AuthService) {
     return async () => {
+        /* 타임아웃 Promise: 지정 시간 내 Keycloak 미응답 시 reject */
+        const timeout = new Promise<never>((_, reject) =>
+            setTimeout(
+                () => reject(new Error(`Keycloak 초기화 타임아웃 (${KEYCLOAK_INIT_TIMEOUT_MS}ms)`)),
+                KEYCLOAK_INIT_TIMEOUT_MS
+            )
+        );
         try {
-            await keycloak.init({
-                config: {
-                    url:      environment.keycloak.url,
-                    realm:    environment.keycloak.realm,
-                    clientId: environment.keycloak.clientId,
-                },
-                initOptions: {
-                    /* 앱 로드 시 로그인 필수 (미인증 시 Keycloak 로그인 페이지로 이동) */
-                    onLoad: 'login-required',
-                    /* 사일런트 SSO 확인을 위한 리디렉션 URI */
-                    silentCheckSsoRedirectUri:
-                        window.location.origin + '/assets/silent-check-sso.html',
-                    /* PKCE (Proof Key for Code Exchange) 사용 */
-                    pkceMethod: 'S256',
-                },
-                /* Kubernetes API로 보내는 모든 요청에 Bearer 토큰 자동 주입 */
-                bearerPrefix: 'Bearer',
-                /* /assets 경로는 토큰 주입 제외 */
-                bearerExcludedUrls: ['/assets'],
-            });
+            await Promise.race([
+                keycloak.init({
+                    config: {
+                        url:      environment.keycloak.url,
+                        realm:    environment.keycloak.realm,
+                        clientId: environment.keycloak.clientId,
+                    },
+                    initOptions: {
+                        /* 앱 로드 시 로그인 필수 (미인증 시 Keycloak 로그인 페이지로 이동) */
+                        onLoad: 'login-required',
+                        /* 사일런트 SSO 확인을 위한 리디렉션 URI */
+                        silentCheckSsoRedirectUri:
+                            window.location.origin + '/assets/silent-check-sso.html',
+                        /* PKCE (Proof Key for Code Exchange) 사용 */
+                        pkceMethod: 'S256',
+                    },
+                    /* Kubernetes API로 보내는 모든 요청에 Bearer 토큰 자동 주입 */
+                    bearerPrefix: 'Bearer',
+                    /* /assets 경로는 토큰 주입 제외 */
+                    bearerExcludedUrls: ['/assets'],
+                }),
+                timeout,
+            ]);
             /* Keycloak 초기화 성공 — Keycloak 인증 흐름 사용 */
             authService.keycloakAvailable = true;
         } catch (error) {
-            /* Keycloak 서버 미실행 또는 설정 오류 — 로컬 로그인으로 전환 */
+            /* Keycloak 서버 미실행·타임아웃·설정 오류 — 로컬 로그인으로 전환 */
             console.warn('[Keycloak] 초기화 실패 — 로컬 로그인으로 전환합니다.', error);
         }
     };
