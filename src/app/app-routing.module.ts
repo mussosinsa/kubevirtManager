@@ -23,6 +23,7 @@ import { ImagesComponent } from './components/images/images.component';
 import { SSHKeysComponent } from './components/sshkeys/sshkeys.component';
 import { FirewallListComponent } from './components/firewall-list/firewall-list.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 const routes: Routes = [
   { path: 'login',                                    component: LocalLoginComponent },
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'sshkeys',                                  component: SSHKeysComponent,            canActivate: [authGuard] },
   { path: 'firewalls',                                component: FirewallListComponent,       canActivate: [authGuard] },
   { path: 'settings',                                 component: SettingsComponent,           canActivate: [authGuard] },
+  { path: 'profile',                                  component: ProfileComponent,            canActivate: [authGuard] },
 ];
 
 @NgModule({

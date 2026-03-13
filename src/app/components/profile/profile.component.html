@@ -1,0 +1,120 @@
+<!-- 내 프로필 페이지 -->
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">내 프로필</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+
+          <!-- 사용자 정보 카드 -->
+          <div class="card card-primary card-outline">
+            <div class="card-body text-center pt-4 pb-3">
+              <span style="display:inline-flex;align-items:center;justify-content:center;
+                           width:80px;height:80px;border-radius:50%;
+                           background:linear-gradient(135deg,#007bff,#0056b3);
+                           color:#fff;font-size:2rem;font-weight:700;">
+                {{ initials || 'U' }}
+              </span>
+              <h3 class="profile-username mt-3">{{ displayName || username }}</h3>
+              <p class="text-muted mb-1">
+                <i class="fas fa-user mr-1"></i>{{ username }}
+              </p>
+              <p class="text-muted mb-0" *ngIf="email">
+                <i class="fas fa-envelope mr-1"></i>{{ email }}
+              </p>
+              <p class="text-muted mb-0" *ngIf="!email && isLocalAuth">
+                <i class="fas fa-lock mr-1"></i>로컬 계정
+              </p>
+            </div>
+          </div>
+
+          <!-- 비밀번호 변경 카드 (로컬 로그인 전용) -->
+          <div class="card card-outline card-warning" *ngIf="isLocalAuth">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-key mr-2"></i>비밀번호 변경</h3>
+            </div>
+            <div class="card-body">
+
+              <div *ngIf="successMsg" class="alert alert-success alert-dismissible">
+                <button type="button" class="close" (click)="successMsg = ''">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <i class="fas fa-check-circle mr-2"></i>{{ successMsg }}
+              </div>
+              <div *ngIf="errorMsg" class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" (click)="errorMsg = ''">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <i class="fas fa-exclamation-circle mr-2"></i>{{ errorMsg }}
+              </div>
+
+              <div class="form-group">
+                <label>현재 비밀번호</label>
+                <div class="input-group">
+                  <input [type]="showCurrent ? 'text' : 'password'"
+                         class="form-control"
+                         placeholder="현재 비밀번호"
+                         [(ngModel)]="currentPw">
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary"
+                            (click)="showCurrent = !showCurrent">
+                      <i [ngClass]="showCurrent ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>새 비밀번호</label>
+                <div class="input-group">
+                  <input [type]="showNew ? 'text' : 'password'"
+                         class="form-control"
+                         placeholder="새 비밀번호 (4자 이상)"
+                         [(ngModel)]="newPw">
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary"
+                            (click)="showNew = !showNew">
+                      <i [ngClass]="showNew ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>새 비밀번호 확인</label>
+                <div class="input-group">
+                  <input [type]="showConfirm ? 'text' : 'password'"
+                         class="form-control"
+                         placeholder="새 비밀번호 재입력"
+                         [(ngModel)]="confirmPw">
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary"
+                            (click)="showConfirm = !showConfirm">
+                      <i [ngClass]="showConfirm ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-warning btn-block"
+                      (click)="changePassword()">
+                <i class="fas fa-save mr-1"></i>비밀번호 변경
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -14,7 +15,7 @@ export class MainHeaderComponent implements OnInit {
   initials: string      = '';
   showDropdown: boolean = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   async ngOnInit(): Promise<void> {
     this.displayName = this.authService.getDisplayName();
@@ -25,6 +26,9 @@ export class MainHeaderComponent implements OnInit {
 
   async logout(): Promise<void> {
     await this.authService.logout();
+    if (!this.authService.keycloakAvailable) {
+      await this.router.navigate(['/login']);
+    }
   }
 
   toggleDropdown(): void {

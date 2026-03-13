@@ -34,6 +34,7 @@ import { ImagesComponent } from './components/images/images.component';
 import { SSHKeysComponent } from './components/sshkeys/sshkeys.component';
 import { FirewallListComponent } from './components/firewall-list/firewall-list.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { ProfileComponent } from './components/profile/profile.component';
 import { DataTablesModule } from 'angular-datatables';
 
 /**
@@ -98,6 +99,7 @@ function initializeKeycloak(keycloak: KeycloakService, authService: AuthService)
         SSHKeysComponent,
         FirewallListComponent,
         SettingsComponent,
+        ProfileComponent,
         LocalLoginComponent,
     ],
     bootstrap: [AppComponent],

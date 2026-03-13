@@ -73,8 +73,9 @@
 
         <!-- 메뉴 항목 -->
         <div class="py-1">
-          <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-4" href="#"
-             (click)="$event.preventDefault(); closeDropdown()">
+          <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-4"
+             routerLink="/profile"
+             (click)="closeDropdown()">
             <i class="fas fa-user-circle fa-fw text-muted"></i>
             <span>내 프로필</span>
           </a>
