@@ -1,0 +1,34 @@
+.score-label {
+    min-width: 32px;
+    display: inline-block;
+    font-size: 0.75em;
+}
+
+.score-details {
+    margin-top: 4px;
+}
+
+.node-result-item {
+    transition: background 0.2s;
+}
+
+.node-result-item:hover {
+    background: #f8f9fa;
+}
+
+.node-filtered {
+    opacity: 0.6;
+    background: #fff8f8;
+}
+
+.yaml-output {
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre;
+}
+
+.btn-xs {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    border-radius: 0.2rem;
+}

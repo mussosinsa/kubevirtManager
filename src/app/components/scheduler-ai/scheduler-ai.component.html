@@ -1,0 +1,608 @@
+<!-- AI 스케줄러 컴포넌트 -->
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">AI 스케줄러 <small class="text-muted" style="font-size:0.55em;">머신러닝 기반 노드 배치 분석</small></h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">홈</a></li>
+            <li class="breadcrumb-item active">AI 스케줄러</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="content">
+    <div class="container-fluid">
+
+      <!-- 오류 메시지 -->
+      <div *ngIf="errorMsg" class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" (click)="errorMsg=''"><span>&times;</span></button>
+        <i class="icon fas fa-ban"></i> {{ errorMsg }}
+      </div>
+
+      <!-- Metrics 미설치 알림 -->
+      <div *ngIf="!loading && !metricsAvailable" class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle mr-1"></i>
+        <strong>Metrics Server</strong>가 설치되어 있지 않습니다. 실시간 사용량 대신 requests 합산값으로 점수를 계산합니다.
+      </div>
+
+      <!-- 상단 요약 카드 -->
+      <div class="row" *ngIf="!loading">
+        <div class="col-md-3 col-sm-6 col-12">
+          <div class="info-box bg-info">
+            <span class="info-box-icon"><i class="fas fa-server"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">전체 노드</span>
+              <span class="info-box-number">{{ nodeScores.length }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+          <div class="info-box bg-success">
+            <span class="info-box-icon"><i class="fas fa-check-circle"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">배치 가능 노드</span>
+              <span class="info-box-number">{{ schedulableCount }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+          <div class="info-box bg-warning">
+            <span class="info-box-icon"><i class="fas fa-brain"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">최고 점수</span>
+              <span class="info-box-number">
+                {{ nodeScores.length ? (nodeScores[0].filtered ? nodeScores[0].totalScore : 0) : 0 }} / 100
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+          <div class="info-box bg-danger">
+            <span class="info-box-icon"><i class="fas fa-ban"></i></span>
+            <div class="info-box-content">
+              <span class="info-box-text">필터 제외 노드</span>
+              <span class="info-box-number">{{ filteredOutCount }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 로딩 스피너 -->
+      <div *ngIf="loading" class="text-center py-5">
+        <i class="fas fa-spinner fa-spin fa-3x text-info"></i>
+        <p class="mt-3 text-muted">노드 정보를 불러오는 중...</p>
+      </div>
+
+      <div *ngIf="!loading" class="row">
+
+        <!-- ────────────────────────────────────────────────────
+             왼쪽: 정책 설정 패널
+        ──────────────────────────────────────────────────── -->
+        <div class="col-lg-5">
+          <div class="card card-primary card-tabs">
+            <div class="card-header p-0 pt-1">
+              <ul class="nav nav-tabs" id="policy-tabs">
+                <li class="nav-item">
+                  <a class="nav-link" [class.active]="activeTab==='node-targeting'"
+                     (click)="activeTab='node-targeting'" href="javascript:void(0)">
+                    <i class="fas fa-bullseye mr-1"></i>노드 타겟팅
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" [class.active]="activeTab==='pod-placement'"
+                     (click)="activeTab='pod-placement'" href="javascript:void(0)">
+                    <i class="fas fa-project-diagram mr-1"></i>파드 배치
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" [class.active]="activeTab==='resource'"
+                     (click)="activeTab='resource'" href="javascript:void(0)">
+                    <i class="fas fa-tachometer-alt mr-1"></i>리소스
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="card-body">
+
+              <!-- ═══════ 탭1: 노드 타겟팅 ═══════ -->
+              <div *ngIf="activeTab==='node-targeting'">
+
+                <!-- nodeSelector -->
+                <div class="form-group">
+                  <label class="font-weight-bold"><i class="fas fa-tag mr-1 text-primary"></i>nodeSelector</label>
+                  <div class="input-group input-group-sm mb-1">
+                    <input type="text" class="form-control" placeholder="키" [(ngModel)]="newNsKey">
+                    <input type="text" class="form-control" placeholder="값" [(ngModel)]="newNsValue">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" (click)="addNodeSelector()"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                  <div *ngFor="let e of policy.nodeSelector; let i=index" class="badge badge-secondary mr-1 mb-1" style="font-size:0.85em;">
+                    {{ e.key }}={{ e.value }}
+                    <span class="ml-1" style="cursor:pointer;" (click)="removeNodeSelector(i)">&times;</span>
+                  </div>
+                  <small *ngIf="!policy.nodeSelector.length" class="text-muted">설정된 항목 없음</small>
+                </div>
+
+                <hr>
+
+                <!-- Required Node Affinity -->
+                <div class="form-group">
+                  <label class="font-weight-bold"><i class="fas fa-lock mr-1 text-danger"></i>필수 Node Affinity (Required)</label>
+                  <div class="row no-gutters mb-1">
+                    <div class="col-4 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="키" [(ngModel)]="newReqKey">
+                    </div>
+                    <div class="col-3 pr-1">
+                      <select class="form-control form-control-sm" [(ngModel)]="newReqOp">
+                        <option *ngFor="let op of affinityOps">{{ op }}</option>
+                      </select>
+                    </div>
+                    <div class="col-4 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="값(쉼표구분)" [(ngModel)]="newReqValues">
+                    </div>
+                    <div class="col-1">
+                      <button class="btn btn-sm btn-danger w-100" (click)="addRequiredAffinity()"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                  <div *ngFor="let e of policy.requiredAffinity; let i=index" class="alert alert-danger py-1 px-2 mb-1 small d-flex justify-content-between align-items-center">
+                    <span><code>{{ e.key }} {{ e.operator }} [{{ e.values }}]</code></span>
+                    <button class="btn btn-xs btn-danger" (click)="removeRequiredAffinity(i)"><i class="fas fa-times"></i></button>
+                  </div>
+                  <small *ngIf="!policy.requiredAffinity.length" class="text-muted">설정된 항목 없음</small>
+                </div>
+
+                <hr>
+
+                <!-- Preferred Node Affinity -->
+                <div class="form-group">
+                  <label class="font-weight-bold"><i class="fas fa-heart mr-1 text-warning"></i>선호 Node Affinity (Preferred)</label>
+                  <div class="row no-gutters mb-1">
+                    <div class="col-2 pr-1">
+                      <input type="number" class="form-control form-control-sm" placeholder="가중치" [(ngModel)]="newPrefWeight" min="1" max="100">
+                    </div>
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="키" [(ngModel)]="newPrefKey">
+                    </div>
+                    <div class="col-3 pr-1">
+                      <select class="form-control form-control-sm" [(ngModel)]="newPrefOp">
+                        <option *ngFor="let op of affinityOps">{{ op }}</option>
+                      </select>
+                    </div>
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="값(쉼표)" [(ngModel)]="newPrefValues">
+                    </div>
+                    <div class="col-1">
+                      <button class="btn btn-sm btn-warning w-100" (click)="addPreferredAffinity()"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                  <div *ngFor="let p of policy.preferredAffinity; let i=index" class="alert alert-warning py-1 px-2 mb-1 small d-flex justify-content-between align-items-center">
+                    <span>가중치 <strong>{{ p.weight }}</strong> – <code>{{ p.expressions[0]?.key }} {{ p.expressions[0]?.operator }} [{{ p.expressions[0]?.values }}]</code></span>
+                    <button class="btn btn-xs btn-warning" (click)="removePreferredAffinity(i)"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+
+                <hr>
+
+                <!-- Tolerations -->
+                <div class="form-group">
+                  <label class="font-weight-bold"><i class="fas fa-shield-alt mr-1 text-info"></i>Tolerations</label>
+                  <div class="row no-gutters mb-1">
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="키" [(ngModel)]="newTolKey">
+                    </div>
+                    <div class="col-2 pr-1">
+                      <select class="form-control form-control-sm" [(ngModel)]="newTolOp">
+                        <option *ngFor="let op of tolerationOps">{{ op }}</option>
+                      </select>
+                    </div>
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="값" [(ngModel)]="newTolValue">
+                    </div>
+                    <div class="col-3 pr-1">
+                      <select class="form-control form-control-sm" [(ngModel)]="newTolEffect">
+                        <option *ngFor="let ef of tolerationEffects">{{ ef || '(모든 Effect)' }}</option>
+                      </select>
+                    </div>
+                    <div class="col-1">
+                      <button class="btn btn-sm btn-info w-100" (click)="addToleration()"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                  <div *ngFor="let t of policy.tolerations; let i=index" class="alert alert-info py-1 px-2 mb-1 small d-flex justify-content-between align-items-center">
+                    <span><code>{{ t.key }} {{ t.operator }}{{ t.value ? '='+t.value : '' }}{{ t.effect ? ' :'+t.effect : '' }}</code></span>
+                    <button class="btn btn-xs btn-info" (click)="removeToleration(i)"><i class="fas fa-times"></i></button>
+                  </div>
+                  <small *ngIf="!policy.tolerations.length" class="text-muted">설정된 항목 없음</small>
+                </div>
+
+              </div><!-- /탭1 -->
+
+              <!-- ═══════ 탭2: 파드 배치 ═══════ -->
+              <div *ngIf="activeTab==='pod-placement'">
+
+                <!-- Pod Affinity -->
+                <div class="form-group">
+                  <label class="font-weight-bold"><i class="fas fa-people-arrows mr-1 text-success"></i>Pod Affinity (함께 배치)</label>
+                  <div class="row no-gutters mb-1">
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="topologyKey" [(ngModel)]="newPATopology">
+                    </div>
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="labelKey" [(ngModel)]="newPALabelKey">
+                    </div>
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="labelValue" [(ngModel)]="newPALabelValue">
+                    </div>
+                    <div class="col-2 pr-1">
+                      <select class="form-control form-control-sm" [(ngModel)]="newPAScheduling">
+                        <option value="required">필수</option>
+                        <option value="preferred">선호</option>
+                      </select>
+                    </div>
+                    <div class="col-1">
+                      <button class="btn btn-sm btn-success w-100" (click)="addPodAffinity()"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                  <div *ngFor="let r of policy.podAffinityRules; let i=index" class="alert alert-success py-1 px-2 mb-1 small d-flex justify-content-between align-items-center">
+                    <span>[{{ r.scheduling }}] <code>{{ r.topologyKey }}</code> – {{ r.labelKey }}={{ r.labelValue }}</span>
+                    <button class="btn btn-xs btn-success" (click)="removePodAffinity(i)"><i class="fas fa-times"></i></button>
+                  </div>
+                  <small *ngIf="!policy.podAffinityRules.length" class="text-muted">설정된 항목 없음</small>
+                </div>
+
+                <hr>
+
+                <!-- Pod Anti-Affinity -->
+                <div class="form-group">
+                  <label class="font-weight-bold"><i class="fas fa-random mr-1 text-danger"></i>Pod Anti-Affinity (분산 배치)</label>
+                  <div class="row no-gutters mb-1">
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="topologyKey" [(ngModel)]="newPAATopology">
+                    </div>
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="labelKey" [(ngModel)]="newPAALabelKey">
+                    </div>
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="labelValue" [(ngModel)]="newPAALabelValue">
+                    </div>
+                    <div class="col-2 pr-1">
+                      <select class="form-control form-control-sm" [(ngModel)]="newPAAScheduling">
+                        <option value="required">필수</option>
+                        <option value="preferred">선호</option>
+                      </select>
+                    </div>
+                    <div class="col-1">
+                      <button class="btn btn-sm btn-danger w-100" (click)="addPodAntiAffinity()"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                  <div *ngFor="let r of policy.podAntiAffinityRules; let i=index" class="alert alert-danger py-1 px-2 mb-1 small d-flex justify-content-between align-items-center">
+                    <span>[{{ r.scheduling }}] <code>{{ r.topologyKey }}</code> – {{ r.labelKey }}={{ r.labelValue }}</span>
+                    <button class="btn btn-xs btn-danger" (click)="removePodAntiAffinity(i)"><i class="fas fa-times"></i></button>
+                  </div>
+                  <small *ngIf="!policy.podAntiAffinityRules.length" class="text-muted">설정된 항목 없음</small>
+                </div>
+
+                <hr>
+
+                <!-- Topology Spread -->
+                <div class="form-group">
+                  <label class="font-weight-bold"><i class="fas fa-network-wired mr-1 text-purple"></i>Topology Spread Constraints</label>
+                  <div class="row no-gutters mb-1">
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="topologyKey" [(ngModel)]="newTsTopology">
+                    </div>
+                    <div class="col-1 pr-1">
+                      <input type="number" class="form-control form-control-sm" placeholder="Skew" [(ngModel)]="newTsMaxSkew" min="1">
+                    </div>
+                    <div class="col-2 pr-1">
+                      <select class="form-control form-control-sm" [(ngModel)]="newTsWhenUnsatisfiable">
+                        <option *ngFor="let p of spreadPolicies">{{ p }}</option>
+                      </select>
+                    </div>
+                    <div class="col-3 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="labelKey" [(ngModel)]="newTsLabelKey">
+                    </div>
+                    <div class="col-2 pr-1">
+                      <input type="text" class="form-control form-control-sm" placeholder="labelValue" [(ngModel)]="newTsLabelValue">
+                    </div>
+                    <div class="col-1">
+                      <button class="btn btn-sm btn-secondary w-100" (click)="addTopologyConstraint()"><i class="fas fa-plus"></i></button>
+                    </div>
+                  </div>
+                  <div *ngFor="let c of policy.topologyConstraints; let i=index" class="alert alert-secondary py-1 px-2 mb-1 small d-flex justify-content-between align-items-center">
+                    <span><code>{{ c.topologyKey }}</code> maxSkew={{ c.maxSkew }} {{ c.whenUnsatisfiable }} – {{ c.labelKey }}={{ c.labelValue }}</span>
+                    <button class="btn btn-xs btn-secondary" (click)="removeTopologyConstraint(i)"><i class="fas fa-times"></i></button>
+                  </div>
+                  <small *ngIf="!policy.topologyConstraints.length" class="text-muted">설정된 항목 없음</small>
+                </div>
+
+              </div><!-- /탭2 -->
+
+              <!-- ═══════ 탭3: 리소스 ═══════ -->
+              <div *ngIf="activeTab==='resource'">
+
+                <!-- 리소스 요구사항 -->
+                <div class="form-group">
+                  <label class="font-weight-bold"><i class="fas fa-microchip mr-1 text-primary"></i>리소스 요구사항</label>
+                  <div class="row">
+                    <div class="col-6">
+                      <label class="small">CPU 요청량 (코어)</label>
+                      <input type="number" class="form-control form-control-sm" [(ngModel)]="policy.cpuRequest" min="0" step="0.1">
+                    </div>
+                    <div class="col-6">
+                      <label class="small">메모리 요청량 (MiB)</label>
+                      <input type="number" class="form-control form-control-sm" [(ngModel)]="policy.memRequest" min="0" step="128">
+                    </div>
+                  </div>
+                </div>
+
+                <hr>
+
+                <!-- 알고리즘 가중치 -->
+                <div class="form-group">
+                  <label class="font-weight-bold d-flex justify-content-between">
+                    <span><i class="fas fa-balance-scale mr-1 text-warning"></i>알고리즘 가중치</span>
+                    <span [class]="weightValid ? 'text-success' : 'text-danger'">
+                      합계: {{ weightSum }} / 100
+                    </span>
+                  </label>
+                  <small class="text-muted d-block mb-2">5개 가중치 합계가 100이 되도록 설정하세요.</small>
+
+                  <div class="row align-items-center mb-2">
+                    <div class="col-6"><small>LeastRequested (유휴 CPU/Mem)</small></div>
+                    <div class="col-4">
+                      <input type="number" class="form-control form-control-sm" [(ngModel)]="policy.weightLeastRequested" min="0" max="100">
+                    </div>
+                    <div class="col-2 text-muted small">{{ policy.weightLeastRequested }}%</div>
+                  </div>
+                  <div class="row align-items-center mb-2">
+                    <div class="col-6"><small>BalancedAllocation (CPU/Mem 균형)</small></div>
+                    <div class="col-4">
+                      <input type="number" class="form-control form-control-sm" [(ngModel)]="policy.weightBalancedAllocation" min="0" max="100">
+                    </div>
+                    <div class="col-2 text-muted small">{{ policy.weightBalancedAllocation }}%</div>
+                  </div>
+                  <div class="row align-items-center mb-2">
+                    <div class="col-6"><small>NodeAffinity (선호도 일치)</small></div>
+                    <div class="col-4">
+                      <input type="number" class="form-control form-control-sm" [(ngModel)]="policy.weightNodeAffinity" min="0" max="100">
+                    </div>
+                    <div class="col-2 text-muted small">{{ policy.weightNodeAffinity }}%</div>
+                  </div>
+                  <div class="row align-items-center mb-2">
+                    <div class="col-6"><small>TopologySpread (존 분산)</small></div>
+                    <div class="col-4">
+                      <input type="number" class="form-control form-control-sm" [(ngModel)]="policy.weightTopologySpread" min="0" max="100">
+                    </div>
+                    <div class="col-2 text-muted small">{{ policy.weightTopologySpread }}%</div>
+                  </div>
+                  <div class="row align-items-center mb-2">
+                    <div class="col-6"><small>PodAffinity (파드 친화도)</small></div>
+                    <div class="col-4">
+                      <input type="number" class="form-control form-control-sm" [(ngModel)]="policy.weightPodAffinity" min="0" max="100">
+                    </div>
+                    <div class="col-2 text-muted small">{{ policy.weightPodAffinity }}%</div>
+                  </div>
+
+                  <!-- 가중치 시각화 -->
+                  <div class="progress mt-2" style="height:12px;">
+                    <div class="progress-bar bg-primary" [style.width.%]="policy.weightLeastRequested"></div>
+                    <div class="progress-bar bg-success" [style.width.%]="policy.weightBalancedAllocation"></div>
+                    <div class="progress-bar bg-warning" [style.width.%]="policy.weightNodeAffinity"></div>
+                    <div class="progress-bar bg-info" [style.width.%]="policy.weightTopologySpread"></div>
+                    <div class="progress-bar bg-danger" [style.width.%]="policy.weightPodAffinity"></div>
+                  </div>
+                  <div class="d-flex justify-content-between mt-1" style="font-size:0.7em;">
+                    <span class="text-primary">■ LeastReq</span>
+                    <span class="text-success">■ Balanced</span>
+                    <span class="text-warning">■ NodeAff</span>
+                    <span class="text-info">■ Topology</span>
+                    <span class="text-danger">■ PodAff</span>
+                  </div>
+                </div>
+
+              </div><!-- /탭3 -->
+
+            </div><!-- /card-body -->
+
+            <div class="card-footer">
+              <button class="btn btn-primary btn-block" (click)="runAnalysis()" [disabled]="analyzing || !weightValid">
+                <i class="fas fa-brain mr-1"></i>
+                {{ analyzing ? 'AI 분석 중...' : 'AI 분석 실행' }}
+              </button>
+              <button class="btn btn-secondary btn-block mt-1" (click)="loadNodes()" [disabled]="loading">
+                <i class="fas fa-sync-alt mr-1"></i>노드 데이터 새로고침
+              </button>
+            </div>
+          </div><!-- /policy card -->
+        </div>
+
+        <!-- ────────────────────────────────────────────────────
+             오른쪽: 분석 결과
+        ──────────────────────────────────────────────────── -->
+        <div class="col-lg-7">
+          <div class="card card-outline card-primary">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-chart-bar mr-1"></i>노드 배치 점수 결과</h3>
+              <div class="card-tools">
+                <span class="badge badge-secondary">{{ nodeScores.length }}개 노드</span>
+              </div>
+            </div>
+            <div class="card-body p-0">
+
+              <div *ngIf="!nodeScores.length" class="text-center py-4 text-muted">
+                <i class="fas fa-info-circle fa-2x mb-2"></i>
+                <p>분석 결과가 없습니다. 정책을 설정하고 AI 분석을 실행하세요.</p>
+              </div>
+
+              <!-- 노드 결과 목록 -->
+              <div *ngFor="let n of nodeScores; trackBy: trackByName"
+                   class="node-result-item border-bottom p-3"
+                   [class.node-filtered]="!n.filtered">
+
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h6 class="mb-0">
+                      <i class="fas fa-server mr-1" [class.text-muted]="!n.filtered" [class.text-primary]="n.filtered"></i>
+                      <strong>{{ n.name }}</strong>
+                      <span *ngIf="n.topologyZone" class="badge badge-secondary ml-1" style="font-size:0.75em;">{{ n.topologyZone }}</span>
+                    </h6>
+                    <small class="text-muted">파드 {{ n.podCount }}개 실행 중</small>
+                  </div>
+                  <div class="text-right">
+                    <span class="badge mr-1" [class]="recommendationClass(n.recommendation)">
+                      {{ recommendationLabel(n.recommendation) }}
+                    </span>
+                    <span class="badge badge-dark" style="font-size:0.9em;">{{ n.filtered ? n.totalScore : 0 }}</span>
+                  </div>
+                </div>
+
+                <!-- 필터 제외 사유 -->
+                <div *ngIf="!n.filtered" class="alert alert-danger py-1 px-2 mb-2 small">
+                  <i class="fas fa-ban mr-1"></i>{{ n.filterReason }}
+                </div>
+
+                <!-- 점수 바 (필터 통과 노드만) -->
+                <div *ngIf="n.filtered">
+                  <!-- 총점 바 -->
+                  <div class="d-flex align-items-center mb-1">
+                    <span class="score-label text-muted small">종합</span>
+                    <div class="progress flex-grow-1 mx-2" style="height:16px;">
+                      <div class="progress-bar {{ scoreBarClass(n.totalScore) }}"
+                           [style.width.%]="n.totalScore"
+                           style="font-size:0.75em; line-height:16px;">
+                        {{ n.totalScore | number:'1.1-1' }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 세부 서브 점수 -->
+                  <div class="row score-details small text-muted">
+                    <div class="col-6">
+                      <div class="d-flex align-items-center mb-1">
+                        <span class="score-label">CPU</span>
+                        <div class="progress flex-grow-1 mx-1" style="height:8px;">
+                          <div class="progress-bar bg-primary" [style.width.%]="n.cpuScore"></div>
+                        </div>
+                        <span>{{ n.cpuScore | number:'1.0-0' }}</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                        <span class="score-label">Mem</span>
+                        <div class="progress flex-grow-1 mx-1" style="height:8px;">
+                          <div class="progress-bar bg-success" [style.width.%]="n.memScore"></div>
+                        </div>
+                        <span>{{ n.memScore | number:'1.0-0' }}</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                        <span class="score-label">균형</span>
+                        <div class="progress flex-grow-1 mx-1" style="height:8px;">
+                          <div class="progress-bar bg-warning" [style.width.%]="n.balanceScore"></div>
+                        </div>
+                        <span>{{ n.balanceScore | number:'1.0-0' }}</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center mb-1">
+                        <span class="score-label">Aff</span>
+                        <div class="progress flex-grow-1 mx-1" style="height:8px;">
+                          <div class="progress-bar bg-info" [style.width.%]="n.affinityScore"></div>
+                        </div>
+                        <span>{{ n.affinityScore | number:'1.0-0' }}</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                        <span class="score-label">Topo</span>
+                        <div class="progress flex-grow-1 mx-1" style="height:8px;">
+                          <div class="progress-bar bg-secondary" [style.width.%]="n.topologyScore"></div>
+                        </div>
+                        <span>{{ n.topologyScore | number:'1.0-0' }}</span>
+                      </div>
+                      <div class="d-flex align-items-center mb-1">
+                        <span class="score-label">PAff</span>
+                        <div class="progress flex-grow-1 mx-1" style="height:8px;">
+                          <div class="progress-bar bg-danger" [style.width.%]="n.podAffinityScore"></div>
+                        </div>
+                        <span>{{ n.podAffinityScore | number:'1.0-0' }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 리소스 사용량 -->
+                  <div class="row mt-1 small">
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <span class="text-muted mr-1">CPU:</span>
+                        <div class="progress flex-grow-1" style="height:6px;">
+                          <div class="progress-bar" [class]="cpuUsagePct(n) > 80 ? 'bg-danger' : cpuUsagePct(n) > 60 ? 'bg-warning' : 'bg-success'"
+                               [style.width.%]="cpuUsagePct(n)"></div>
+                        </div>
+                        <span class="ml-1 text-muted">{{ n.cpuRequested | number:'1.1-1' }}/{{ n.cpuAllocatable | number:'1.1-1' }}코어</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <span class="text-muted mr-1">Mem:</span>
+                        <div class="progress flex-grow-1" style="height:6px;">
+                          <div class="progress-bar" [class]="memUsagePct(n) > 80 ? 'bg-danger' : memUsagePct(n) > 60 ? 'bg-warning' : 'bg-success'"
+                               [style.width.%]="memUsagePct(n)"></div>
+                        </div>
+                        <span class="ml-1 text-muted">{{ n.memRequested | number:'1.0-0' }}/{{ n.memAllocatable | number:'1.0-0' }}MiB</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div><!-- /n.filtered -->
+
+                <!-- YAML 생성 버튼 -->
+                <div class="mt-2 text-right">
+                  <button class="btn btn-xs btn-outline-primary" (click)="openYamlModal(n)" [disabled]="!n.filtered">
+                    <i class="fas fa-code mr-1"></i>스케줄링 YAML 생성
+                  </button>
+                </div>
+
+              </div><!-- /node-result-item -->
+
+            </div><!-- /card-body -->
+          </div><!-- /result card -->
+        </div><!-- /col-lg-7 -->
+
+      </div><!-- /row -->
+
+    </div><!-- /container-fluid -->
+  </section>
+</div><!-- /content-wrapper -->
+
+<!-- ════════════════════════════════════════════
+     YAML 생성 모달
+════════════════════════════════════════════ -->
+<div class="modal fade" id="yamlModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">
+          <i class="fas fa-code mr-2"></i>스케줄링 YAML
+          <small *ngIf="yamlTarget" class="ml-2 opacity-75">— {{ yamlTarget.name }}</small>
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="d-flex justify-content-between align-items-center px-3 pt-2 pb-1 bg-light">
+          <small class="text-muted">생성된 Pod 스펙 (nodeName 고정 배치)</small>
+          <button class="btn btn-sm btn-outline-secondary" (click)="copyYaml()">
+            <i class="fas fa-copy mr-1"></i>클립보드 복사
+          </button>
+        </div>
+        <pre class="yaml-output mb-0 p-3" style="max-height:60vh; overflow-y:auto; font-size:0.82em; background:#1e1e1e; color:#d4d4d4;">{{ generatedYaml }}</pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
