@@ -1,0 +1,722 @@
+<div class="content">
+  <div class="container-fluid">
+    <div class="content-wrapper">
+      &nbsp;<br>
+
+      <!-- ═══ 탭 헤더 ═══ -->
+      <ul class="nav nav-tabs mb-3" id="hciTabs">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab==='ceph'"
+             (click)="activeTab='ceph'" style="cursor:pointer;">
+            <i class="fas fa-circle-notch mr-1"></i>Ceph (Rook-Ceph)
+            <span *ngIf="!cephDetected" class="badge badge-secondary ml-1">미설치</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab==='gluster'"
+             (click)="activeTab='gluster'" style="cursor:pointer;">
+            <i class="fas fa-layer-group mr-1"></i>GlusterFS (Kadalu)
+            <span *ngIf="!glusterDetected" class="badge badge-secondary ml-1">미설치</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- ══════════════════════════════════════════
+           TAB: Ceph
+      ══════════════════════════════════════════ -->
+      <div *ngIf="activeTab==='ceph'">
+
+        <!-- 미설치 알림 -->
+        <div *ngIf="!cephDetected" class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle mr-2"></i>
+          <strong>Rook-Ceph가 감지되지 않았습니다.</strong>
+          CRD <code>cephclusters.ceph.rook.io</code>가 클러스터에 설치되어 있지 않습니다.
+          <a href="https://rook.io/docs/rook/latest/Getting-Started/quickstart/" target="_blank" class="ml-2">
+            설치 가이드 <i class="fas fa-external-link-alt fa-xs"></i>
+          </a>
+        </div>
+
+        <!-- 클러스터 상태 카드 -->
+        <div class="row" *ngIf="cephDetected">
+          <div class="col-md-4 col-sm-6" *ngFor="let cl of cephClusters">
+            <div class="card card-outline"
+                 [ngClass]="cl.health==='HEALTH_OK' ? 'card-success' :
+                             cl.health==='HEALTH_WARN' ? 'card-warning' : 'card-danger'">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-circle-notch mr-1"></i>{{ cl.name }}
+                  <span class="badge ml-2" [ngClass]="healthBadge(cl.health)">
+                    {{ cl.health || cl.phase }}
+                  </span>
+                </h3>
+                <div class="card-tools">
+                  <button class="btn btn-tool btn-sm text-danger"
+                          (click)="showDeleteCluster(cl.namespace, cl.name)" title="클러스터 삭제">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body p-2">
+                <ul class="list-unstyled mb-0" style="font-size:.85rem;">
+                  <li><i class="fas fa-tag fa-fw text-muted mr-1"></i>버전: {{ cl.cephVersion.split(':')[1] || cl.cephVersion }}</li>
+                  <li><i class="fas fa-circle fa-fw text-muted mr-1"></i>MON: {{ cl.monCount }}개</li>
+                  <li *ngIf="cl.capacity"><i class="fas fa-hdd fa-fw text-muted mr-1"></i>용량: {{ cl.capacity }}</li>
+                  <li *ngIf="cl.message" class="text-muted"><i class="fas fa-info-circle fa-fw mr-1"></i>{{ cl.message }}</li>
+                  <li class="text-muted" style="font-size:.75rem;">
+                    {{ cl.namespace }} / {{ cl.creationTimestamp | date:'yyyy-MM-dd' }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 새 클러스터 추가 카드 -->
+          <div class="col-md-4 col-sm-6">
+            <div class="card card-outline card-secondary h-100"
+                 style="border-style:dashed; cursor:pointer; min-height:120px;"
+                 (click)="showNewCephCluster()">
+              <div class="card-body d-flex flex-column align-items-center justify-content-center text-muted">
+                <i class="fas fa-plus-circle fa-2x mb-1"></i>
+                <span>새 Ceph 클러스터</span>
+              </div>
+            </div>
+          </div>
+        </div><!-- /클러스터 카드 row -->
+
+        <!-- ═══ Block Pools ═══ -->
+        <div class="card card-outline mt-3" *ngIf="cephDetected">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-th-large mr-1"></i>Block Pool (RBD)</h3>
+            <div class="card-tools">
+              <button class="btn btn-tool" (click)="loadCephPools()" title="새로고침">
+                <i class="fas fa-sync"></i>
+              </button>
+              <button class="btn btn-tool" (click)="showNewPool()" title="새 Block Pool">
+                <i class="fas fa-plus-square"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table datatable [dtOptions]="dtOpts" [dtTrigger]="dtTriggerPool"
+                   class="table table-sm" style="vertical-align:middle !important;">
+              <thead>
+                <tr>
+                  <th style="width:10px">&nbsp;</th>
+                  <th>네임스페이스</th>
+                  <th>이름</th>
+                  <th>복제 수</th>
+                  <th>장애 도메인</th>
+                  <th>상태</th>
+                  <th style="width:80px">&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of cephPools">
+                  <td><i class="fas fa-th-large"></i></td>
+                  <td>{{ p.namespace }}</td>
+                  <td>{{ p.name }}</td>
+                  <td>{{ p.replicas }}</td>
+                  <td>{{ p.failureDomain }}</td>
+                  <td><span class="badge" [ngClass]="phaseBadge(p.phase)">{{ p.phase || '-' }}</span></td>
+                  <td>
+                    <button class="btn btn-xs btn-outline-danger" (click)="showDeletePool(p.namespace, p.name)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ═══ Filesystems (CephFS) ═══ -->
+        <div class="card card-outline mt-3" *ngIf="cephDetected">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-folder-open mr-1"></i>Filesystem (CephFS)</h3>
+            <div class="card-tools">
+              <button class="btn btn-tool" (click)="loadCephFilesystems()" title="새로고침">
+                <i class="fas fa-sync"></i>
+              </button>
+              <button class="btn btn-tool" (click)="showNewFs()" title="새 Filesystem">
+                <i class="fas fa-plus-square"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table datatable [dtOptions]="dtOpts" [dtTrigger]="dtTriggerFs"
+                   class="table table-sm" style="vertical-align:middle !important;">
+              <thead>
+                <tr>
+                  <th style="width:10px">&nbsp;</th>
+                  <th>네임스페이스</th>
+                  <th>이름</th>
+                  <th>데이터 복제</th>
+                  <th>메타 복제</th>
+                  <th>MDS 수</th>
+                  <th>상태</th>
+                  <th style="width:80px">&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let fs of cephFilesystems">
+                  <td><i class="fas fa-folder-open"></i></td>
+                  <td>{{ fs.namespace }}</td>
+                  <td>{{ fs.name }}</td>
+                  <td>{{ fs.dataPoolReplicas }}</td>
+                  <td>{{ fs.metaReplicas }}</td>
+                  <td>{{ fs.activeCount }}</td>
+                  <td><span class="badge" [ngClass]="phaseBadge(fs.phase)">{{ fs.phase || '-' }}</span></td>
+                  <td>
+                    <button class="btn btn-xs btn-outline-danger" (click)="showDeleteFs(fs.namespace, fs.name)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ═══ Object Stores ═══ -->
+        <div class="card card-outline mt-3" *ngIf="cephDetected">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-box mr-1"></i>Object Store (S3)</h3>
+            <div class="card-tools">
+              <button class="btn btn-tool" (click)="loadCephObjectStores()" title="새로고침">
+                <i class="fas fa-sync"></i>
+              </button>
+              <button class="btn btn-tool" (click)="showNewOs()" title="새 Object Store">
+                <i class="fas fa-plus-square"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table datatable [dtOptions]="dtOpts" [dtTrigger]="dtTriggerOs"
+                   class="table table-sm" style="vertical-align:middle !important;">
+              <thead>
+                <tr>
+                  <th style="width:10px">&nbsp;</th>
+                  <th>네임스페이스</th>
+                  <th>이름</th>
+                  <th>복제 수</th>
+                  <th>게이트웨이 포트</th>
+                  <th>엔드포인트</th>
+                  <th>상태</th>
+                  <th style="width:80px">&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let os of cephObjectStores">
+                  <td><i class="fas fa-box"></i></td>
+                  <td>{{ os.namespace }}</td>
+                  <td>{{ os.name }}</td>
+                  <td>{{ os.replicas }}</td>
+                  <td>{{ os.port }}</td>
+                  <td style="word-break:break-all;">{{ os.endpoint || '-' }}</td>
+                  <td><span class="badge" [ngClass]="phaseBadge(os.phase)">{{ os.phase || '-' }}</span></td>
+                  <td>
+                    <button class="btn btn-xs btn-outline-danger" (click)="showDeleteOs(os.namespace, os.name)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /ceph tab -->
+
+
+      <!-- ══════════════════════════════════════════
+           TAB: GlusterFS
+      ══════════════════════════════════════════ -->
+      <div *ngIf="activeTab==='gluster'">
+
+        <!-- 미설치 알림 -->
+        <div *ngIf="!glusterDetected" class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle mr-2"></i>
+          <strong>Kadalu Operator가 감지되지 않았습니다.</strong>
+          CRD <code>kadalustorages.kadalu.storage</code>가 클러스터에 설치되어 있지 않습니다.
+          <a href="https://kadalu.tech/docs/k8s-storage/latest/installation" target="_blank" class="ml-2">
+            설치 가이드 <i class="fas fa-external-link-alt fa-xs"></i>
+          </a>
+        </div>
+
+        <!-- Storage Pool 목록 -->
+        <div class="card card-outline" [class.mt-3]="!glusterDetected">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-layer-group mr-1"></i>GlusterFS Storage Pool</h3>
+            <div class="card-tools">
+              <button class="btn btn-tool" (click)="loadGlusterStorages()" title="새로고침">
+                <i class="fas fa-sync"></i>
+              </button>
+              <button class="btn btn-tool" (click)="showNewGluster()" title="새 Storage Pool"
+                      [disabled]="!glusterDetected">
+                <i class="fas fa-plus-square"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table datatable [dtOptions]="dtOpts" [dtTrigger]="dtTriggerGluster"
+                   class="table table-sm" style="vertical-align:middle !important;">
+              <thead>
+                <tr>
+                  <th style="width:10px">&nbsp;</th>
+                  <th>네임스페이스</th>
+                  <th>이름</th>
+                  <th>유형</th>
+                  <th>스토리지 노드</th>
+                  <th>상태</th>
+                  <th style="width:80px">&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let gs of glusterStorages">
+                  <td><i class="fas fa-layer-group"></i></td>
+                  <td>{{ gs.namespace }}</td>
+                  <td>{{ gs.name }}</td>
+                  <td><span class="badge badge-info">{{ gs.type }}</span></td>
+                  <td>
+                    <span *ngFor="let n of gs.storageNodes" class="badge badge-secondary mr-1">
+                      {{ n.node }}:{{ n.path }}
+                    </span>
+                  </td>
+                  <td><span class="badge" [ngClass]="phaseBadge(gs.phase)">{{ gs.phase || '-' }}</span></td>
+                  <td>
+                    <button class="btn btn-xs btn-outline-danger"
+                            (click)="showDeleteGluster(gs.namespace, gs.name)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /gluster tab -->
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     Modal: 새 Ceph 클러스터
+═══════════════════════════════════════════════ -->
+<div class="modal fade" id="modal-new-cluster" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white"><i class="fas fa-circle-notch mr-2"></i>새 Ceph 클러스터</h4>
+        <button type="button" class="close text-white" (click)="hideModal('modal-new-cluster')">
+          <span>×</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>클러스터 이름 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm"
+                     [(ngModel)]="newCephName" placeholder="rook-ceph"/>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>네임스페이스</label>
+              <select class="form-control form-control-sm" [(ngModel)]="newCephNamespace">
+                <option *ngFor="let ns of namespaceList" [value]="ns">{{ ns }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <div class="form-group">
+              <label>Ceph 이미지</label>
+              <input type="text" class="form-control form-control-sm" [(ngModel)]="newCephVersion"
+                     placeholder="quay.io/ceph/ceph:v18.2.4"/>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>MON 수</label>
+              <input type="number" class="form-control form-control-sm"
+                     [(ngModel)]="newCephMonCount" min="1" max="9" step="2"/>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group">
+              <label>스토리지 자동 검색</label>
+              <div class="custom-control custom-switch mt-1">
+                <input type="checkbox" class="custom-control-input" id="ceph-use-all"
+                       [(ngModel)]="newCephUseAll"/>
+                <label class="custom-control-label" for="ceph-use-all">
+                  모든 노드/디바이스 자동 사용 (useAllNodes / useAllDevices)
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-warning mb-0" style="font-size:.85rem;">
+          <i class="fas fa-exclamation-triangle mr-1"></i>
+          Rook-Ceph Operator가 미리 설치된 환경에서만 정상 동작합니다.
+          <code>rook-ceph</code> 네임스페이스와 Operator가 실행 중인지 확인하세요.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-new-cluster')">취소</button>
+        <button type="button" class="btn btn-danger" (click)="onCreateCephCluster()">
+          <i class="fas fa-circle-notch mr-1"></i>생성
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: 클러스터 삭제 -->
+<div class="modal fade" id="modal-delete-cluster" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header bg-danger">
+      <h4 class="modal-title text-white"><i class="fas fa-trash mr-2"></i>Ceph 클러스터 삭제</h4>
+      <button type="button" class="close text-white" (click)="hideModal('modal-delete-cluster')"><span>×</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-danger">
+        <strong>{{ activeName }}</strong> 클러스터를 삭제합니다. 모든 데이터가 손실될 수 있습니다.
+      </div>
+      <p>네임스페이스: <strong>{{ activeNamespace }}</strong></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" (click)="hideModal('modal-delete-cluster')">취소</button>
+      <button type="button" class="btn btn-danger" (click)="onDeleteCephCluster()">삭제</button>
+    </div>
+  </div></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     Modal: 새 Block Pool
+═══════════════════════════════════════════════ -->
+<div class="modal fade" id="modal-new-pool" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h4 class="modal-title text-white"><i class="fas fa-th-large mr-2"></i>새 Block Pool</h4>
+        <button type="button" class="close text-white" (click)="hideModal('modal-new-pool')"><span>×</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>풀 이름 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" [(ngModel)]="newPoolName" placeholder="replicapool"/>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>네임스페이스</label>
+              <select class="form-control form-control-sm" [(ngModel)]="newPoolNamespace">
+                <option *ngFor="let ns of namespaceList" [value]="ns">{{ ns }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>복제 수</label>
+              <input type="number" class="form-control form-control-sm" [(ngModel)]="newPoolReplicas" min="1" max="9"/>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>장애 도메인</label>
+              <select class="form-control form-control-sm" [(ngModel)]="newPoolFailDomain">
+                <option value="host">host</option>
+                <option value="osd">osd</option>
+                <option value="rack">rack</option>
+                <option value="zone">zone</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-new-pool')">취소</button>
+        <button type="button" class="btn btn-primary" (click)="onCreatePool()">
+          <i class="fas fa-th-large mr-1"></i>생성
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Pool 삭제 -->
+<div class="modal fade" id="modal-delete-pool" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header bg-danger">
+      <h4 class="modal-title text-white"><i class="fas fa-trash mr-2"></i>Block Pool 삭제</h4>
+      <button type="button" class="close text-white" (click)="hideModal('modal-delete-pool')"><span>×</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-danger"><strong>{{ activeName }}</strong> Block Pool을 삭제합니다.</div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" (click)="hideModal('modal-delete-pool')">취소</button>
+      <button type="button" class="btn btn-danger" (click)="onDeletePool()">삭제</button>
+    </div>
+  </div></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     Modal: 새 Filesystem
+═══════════════════════════════════════════════ -->
+<div class="modal fade" id="modal-new-fs" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <h4 class="modal-title text-white"><i class="fas fa-folder-open mr-2"></i>새 CephFS Filesystem</h4>
+        <button type="button" class="close text-white" (click)="hideModal('modal-new-fs')"><span>×</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>이름 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" [(ngModel)]="newFsName" placeholder="ceph-filesystem"/>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>네임스페이스</label>
+              <select class="form-control form-control-sm" [(ngModel)]="newFsNamespace">
+                <option *ngFor="let ns of namespaceList" [value]="ns">{{ ns }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>데이터 복제 수</label>
+              <input type="number" class="form-control form-control-sm" [(ngModel)]="newFsDataReplicas" min="1" max="9"/>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>메타 복제 수</label>
+              <input type="number" class="form-control form-control-sm" [(ngModel)]="newFsMetaReplicas" min="1" max="9"/>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>활성 MDS 수</label>
+              <input type="number" class="form-control form-control-sm" [(ngModel)]="newFsMdsCount" min="1" max="8"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-new-fs')">취소</button>
+        <button type="button" class="btn btn-info" (click)="onCreateFs()">
+          <i class="fas fa-folder-open mr-1"></i>생성
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Filesystem 삭제 -->
+<div class="modal fade" id="modal-delete-fs" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header bg-danger">
+      <h4 class="modal-title text-white"><i class="fas fa-trash mr-2"></i>Filesystem 삭제</h4>
+      <button type="button" class="close text-white" (click)="hideModal('modal-delete-fs')"><span>×</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-danger"><strong>{{ activeName }}</strong> Filesystem을 삭제합니다.</div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" (click)="hideModal('modal-delete-fs')">취소</button>
+      <button type="button" class="btn btn-danger" (click)="onDeleteFs()">삭제</button>
+    </div>
+  </div></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     Modal: 새 Object Store
+═══════════════════════════════════════════════ -->
+<div class="modal fade" id="modal-new-os" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h4 class="modal-title"><i class="fas fa-box mr-2"></i>새 Object Store (S3)</h4>
+        <button type="button" class="close" (click)="hideModal('modal-new-os')"><span>×</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>이름 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" [(ngModel)]="newOsName" placeholder="ceph-objectstore"/>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>네임스페이스</label>
+              <select class="form-control form-control-sm" [(ngModel)]="newOsNamespace">
+                <option *ngFor="let ns of namespaceList" [value]="ns">{{ ns }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>복제 수</label>
+              <input type="number" class="form-control form-control-sm" [(ngModel)]="newOsReplicas" min="1" max="9"/>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>게이트웨이 포트</label>
+              <input type="number" class="form-control form-control-sm" [(ngModel)]="newOsPort" min="1" max="65535"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-new-os')">취소</button>
+        <button type="button" class="btn btn-warning" (click)="onCreateOs()">
+          <i class="fas fa-box mr-1"></i>생성
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Object Store 삭제 -->
+<div class="modal fade" id="modal-delete-os" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header bg-danger">
+      <h4 class="modal-title text-white"><i class="fas fa-trash mr-2"></i>Object Store 삭제</h4>
+      <button type="button" class="close text-white" (click)="hideModal('modal-delete-os')"><span>×</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-danger"><strong>{{ activeName }}</strong> Object Store를 삭제합니다.</div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" (click)="hideModal('modal-delete-os')">취소</button>
+      <button type="button" class="btn btn-danger" (click)="onDeleteOs()">삭제</button>
+    </div>
+  </div></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     Modal: 새 GlusterFS Storage
+═══════════════════════════════════════════════ -->
+<div class="modal fade" id="modal-new-gluster" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success">
+        <h4 class="modal-title text-white"><i class="fas fa-layer-group mr-2"></i>새 GlusterFS Storage Pool</h4>
+        <button type="button" class="close text-white" (click)="hideModal('modal-new-gluster')"><span>×</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>스토리지 이름 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm"
+                     [(ngModel)]="newGlusterName" placeholder="gluster-storage"/>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>네임스페이스</label>
+              <select class="form-control form-control-sm" [(ngModel)]="newGlusterNamespace">
+                <option *ngFor="let ns of namespaceList" [value]="ns">{{ ns }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label>복제 유형</label>
+              <select class="form-control form-control-sm" [(ngModel)]="newGlusterType">
+                <option value="Replica1">Replica1 (단일)</option>
+                <option value="Replica2">Replica2 (2중화)</option>
+                <option value="Replica3">Replica3 (3중화)</option>
+                <option value="Disperse">Disperse (분산)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 노드/경로 목록 -->
+        <label class="font-weight-bold">스토리지 노드 <span class="text-danger">*</span></label>
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered">
+            <thead class="thead-light">
+              <tr>
+                <th>노드 이름 (hostname)</th>
+                <th>경로 (path)</th>
+                <th style="width:50px">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let n of newGlusterNodes; let i = index">
+                <td>
+                  <input type="text" class="form-control form-control-sm"
+                         [(ngModel)]="newGlusterNodes[i].node" placeholder="node1"/>
+                </td>
+                <td>
+                  <input type="text" class="form-control form-control-sm"
+                         [(ngModel)]="newGlusterNodes[i].path" placeholder="/exports/gluster/vol1"/>
+                </td>
+                <td>
+                  <button class="btn btn-xs btn-outline-danger"
+                          (click)="removeGlusterNode(i)"
+                          [disabled]="newGlusterNodes.length <= 1">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn btn-sm btn-outline-secondary" (click)="addGlusterNode()">
+          <i class="fas fa-plus mr-1"></i>노드 추가
+        </button>
+
+        <div class="alert alert-info mt-3 mb-0" style="font-size:.85rem;">
+          <i class="fas fa-info-circle mr-1"></i>
+          Kadalu Operator가 미리 설치된 환경에서만 동작합니다.
+          경로는 각 노드에 실제로 존재하는 디렉터리여야 합니다.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="hideModal('modal-new-gluster')">취소</button>
+        <button type="button" class="btn btn-success" (click)="onCreateGluster()">
+          <i class="fas fa-layer-group mr-1"></i>생성
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: GlusterFS 삭제 -->
+<div class="modal fade" id="modal-delete-gluster" style="display:none;" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header bg-danger">
+      <h4 class="modal-title text-white"><i class="fas fa-trash mr-2"></i>GlusterFS Storage 삭제</h4>
+      <button type="button" class="close text-white" (click)="hideModal('modal-delete-gluster')"><span>×</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-danger">
+        <strong>{{ activeName }}</strong> Storage Pool을 삭제합니다. 데이터가 손실될 수 있습니다.
+      </div>
+      <p>네임스페이스: <strong>{{ activeNamespace }}</strong></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" (click)="hideModal('modal-delete-gluster')">취소</button>
+      <button type="button" class="btn btn-danger" (click)="onDeleteGluster()">삭제</button>
+    </div>
+  </div></div>
+</div>

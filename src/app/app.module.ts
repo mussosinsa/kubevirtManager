@@ -36,6 +36,7 @@ import { FirewallListComponent } from './components/firewall-list/firewall-list.
 import { SettingsComponent } from './components/settings/settings.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { CicdListComponent } from './components/cicd-list/cicd-list.component';
+import { HciStorageComponent } from './components/hci-storage/hci-storage.component';
 import { DataTablesModule } from 'angular-datatables';
 
 /** Keycloak 응답 대기 최대 시간 (ms). 초과 시 로컬 로그인으로 전환합니다. */
@@ -116,6 +117,7 @@ function initializeKeycloak(keycloak: KeycloakService, authService: AuthService)
         ProfileComponent,
         LocalLoginComponent,
         CicdListComponent,
+        HciStorageComponent,
     ],
     bootstrap: [AppComponent],
     imports: [

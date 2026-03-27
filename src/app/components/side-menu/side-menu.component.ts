@@ -15,6 +15,7 @@ export class SideMenuComponent implements OnInit {
     capkCheck: boolean = false;
     imgCheck: boolean = false;
     cdiCheck: boolean = false;
+    hciCheck: boolean = false;
     myConstants!: Constants;
 
     constructor(
@@ -28,6 +29,7 @@ export class SideMenuComponent implements OnInit {
         this.checkCapk();
         this.checkImage();
         this.checkCDI();
+        this.checkHci();
     }
 
     /*
@@ -102,6 +104,19 @@ export class SideMenuComponent implements OnInit {
         for (let i = 0; i < this.crdList.length; i++) {
             if(this.crdList[i].metadata["name"] == this.myConstants.ContainerizedDataImporter) {
                 this.cdiCheck = true;
+            }
+        }
+    }
+
+    /*
+     * Check HCI Storage Support (Rook-Ceph or Kadalu)
+     */
+    async checkHci(): Promise<void> {
+        for (let i = 0; i < this.crdList.length; i++) {
+            const name = this.crdList[i].metadata["name"];
+            if (name === this.myConstants.RookCephCluster || name === this.myConstants.KadaluStorage) {
+                this.hciCheck = true;
+                return;
             }
         }
     }

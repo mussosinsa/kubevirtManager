@@ -8,6 +8,7 @@ import { PrometheusService } from 'src/app/services/prometheus.service';
 import { Chart } from 'chart.js/auto'
 import { XK8sService } from 'src/app/services/x-k8s.service';
 import { CicdService } from 'src/app/services/cicd.service';
+import { HciService } from 'src/app/services/hci.service';
 import { Constants } from 'src/app/classes/constants';
 import { Toasts } from 'src/app/classes/toasts';
 
@@ -40,6 +41,8 @@ export class DashboardComponent implements OnInit {
     instanceTypesInfo = 0;
     loadBalancers     = 0;
     paasAppsInfo      = 0;
+    hciCephInfo       = 0;
+    hciGlusterInfo    = 0;
 
     /* Prometheus */
     promStartTime = 0;
@@ -67,7 +70,8 @@ export class DashboardComponent implements OnInit {
         private dataVolumesService: DataVolumesService,
         private prometheusService: PrometheusService,
         private xK8sService: XK8sService,
-        private cicdService: CicdService
+        private cicdService: CicdService,
+        private hciService: HciService,
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -87,6 +91,8 @@ export class DashboardComponent implements OnInit {
         this.getInstanceTypes();
         this.getLoadBalancers();
         this.getPaasApps();
+        this.getHciCeph();
+        this.getHciGluster();
         this.loadPrometheus();
     }
 
@@ -294,6 +300,20 @@ export class DashboardComponent implements OnInit {
         try {
             const data = await lastValueFrom(this.cicdService.getDeployments());
             this.paasAppsInfo = data.items.length;
+        } catch (_) { }
+    }
+
+    async getHciCeph(): Promise<void> {
+        try {
+            const data = await lastValueFrom(this.hciService.getCephClusters());
+            this.hciCephInfo = data.items.length;
+        } catch (_) { }
+    }
+
+    async getHciGluster(): Promise<void> {
+        try {
+            const data = await lastValueFrom(this.hciService.getKadaluStorages());
+            this.hciGlusterInfo = data.items.length;
         } catch (_) { }
     }
 

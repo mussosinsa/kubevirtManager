@@ -25,6 +25,7 @@ import { FirewallListComponent } from './components/firewall-list/firewall-list.
 import { SettingsComponent } from './components/settings/settings.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { CicdListComponent } from './components/cicd-list/cicd-list.component';
+import { HciStorageComponent } from './components/hci-storage/hci-storage.component';
 
 const routes: Routes = [
   { path: 'login',                                    component: LocalLoginComponent },
@@ -50,6 +51,7 @@ const routes: Routes = [
   { path: 'settings',                                 component: SettingsComponent,           canActivate: [authGuard] },
   { path: 'profile',                                  component: ProfileComponent,            canActivate: [authGuard] },
   { path: 'cicdlist',                                 component: CicdListComponent,           canActivate: [authGuard] },
+  { path: 'hci',                                      component: HciStorageComponent,         canActivate: [authGuard] },
 ];
 
 @NgModule({

@@ -10,6 +10,10 @@ export class Constants {
     public readonly KubevirtClusters: string = "kubevirtclusters.infrastructure.cluster.x-k8s.io";
     public readonly KubevirtMachineTemplates: string = "kubevirtmachinetemplates.infrastructure.cluster.x-k8s.io";
 
+    /* HCI Storage CRDs */
+    public readonly RookCephCluster: string   = "cephclusters.ceph.rook.io";
+    public readonly KadaluStorage: string     = "kadalustorages.kadalu.storage";
+
     /* General Labels and Annotations keys */
     public readonly KubernetesHostname: string = "kubernetes.io/hostname";
     public readonly KubevirtDomain: string = "kubevirt.io/domain";

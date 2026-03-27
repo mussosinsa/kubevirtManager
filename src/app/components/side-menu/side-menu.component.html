@@ -99,6 +99,12 @@
             <p>CI/CD 배포</p>
           </a>
         </li>
+        <li class="nav-item" *ngIf="hciCheck">
+          <a routerLink="/hci" class="nav-link" alt="#" title="HCI 스토리지...">
+            <i class="nav-icon fas fa-database"></i>
+            <p>HCI 스토리지</p>
+          </a>
+        </li>
         <li class="nav-item">
           <a routerLink="/settings" class="nav-link" alt="#" title="환경 설정...">
             <i class="nav-icon fas fa-cog"></i>
