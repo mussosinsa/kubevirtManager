@@ -1,0 +1,165 @@
+/* ── 위저드 단계 표시 ─────────────────────────── */
+.wizard-steps {
+    padding: 16px 0 8px;
+    gap: 0;
+    align-items: center;
+}
+
+.wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #dee2e6;
+    background: #fff;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all .25s;
+}
+
+.wizard-step.active .step-circle {
+    border-color: #007bff;
+    background: #007bff;
+    color: #fff;
+}
+
+.wizard-step.done .step-circle {
+    border-color: #28a745;
+    background: #28a745;
+    color: #fff;
+}
+
+.step-label {
+    font-size: 12px;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.wizard-step.active .step-label { color: #007bff; font-weight: 600; }
+.wizard-step.done  .step-label  { color: #28a745; }
+
+.wizard-connector {
+    flex: 1;
+    height: 2px;
+    background: #dee2e6;
+    margin: 0 8px;
+    margin-bottom: 20px;
+    max-width: 80px;
+    transition: background .25s;
+}
+.wizard-connector.done { background: #28a745; }
+
+/* ── 템플릿 카드 ──────────────────────────────── */
+.template-card {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    background: #fff;
+}
+
+.template-card:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, .15);
+}
+
+.template-card.selected {
+    border-color: #007bff;
+    background: #f0f8ff;
+}
+
+.template-icon {
+    font-size: 2.2rem;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.template-body h5 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.template-check {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 1.2rem;
+}
+
+/* ── 출력 형식 카드 ───────────────────────────── */
+.format-card {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 24px 16px;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    text-align: center;
+    background: #fff;
+}
+
+.format-card:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, .15);
+}
+
+.format-card.selected {
+    border-color: #007bff;
+    background: #f0f8ff;
+}
+
+.format-icon {
+    font-size: 2.4rem;
+    color: #007bff;
+    margin-bottom: 12px;
+}
+
+.format-card h5 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+
+.format-check {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 1.2rem;
+}
+
+/* ── 보고서 헤더 ──────────────────────────────── */
+.report-header {
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    color: #fff;
+}
+.report-header h2 { color: #fff; }
+.report-header small { color: rgba(255,255,255,.8); }
+
+/* ── 인쇄 스타일 ──────────────────────────────── */
+@media print {
+    .no-print { display: none !important; }
+    .main-sidebar,
+    .main-header,
+    .main-footer,
+    .content-header { display: none !important; }
+    .content-wrapper { margin: 0 !important; padding: 0 !important; }
+    .card { box-shadow: none !important; border: 1px solid #dee2e6 !important; }
+    body { background: #fff !important; }
+}
+
+/* ── 유틸 ────────────────────────────────────── */
+.gap-2 { gap: 8px; }

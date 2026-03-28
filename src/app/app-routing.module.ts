@@ -27,6 +27,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { CicdListComponent } from './components/cicd-list/cicd-list.component';
 import { HciStorageComponent } from './components/hci-storage/hci-storage.component';
 import { SchedulerAiComponent } from './components/scheduler-ai/scheduler-ai.component';
+import { ReportComponent } from './components/report/report.component';
 
 const routes: Routes = [
   { path: 'login',                                    component: LocalLoginComponent },
@@ -54,6 +55,7 @@ const routes: Routes = [
   { path: 'cicdlist',                                 component: CicdListComponent,           canActivate: [authGuard] },
   { path: 'hci',                                      component: HciStorageComponent,         canActivate: [authGuard] },
   { path: 'scheduler',                                component: SchedulerAiComponent,        canActivate: [authGuard] },
+  { path: 'report',                                  component: ReportComponent,             canActivate: [authGuard] },
 ];
 
 @NgModule({

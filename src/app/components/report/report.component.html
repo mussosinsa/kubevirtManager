@@ -1,0 +1,448 @@
+<!-- Content Wrapper -->
+<div class="content-wrapper" id="report-print-area">
+
+  <!-- Content Header -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">운영 보고서</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">대시보드</a></li>
+            <li class="breadcrumb-item active">운영 보고서</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /Content Header -->
+
+  <section class="content">
+    <div class="container-fluid">
+
+      <!-- ═══════════════════════════════════════════
+           위저드 진행 표시
+      ═══════════════════════════════════════════ -->
+      <div class="card card-default no-print">
+        <div class="card-header">
+          <div class="wizard-steps d-flex justify-content-center">
+            <div class="wizard-step" [class.active]="step >= 1" [class.done]="step > 1">
+              <div class="step-circle">
+                <i *ngIf="step > 1" class="fas fa-check"></i>
+                <span *ngIf="step <= 1">1</span>
+              </div>
+              <div class="step-label">템플릿 선택</div>
+            </div>
+            <div class="wizard-connector" [class.done]="step > 1"></div>
+            <div class="wizard-step" [class.active]="step >= 2" [class.done]="step > 2">
+              <div class="step-circle">
+                <i *ngIf="step > 2" class="fas fa-check"></i>
+                <span *ngIf="step <= 2">2</span>
+              </div>
+              <div class="step-label">출력 형식</div>
+            </div>
+            <div class="wizard-connector" [class.done]="step > 2"></div>
+            <div class="wizard-step" [class.active]="step >= 3">
+              <div class="step-circle">3</div>
+              <div class="step-label">보고서 생성</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           STEP 1: 템플릿 선택
+      ═══════════════════════════════════════════ -->
+      <div *ngIf="step === 1" class="no-print">
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-list mr-2"></i>보고서 템플릿 선택</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 col-sm-6 mb-3" *ngFor="let t of templates">
+                <div class="template-card"
+                     [class.selected]="selectedTemplate === t.id"
+                     (click)="selectTemplate(t.id)">
+                  <div class="template-icon">
+                    <i [class]="t.icon"></i>
+                  </div>
+                  <div class="template-body">
+                    <h5>{{ t.label }}</h5>
+                    <p class="text-muted small">{{ t.description }}</p>
+                  </div>
+                  <div class="template-check" *ngIf="selectedTemplate === t.id">
+                    <i class="fas fa-check-circle text-primary"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer text-right">
+            <button class="btn btn-primary" [disabled]="!selectedTemplate" (click)="nextStep()">
+              다음 <i class="fas fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           STEP 2: 출력 형식 선택
+      ═══════════════════════════════════════════ -->
+      <div *ngIf="step === 2" class="no-print">
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-file-export mr-2"></i>출력 형식 선택</h3>
+            <div class="card-tools">
+              <span class="badge badge-info">{{ templateLabel }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row justify-content-center">
+              <div class="col-md-3 col-sm-6 mb-3" *ngFor="let f of formats">
+                <div class="format-card"
+                     [class.selected]="selectedFormat === f.id"
+                     (click)="selectFormat(f.id)">
+                  <div class="format-icon">
+                    <i [class]="f.icon"></i>
+                  </div>
+                  <h5>{{ f.label }}</h5>
+                  <p class="text-muted small">{{ f.description }}</p>
+                  <div class="format-check" *ngIf="selectedFormat === f.id">
+                    <i class="fas fa-check-circle text-primary"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer d-flex justify-content-between">
+            <button class="btn btn-secondary" (click)="prevStep()">
+              <i class="fas fa-arrow-left mr-1"></i> 이전
+            </button>
+            <button class="btn btn-primary" [disabled]="!selectedFormat" (click)="nextStep()">
+              다음 <i class="fas fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           STEP 3: 보고서 생성
+      ═══════════════════════════════════════════ -->
+      <div *ngIf="step === 3">
+
+        <!-- 생성 버튼 패널 (화면 전용) -->
+        <div class="card card-default no-print">
+          <div class="card-body d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+              <span class="badge badge-info mr-2">{{ templateLabel }}</span>
+              <span class="badge badge-secondary">{{ formatLabel }}</span>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-secondary mr-2" (click)="prevStep()" [disabled]="loading">
+                <i class="fas fa-arrow-left mr-1"></i> 이전
+              </button>
+              <button class="btn btn-primary mr-2" (click)="generate()" [disabled]="loading">
+                <i class="fas fa-sync-alt mr-1" [class.fa-spin]="loading"></i>
+                {{ loading ? '수집 중...' : '보고서 자동 작성' }}
+              </button>
+              <ng-container *ngIf="data">
+                <button *ngIf="selectedFormat === 'pdf'" class="btn btn-danger mr-2" (click)="exportPdf()">
+                  <i class="fas fa-file-pdf mr-1"></i> PDF 저장
+                </button>
+                <button *ngIf="selectedFormat === 'csv'" class="btn btn-success mr-2" (click)="exportCsv()">
+                  <i class="fas fa-file-csv mr-1"></i> CSV 다운로드
+                </button>
+                <button *ngIf="selectedFormat === 'json'" class="btn btn-info mr-2" (click)="exportJson()">
+                  <i class="fas fa-file-code mr-1"></i> JSON 다운로드
+                </button>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <!-- 오류 -->
+        <div *ngIf="error" class="alert alert-danger no-print">
+          <i class="fas fa-exclamation-triangle mr-2"></i>{{ error }}
+        </div>
+
+        <!-- 로딩 -->
+        <div *ngIf="loading" class="text-center py-5 no-print">
+          <i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i>
+          <p class="text-muted">클러스터 데이터를 수집하는 중입니다...</p>
+        </div>
+
+        <!-- ════════════════ 보고서 본문 ════════════════ -->
+        <div *ngIf="data" id="report-content">
+
+          <!-- 보고서 헤더 -->
+          <div class="card card-primary">
+            <div class="card-header report-header">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h2 class="mb-0"><i class="fas fa-file-alt mr-2"></i>{{ templateLabel }}</h2>
+                  <small>생성 일시: {{ data.generatedAt }}</small>
+                </div>
+                <div class="text-right print-logo">
+                  <strong>OV-Works PaaS Manager</strong><br>
+                  <small>운영 보고서</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 클러스터 요약 카드 -->
+          <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="fas fa-hdd"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">전체 노드</span>
+                  <span class="info-box-number">{{ data.cluster.totalNodes }}</span>
+                  <span class="info-box-text text-success">정상 {{ data.cluster.readyNodes }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-success"><i class="fas fa-desktop"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">전체 VM</span>
+                  <span class="info-box-number">{{ data.cluster.totalVMs }}</span>
+                  <span class="info-box-text text-success">실행중 {{ data.cluster.runningVMs }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-warning"><i class="fas fa-rocket"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">배포 앱</span>
+                  <span class="info-box-number">{{ data.cluster.totalDeployments }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-danger"><i class="fas fa-database"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Ceph 클러스터</span>
+                  <span class="info-box-number">{{ data.cephClusters.length }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-secondary"><i class="fas fa-server"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">GlusterFS</span>
+                  <span class="info-box-number">{{ data.glusterVolumes.length }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 노드 리소스 섹션 ── -->
+          <div *ngIf="showSection('nodes')" class="card card-default mb-3">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-hdd mr-2"></i>노드 리소스 현황</h3>
+              <div class="card-tools">
+                <span class="badge badge-primary">{{ data.nodes.length }}개 노드</span>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped table-hover mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>이름</th>
+                      <th>상태</th>
+                      <th>역할</th>
+                      <th>CPU (할당가능)</th>
+                      <th>메모리 (할당가능)</th>
+                      <th>Kubernetes 버전</th>
+                      <th>운영 기간</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let n of data.nodes">
+                      <td><strong>{{ n.name }}</strong></td>
+                      <td>
+                        <span [class]="n.status === '정상' ? 'badge badge-success' : 'badge badge-danger'">
+                          {{ n.status }}
+                        </span>
+                      </td>
+                      <td><span class="badge badge-info">{{ n.roles }}</span></td>
+                      <td>{{ n.cpuAllocatable }}</td>
+                      <td>{{ n.memAllocatable }}</td>
+                      <td><small>{{ n.k8sVersion }}</small></td>
+                      <td>{{ n.age }}</td>
+                    </tr>
+                    <tr *ngIf="data.nodes.length === 0">
+                      <td colspan="7" class="text-center text-muted">노드 정보 없음</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── VM 운영 섹션 ── -->
+          <div *ngIf="showSection('vms')" class="card card-default mb-3">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-desktop mr-2"></i>VM 운영 현황</h3>
+              <div class="card-tools">
+                <span class="badge badge-primary">{{ data.vms.length }}개 VM</span>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped table-hover mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>이름</th>
+                      <th>네임스페이스</th>
+                      <th>상태</th>
+                      <th>CPU</th>
+                      <th>메모리</th>
+                      <th>배치 노드</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let v of data.vms">
+                      <td><strong>{{ v.name }}</strong></td>
+                      <td><small>{{ v.namespace }}</small></td>
+                      <td>
+                        <span [class]="vmBadge(v.status)">{{ v.status }}</span>
+                      </td>
+                      <td>{{ v.cpu }}</td>
+                      <td>{{ v.memory }}</td>
+                      <td><small>{{ v.node }}</small></td>
+                    </tr>
+                    <tr *ngIf="data.vms.length === 0">
+                      <td colspan="6" class="text-center text-muted">VM 정보 없음</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── CI/CD 배포 섹션 ── -->
+          <div *ngIf="showSection('cicd')" class="card card-default mb-3">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-rocket mr-2"></i>CI/CD 배포 현황</h3>
+              <div class="card-tools">
+                <span class="badge badge-primary">{{ data.deployments.length }}개 배포</span>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped table-hover mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>이름</th>
+                      <th>네임스페이스</th>
+                      <th>준비 상태</th>
+                      <th>가용 레플리카</th>
+                      <th>이미지</th>
+                      <th>운영 기간</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let d of data.deployments">
+                      <td><strong>{{ d.name }}</strong></td>
+                      <td><small>{{ d.namespace }}</small></td>
+                      <td>
+                        <span [class]="deployBadge(d.ready, d.desired)">{{ d.ready }}</span>
+                      </td>
+                      <td>{{ d.available }}</td>
+                      <td><small class="text-truncate d-block" style="max-width:200px">{{ d.image }}</small></td>
+                      <td>{{ d.age }}</td>
+                    </tr>
+                    <tr *ngIf="data.deployments.length === 0">
+                      <td colspan="6" class="text-center text-muted">배포 정보 없음</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── HCI 스토리지 섹션 ── -->
+          <div *ngIf="showSection('hci')" class="row mb-3">
+            <!-- Ceph -->
+            <div class="col-md-6">
+              <div class="card card-default h-100">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fas fa-server mr-2"></i>Ceph 클러스터</h3>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table table-sm table-striped mb-0">
+                    <thead class="thead-light">
+                      <tr><th>이름</th><th>네임스페이스</th><th>상태</th><th>헬스</th><th>MON 수</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let c of data.cephClusters">
+                        <td>{{ c.name }}</td>
+                        <td><small>{{ c.namespace }}</small></td>
+                        <td>{{ c.phase }}</td>
+                        <td><span [class]="cephBadge(c.health)">{{ c.health }}</span></td>
+                        <td>{{ c.monitors }}</td>
+                      </tr>
+                      <tr *ngIf="data.cephClusters.length === 0">
+                        <td colspan="5" class="text-center text-muted">Ceph 클러스터 없음</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- GlusterFS -->
+            <div class="col-md-6">
+              <div class="card card-default h-100">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fas fa-database mr-2"></i>GlusterFS (Kadalu)</h3>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table table-sm table-striped mb-0">
+                    <thead class="thead-light">
+                      <tr><th>이름</th><th>네임스페이스</th><th>상태</th><th>볼륨 수</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let g of data.glusterVolumes">
+                        <td>{{ g.name }}</td>
+                        <td><small>{{ g.namespace }}</small></td>
+                        <td>{{ g.phase }}</td>
+                        <td>{{ g.volumes }}</td>
+                      </tr>
+                      <tr *ngIf="data.glusterVolumes.length === 0">
+                        <td colspan="4" class="text-center text-muted">GlusterFS 볼륨 없음</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 보고서 푸터 -->
+          <div class="card card-default">
+            <div class="card-footer text-muted small d-flex justify-content-between">
+              <span><i class="fas fa-info-circle mr-1"></i>본 보고서는 OV-Works PaaS Manager에서 자동 생성되었습니다.</span>
+              <span>생성 일시: {{ data.generatedAt }}</span>
+            </div>
+          </div>
+
+        </div>
+        <!-- /보고서 본문 -->
+
+      </div>
+      <!-- /STEP 3 -->
+
+    </div>
+  </section>
+</div>
+<!-- /Content Wrapper -->
