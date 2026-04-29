@@ -1,0 +1,78 @@
+# ============================================================
+# Jenkins Kubernetes Plugin 용 ServiceAccount + RBAC
+#
+# 적용 방법:
+#   kubectl apply -f kubernetes/jenkins/rbac.yaml
+#
+# Jenkins Kubernetes Plugin 설정:
+#   Manage Jenkins → Clouds → Kubernetes
+#     - Kubernetes URL:         https://kubernetes.default.svc
+#     - Kubernetes Namespace:   jenkins
+#     - Credentials:            (ServiceAccount 토큰 또는 kubeconfig)
+#     - Jenkins URL:            http://jenkins.jenkins.svc.cluster.local:8080
+# ============================================================
+
+# ── Namespace ────────────────────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jenkins
+  labels:
+    app.kubernetes.io/managed-by: kubectl
+
+---
+# ── ServiceAccount ───────────────────────────────────────
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: jenkins
+  labels:
+    app.kubernetes.io/name:      jenkins
+    app.kubernetes.io/component: ci
+
+---
+# ── ClusterRole: Jenkins 에이전트 파드 관리 권한 ──────────
+# Jenkins Kubernetes Plugin 이 동적 에이전트 파드를 생성·삭제하기 위해 필요
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jenkins-agent-manager
+  labels:
+    app.kubernetes.io/name:      jenkins
+    app.kubernetes.io/component: ci
+rules:
+  # 에이전트 파드 관리
+  - apiGroups: [""]
+    resources: ["pods", "pods/exec", "pods/log", "pods/status"]
+    verbs:     ["create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"]
+  # 빌드에 필요한 Secret (예: registry-dockerconfig) 읽기
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs:     ["get", "list"]
+  # ConfigMap 읽기 (에이전트 설정용)
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs:     ["get", "list"]
+  # 이벤트 조회
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs:     ["get", "list", "watch"]
+
+---
+# ── ClusterRoleBinding ───────────────────────────────────
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins-agent-manager
+  labels:
+    app.kubernetes.io/name:      jenkins
+    app.kubernetes.io/component: ci
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind:     ClusterRole
+  name:     jenkins-agent-manager
+subjects:
+  - kind:      ServiceAccount
+    name:      jenkins
+    namespace: jenkins

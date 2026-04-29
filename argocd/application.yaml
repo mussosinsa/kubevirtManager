@@ -1,0 +1,77 @@
+# ============================================================
+# ArgoCD Application - kubevirt-manager
+#
+# 적용 방법:
+#   kubectl apply -f argocd/application.yaml -n argocd
+#
+# 동작 방식:
+#   1. Jenkins가 kubernetes/deployment.yaml 의 이미지 태그를 업데이트하고 Git Push
+#   2. ArgoCD가 변경을 감지하여 자동으로 클러스터에 동기화(배포)
+#
+# ★ 변경 필요 항목:
+#   - spec.source.repoURL       → 실제 Git 저장소 URL
+#   - spec.source.targetRevision → 배포 브랜치 (기본: main)
+# ============================================================
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubevirt-manager
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name:      kubevirt-manager
+    app.kubernetes.io/component: gitops
+  # Application 삭제 시 연결된 K8s 리소스도 함께 정리
+  finalizers:
+    - resources-finalizer.argocd.io
+
+spec:
+  project: kubevirt-manager
+
+  # ── 소스 Git 저장소 ──────────────────────────────────
+  source:
+    # ★ 실제 Git 저장소 URL로 변경하세요
+    repoURL:        'https://git.example.com/kubevirt-manager.git'
+    targetRevision: main
+    # Jenkins가 이미지 태그를 업데이트하는 디렉토리
+    path:           kubernetes
+
+  # ── 배포 대상 ─────────────────────────────────────────
+  destination:
+    server:    https://kubernetes.default.svc
+    namespace: kubevirt-manager
+
+  # ── 동기화 정책 ───────────────────────────────────────
+  syncPolicy:
+    automated:
+      # Git에 없는 리소스를 클러스터에서 자동 삭제
+      prune:     true
+      # 클러스터 상태가 Git과 달라지면 자동 복구
+      selfHeal:  true
+      # 일시 중단(Suspend) 상태의 앱도 자동 동기화 허용
+      allowEmpty: false
+
+    syncOptions:
+      # 네임스페이스가 없으면 자동 생성
+      - CreateNamespace=true
+      # 리소스 삭제 순서 보장 (Foreground)
+      - PrunePropagationPolicy=foreground
+      # Prune은 마지막에 실행
+      - PruneLast=true
+      # ServerSideApply 사용 (대용량 CRD 처리)
+      - ServerSideApply=true
+
+    # 동기화 실패 시 재시도
+    retry:
+      limit: 5
+      backoff:
+        duration:    10s
+        factor:      2
+        maxDuration: 5m
+
+  # ── 헬스 체크 설정 ────────────────────────────────────
+  # ignoreDifferences:
+  #   - group: apps
+  #     kind:  Deployment
+  #     jsonPointers:
+  #       - /spec/replicas   # HPA가 레플리카 수를 관리하는 경우 드리프트 무시

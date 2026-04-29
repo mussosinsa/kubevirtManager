@@ -1,0 +1,56 @@
+# ============================================================
+# ArgoCD AppProject - kubevirt-manager
+#
+# 적용 방법:
+#   kubectl apply -f argocd/project.yaml -n argocd
+#
+# ArgoCD가 설치된 네임스페이스(기본값: argocd)에 적용합니다.
+# ============================================================
+
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: kubevirt-manager
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name:      kubevirt-manager
+    app.kubernetes.io/component: gitops
+spec:
+  description: KubeVirt Manager CI/CD 프로젝트 (Jenkins + ArgoCD)
+
+  # ── 허용 소스 저장소 ──────────────────────────────────
+  # ★ 실제 Git 저장소 URL로 변경하세요
+  sourceRepos:
+    - 'https://git.example.com/kubevirt-manager.git'
+
+  # ── 배포 허용 대상 클러스터/네임스페이스 ─────────────
+  destinations:
+    - namespace: kubevirt-manager
+      server:    https://kubernetes.default.svc
+    # (선택) 모니터링 네임스페이스 등 추가 허용 시 아래 추가
+    # - namespace: monitoring
+    #   server:    https://kubernetes.default.svc
+
+  # ── 클러스터 수준 리소스 허용 목록 ───────────────────
+  clusterResourceWhitelist:
+    - group: ''
+      kind:  Namespace
+    - group: rbac.authorization.k8s.io
+      kind:  ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind:  ClusterRoleBinding
+
+  # ── 네임스페이스 수준 리소스 허용 목록 ───────────────
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind:  '*'
+
+  # ── 역할 정의 ─────────────────────────────────────────
+  roles:
+    # Jenkins CI 전용 역할: 앱 동기화만 허용
+    - name:        ci-role
+      description: Jenkins CI 파이프라인 전용 역할
+      policies:
+        - p, proj:kubevirt-manager:ci-role, applications, sync,   kubevirt-manager/*, allow
+        - p, proj:kubevirt-manager:ci-role, applications, get,    kubevirt-manager/*, allow
+      jwtTokens: []   # ArgoCD CLI 토큰은 application.yaml 설정 후 argocd proj role create-token 으로 발급
